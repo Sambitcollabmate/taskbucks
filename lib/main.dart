@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 
 void main() {
@@ -10,36 +11,11 @@ class TaskBucksApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'TaskBucks',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const _SetupCheckScreen(),
-    );
-  }
-}
-
-// Temporary screen just to confirm the toolchain + theme work.
-// Claude Code will replace this with the real Home screen in Phase 1.
-class _SetupCheckScreen extends StatelessWidget {
-  const _SetupCheckScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'TaskBucks setup ✅',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            const Text('Theme, fonts, and toolchain are wired up.'),
-          ],
-        ),
-      ),
+      routerConfig: appRouter,
     );
   }
 }

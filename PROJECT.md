@@ -118,15 +118,30 @@ tagged `// LEGAL-REVIEW:`) rather than making an assumption and moving on:
 
 ## 5. Design system (tokens — keep centralized, don't hardcode colors/fonts per widget)
 
-- Primary: indigo/violet (`#5B4FE0` family)
+- Primary: `#F0295E` (flat contexts — text, icons, borders, non-gradient
+  buttons)
+- Primary gradient: `primaryGradientStart` `#FF8A3D` → `primaryGradientEnd`
+  `#F0295E`, used on gradient-filled surfaces (balance hero card, today's
+  pulse indicator on Home's week streak)
 - Earnings green: `#1FAA59`
-- Premium gold: `#E8A23A`
-- Danger/red: `#E0523F`
+- Premium gold: `#E8A23A` — used as an *accent* (icons, badges, price text),
+  not a full-bleed fill; the Home upgrade banner pairs it with a dark
+  charcoal gradient (`premiumSurfaceStart` `#2A2A35` → `premiumSurfaceEnd`
+  `#13131A`) rather than a flat gold card, which read too "yellow"
+- Warning/orange: `#F2994A` — mid-progress status (e.g. week streak partial
+  day)
+- Danger/red: `#E0523F` — reserved for an actual missed/past day, not for
+  today while it's still in progress (today uses the primary gradient +
+  pulse animation instead, so it doesn't read as "failed")
 - Background: light neutral (`#F7F7FB`)
 - Card background: white, soft shadow, 16–20px border radius
-- Balance hero: gradient card (indigo → deeper indigo or teal), white text
+- Balance hero: gradient card (primary gradient, orange → pink), white text
 - Task progress: circular ring, green when in progress, gold when the day's
   cap is complete
+- Week streak (Home): 7-day strip, one letter per day; today pulses (primary
+  gradient) instead of being colored red/green until its cap is met; past
+  days color green (cap met) / orange (partial) / red (missed); future days
+  neutral
 - Bottom nav: 5 items — Home, Tasks, Wallet, Refer, Profile
 
 All of the above live in `core/theme/` as the single place to edit look and
@@ -150,6 +165,11 @@ Push-only screens (reachable from tabs, no tab bar of their own):
   Support Tickets, How It Works, About, FAQ, Contact,
   Payment Proofs, Terms, Privacy, Refund
 ```
+
+The post-auth tab bar is wired up (`core/router/app_router.dart`,
+`initialLocation: '/home'`) with real Home and Tasks screens and stub
+"coming soon" screens for Wallet, Refer, and Profile until they're built.
+The pre-auth stack and auth redirect logic are not wired yet — Phase 3.
 
 Settings is a single consolidated screen (Profile, Security, Payment
 details as scrollable sections with anchors) — Profile's menu rows deep-link
@@ -190,12 +210,16 @@ lib/
   all three.
 - `legal_screen` — one shared template for Terms, Privacy, Refund (plain
   text, numbered headings, no cards).
-- `notice_card` (info / warn variants) — Wallet's payout notice, Refer &
+- `notice_card` (info / warn variants) — **built**, first used on Tasks'
+  non-skippable-ads notice. Still needed for Wallet's payout notice, Refer &
   Earn's trigger-disclosure, Withdraw's new-UPI warning.
 - `phone_input` — compound +91-prefix input, reused in Register, Login,
   Forgot Password.
 - `otp_row` — 6-box OTP input, reused in Verify Phone and Forgot Password.
-- `main_bottom_nav` — the 5-tab bar.
+- `main_bottom_nav` — **built**, the 5-tab bar (Home, Tasks, Wallet, Refer,
+  Profile). Wired into a go_router `StatefulShellRoute.indexedStack` (see
+  `core/router/app_router.dart`) so it persists across tab switches and each
+  tab keeps its own state.
 - `balance_hero_card` — gradient balance card, reused on Home and Wallet.
 
 ---
@@ -211,11 +235,13 @@ patterns, so later screens are mostly assembly, not new invention.
   leaderboard) — establishes the visual language for everything after
 
 **Phase 2 — Core tabs (reuse Home's patterns directly)**
-- Tasks screen (task grid, featured task card, reset countdown)
-- Wallet screen (balance breakdown, payment method card, recent activity)
-- Refer & Earn screen (referral link card, trigger-disclosure notice,
+- [x] Tasks screen (task grid, featured task card, reset countdown)
+- [x] `main_bottom_nav` + go_router `StatefulShellRoute` wiring the 5 tabs
+  together (Wallet/Refer/Profile are stub screens until built below)
+- [ ] Wallet screen (balance breakdown, payment method card, recent activity)
+- [ ] Refer & Earn screen (referral link card, trigger-disclosure notice,
   recent referrals list, leaderboard)
-- Profile screen (account menu, support menu, tier badge, log out)
+- [ ] Profile screen (account menu, support menu, tier badge, log out)
 
 **Phase 3 — Auth flow (needed before anything can be "logged in")**
 - Welcome screen
