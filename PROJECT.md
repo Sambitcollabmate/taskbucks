@@ -167,9 +167,9 @@ Push-only screens (reachable from tabs, no tab bar of their own):
 ```
 
 The post-auth tab bar is wired up (`core/router/app_router.dart`,
-`initialLocation: '/home'`) with real Home, Tasks, and Wallet screens and
-stub "coming soon" screens for Refer and Profile until they're built. The
-pre-auth stack and auth redirect logic are not wired yet — Phase 3.
+`initialLocation: '/home'`) with all 5 tabs now real screens (Home, Tasks,
+Wallet, Refer & Earn, Profile). The pre-auth stack and auth redirect logic
+are not wired yet — Phase 3.
 
 Settings is a single consolidated screen (Profile, Security, Payment
 details as scrollable sections with anchors) — Profile's menu rows deep-link
@@ -230,6 +230,9 @@ lib/
   `LeaderRow.iconBadge` and `LeaderRow.medalBadge` helpers). Reused by Home's
   `WeeklyLeadersCard` (one row per category, ₹ amount trailing) and Refer &
   Earn's `TopReferrersCard` (medal-ranked top 3, conversion-count trailing).
+- `upgrade_banner` — **built**, moved from `screens/home/widgets/` into
+  `shared/widgets/` now that Profile also shows it. Caller must omit it from
+  the widget tree entirely for Premium users, not just visually hide it.
 
 ---
 
@@ -252,7 +255,11 @@ patterns, so later screens are mostly assembly, not new invention.
   stat chips, recent referrals list, this week's top-3 referrers card).
   Bonus-gift value for the #1 spot stays TBD (Section 2) — the card states
   a bonus exists without inventing an amount.
-- [ ] Profile screen (account menu, support menu, tier badge, log out)
+- [x] Profile screen (account menu, support menu, tier badge, log out).
+  Edit profile/Security & password/Payment details menu rows are
+  placeholder no-ops until the consolidated Settings screen exists
+  (Phase 4, PROJECT.md 3/6.1) — don't build separate destination screens
+  for them before then.
 
 **Phase 3 — Auth flow (needed before anything can be "logged in")**
 - Welcome screen

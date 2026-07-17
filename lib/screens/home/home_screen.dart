@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/home_provider.dart';
 import '../../shared/widgets/balance_hero_card.dart';
+import '../../shared/widgets/upgrade_banner.dart';
 import 'widgets/home_top_bar.dart';
 import 'widgets/task_progress_card.dart';
-import 'widgets/upgrade_banner.dart';
 import 'widgets/week_streak_card.dart';
 import 'widgets/weekly_leaders_card.dart';
 
