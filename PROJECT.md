@@ -225,6 +225,11 @@ lib/
 - `balance_hero_card` — **built**, gradient balance card reused on Home and
   Wallet. Action buttons (icon/label/onTap) are configurable per screen —
   Home uses Wallet/Refer & earn, Wallet uses Withdraw/History.
+- `leader_row` — **built**, extracted from Home's weekly leaders card into
+  a shared row (`leading`/`name`/optional `subtitle`/`trailing` widgets, plus
+  `LeaderRow.iconBadge` and `LeaderRow.medalBadge` helpers). Reused by Home's
+  `WeeklyLeadersCard` (one row per category, ₹ amount trailing) and Refer &
+  Earn's `TopReferrersCard` (medal-ranked top 3, conversion-count trailing).
 
 ---
 
@@ -243,8 +248,10 @@ patterns, so later screens are mostly assembly, not new invention.
 - [x] `main_bottom_nav` + go_router `StatefulShellRoute` wiring the 5 tabs
   together (Wallet/Refer/Profile are stub screens until built below)
 - [x] Wallet screen (balance breakdown, payment method card, recent activity)
-- [ ] Refer & Earn screen (referral link card, trigger-disclosure notice,
-  recent referrals list, leaderboard)
+- [x] Refer & Earn screen (referral link card, trigger-disclosure notice,
+  stat chips, recent referrals list, this week's top-3 referrers card).
+  Bonus-gift value for the #1 spot stays TBD (Section 2) — the card states
+  a bonus exists without inventing an amount.
 - [ ] Profile screen (account menu, support menu, tier badge, log out)
 
 **Phase 3 — Auth flow (needed before anything can be "logged in")**
