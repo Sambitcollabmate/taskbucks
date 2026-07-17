@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../core/theme/app_colors.dart';
 
-/// Promotes Premium (₹49/mo, 30 tasks/day — PROJECT.md Section 2).
-/// Dark card with gold accents, so gold reads as a membership signal
-/// rather than a flat yellow fill. Caller hides this for Premium users.
+/// Promotes Premium (₹49/mo, 30 tasks/day — PROJECT.md Section 2). Reused
+/// on Home and Profile. Dark card with gold accents, so gold reads as a
+/// membership signal rather than a flat yellow fill. Caller must omit this
+/// from the widget tree entirely for Premium users, not just hide it.
 class UpgradeBanner extends StatelessWidget {
   final VoidCallback onTap;
 
