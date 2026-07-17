@@ -166,10 +166,15 @@ Push-only screens (reachable from tabs, no tab bar of their own):
   Payment Proofs, Terms, Privacy, Refund
 ```
 
-The post-auth tab bar is wired up (`core/router/app_router.dart`,
-`initialLocation: '/home'`) with all 5 tabs now real screens (Home, Tasks,
-Wallet, Refer & Earn, Profile). The pre-auth stack and auth redirect logic
-are not wired yet — Phase 3.
+The post-auth tab bar is wired up (`core/router/app_router.dart`) with all
+5 tabs now real screens (Home, Tasks, Wallet, Refer & Earn, Profile).
+
+A separate, disconnected pre-auth stack now also exists: `/welcome` (real
+screen, and the router's actual `initialLocation`), `/register` and
+`/login` (placeholders, pushed from Welcome's two CTAs). There is no
+redirect logic between the two stacks yet — reaching the tab bar today
+means manually navigating there (e.g. editing `initialLocation` back to
+`/home` for dev purposes); that wiring is the last item in Phase 3.
 
 Settings is a single consolidated screen (Profile, Security, Payment
 details as scrollable sections with anchors) — Profile's menu rows deep-link
@@ -262,7 +267,11 @@ patterns, so later screens are mostly assembly, not new invention.
   for them before then.
 
 **Phase 3 — Auth flow (needed before anything can be "logged in")**
-- Welcome screen
+- [x] Welcome screen (brand row, hero, dark live-stats strip — earner
+  count marked `// TODO: replace with real data`, trust pills, 4-step how
+  it works, sticky Create account/Log in CTAs). Wired as a separate
+  pre-auth route stack (`/welcome`, `/register`, `/login`), not yet linked
+  to the post-auth StatefulShellRoute — no redirect logic exists yet.
 - Register screen (+ phone_input component)
 - Verify Phone screen (+ otp_row component)
 - Login screen
