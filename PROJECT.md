@@ -220,8 +220,10 @@ lib/
   non-skippable-ads notice, now also used on Wallet's payout-cycle notice
   (warn variant). Still needed for Refer & Earn's trigger-disclosure and
   Withdraw's new-UPI warning.
-- `phone_input` — compound +91-prefix input, reused in Register, Login,
-  Forgot Password.
+- `phone_input` — **built**, first used on Register. A locked +91 box next
+  to a free-text digits-only field (not a single text field the user could
+  type a country code into); the caller reads the controller for just the
+  10-digit number. Still needed on Login and Forgot Password.
 - `otp_row` — 6-box OTP input, reused in Verify Phone and Forgot Password.
 - `main_bottom_nav` — **built**, the 5-tab bar (Home, Tasks, Wallet, Refer,
   Profile). Wired into a go_router `StatefulShellRoute.indexedStack` (see
@@ -272,7 +274,17 @@ patterns, so later screens are mostly assembly, not new invention.
   it works, sticky Create account/Log in CTAs). Wired as a separate
   pre-auth route stack (`/welcome`, `/register`, `/login`), not yet linked
   to the post-auth StatefulShellRoute — no redirect logic exists yet.
-- Register screen (+ phone_input component)
+- [x] Register screen (+ phone_input component). Field order locked to
+  name → phone → optional email → password → optional referral code
+  (PROJECT.md 2). Send OTP button is disabled (no fake OTP fires) until
+  name is non-empty and the phone number is exactly 10 digits — consent
+  checkbox is present but does not currently gate the button, since that
+  wasn't specified; flagging in case that's wanted. Pushes to a
+  `/verify-phone` placeholder on success (real screen + `otp_row` land
+  next). `AuthTextField`/`ConsentCheckbox` are screen-scoped under
+  `screens/auth/widgets/`, not listed in 6.3 — only `phone_input`/`otp_row`
+  were called out as the shared auth components, though Login/Forgot
+  Password will likely reuse `AuthTextField` too.
 - Verify Phone screen (+ otp_row component)
 - Login screen
 - Forgot Password screen (reuses phone_input + otp_row)
