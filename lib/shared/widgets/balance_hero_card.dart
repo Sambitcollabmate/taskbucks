@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/theme/app_colors.dart';
 
 /// Gradient balance card reused on Home and Wallet (see PROJECT.md 6.3).
+/// The two action buttons are configurable so each screen can label them
+/// for its own context (Home: Wallet/Refer & earn, Wallet: Withdraw/History)
+/// while keeping the same gradient card and layout.
 class BalanceHeroCard extends StatelessWidget {
   final double balance;
-  final VoidCallback onWalletTap;
-  final VoidCallback onReferTap;
+  final String primaryLabel;
+  final IconData primaryIcon;
+  final VoidCallback onPrimaryTap;
+  final String secondaryLabel;
+  final IconData secondaryIcon;
+  final VoidCallback onSecondaryTap;
 
   const BalanceHeroCard({
     super.key,
     required this.balance,
-    required this.onWalletTap,
-    required this.onReferTap,
+    required this.primaryLabel,
+    required this.primaryIcon,
+    required this.onPrimaryTap,
+    required this.secondaryLabel,
+    required this.secondaryIcon,
+    required this.onSecondaryTap,
   });
 
   @override
@@ -67,17 +77,17 @@ class BalanceHeroCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _HeroButton(
-                  icon: LucideIcons.wallet,
-                  label: 'Wallet',
-                  onTap: onWalletTap,
+                  icon: primaryIcon,
+                  label: primaryLabel,
+                  onTap: onPrimaryTap,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _HeroButton(
-                  icon: LucideIcons.userPlus,
-                  label: 'Refer & earn',
-                  onTap: onReferTap,
+                  icon: secondaryIcon,
+                  label: secondaryLabel,
+                  onTap: onSecondaryTap,
                 ),
               ),
             ],

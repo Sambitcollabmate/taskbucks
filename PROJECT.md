@@ -167,9 +167,9 @@ Push-only screens (reachable from tabs, no tab bar of their own):
 ```
 
 The post-auth tab bar is wired up (`core/router/app_router.dart`,
-`initialLocation: '/home'`) with real Home and Tasks screens and stub
-"coming soon" screens for Wallet, Refer, and Profile until they're built.
-The pre-auth stack and auth redirect logic are not wired yet — Phase 3.
+`initialLocation: '/home'`) with real Home, Tasks, and Wallet screens and
+stub "coming soon" screens for Refer and Profile until they're built. The
+pre-auth stack and auth redirect logic are not wired yet — Phase 3.
 
 Settings is a single consolidated screen (Profile, Security, Payment
 details as scrollable sections with anchors) — Profile's menu rows deep-link
@@ -205,14 +205,16 @@ lib/
 
 ### 6.3 Shared components to build once (do not duplicate per-screen)
 
-- `txn_row` — used identically in Wallet, Transactions, Notifications.
-  Amount color convention (green credit / red debit) must match exactly in
-  all three.
+- `txn_row` — **built**, first used on Wallet's recent activity list. Still
+  needed on Transactions and Notifications — amount color convention (green
+  credit / red debit) must match exactly in all three, don't fork per-screen
+  copies.
 - `legal_screen` — one shared template for Terms, Privacy, Refund (plain
   text, numbered headings, no cards).
 - `notice_card` (info / warn variants) — **built**, first used on Tasks'
-  non-skippable-ads notice. Still needed for Wallet's payout notice, Refer &
-  Earn's trigger-disclosure, Withdraw's new-UPI warning.
+  non-skippable-ads notice, now also used on Wallet's payout-cycle notice
+  (warn variant). Still needed for Refer & Earn's trigger-disclosure and
+  Withdraw's new-UPI warning.
 - `phone_input` — compound +91-prefix input, reused in Register, Login,
   Forgot Password.
 - `otp_row` — 6-box OTP input, reused in Verify Phone and Forgot Password.
@@ -220,7 +222,9 @@ lib/
   Profile). Wired into a go_router `StatefulShellRoute.indexedStack` (see
   `core/router/app_router.dart`) so it persists across tab switches and each
   tab keeps its own state.
-- `balance_hero_card` — gradient balance card, reused on Home and Wallet.
+- `balance_hero_card` — **built**, gradient balance card reused on Home and
+  Wallet. Action buttons (icon/label/onTap) are configurable per screen —
+  Home uses Wallet/Refer & earn, Wallet uses Withdraw/History.
 
 ---
 
@@ -238,7 +242,7 @@ patterns, so later screens are mostly assembly, not new invention.
 - [x] Tasks screen (task grid, featured task card, reset countdown)
 - [x] `main_bottom_nav` + go_router `StatefulShellRoute` wiring the 5 tabs
   together (Wallet/Refer/Profile are stub screens until built below)
-- [ ] Wallet screen (balance breakdown, payment method card, recent activity)
+- [x] Wallet screen (balance breakdown, payment method card, recent activity)
 - [ ] Refer & Earn screen (referral link card, trigger-disclosure notice,
   recent referrals list, leaderboard)
 - [ ] Profile screen (account menu, support menu, tier badge, log out)

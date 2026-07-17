@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -50,8 +51,12 @@ class _HomeScreenBody extends StatelessWidget {
                   const SizedBox(height: 20),
                   BalanceHeroCard(
                     balance: summary.balance,
-                    onWalletTap: () {},
-                    onReferTap: () {},
+                    primaryLabel: 'Wallet',
+                    primaryIcon: LucideIcons.wallet,
+                    onPrimaryTap: () {},
+                    secondaryLabel: 'Refer & earn',
+                    secondaryIcon: LucideIcons.userPlus,
+                    onSecondaryTap: () {},
                   ),
                   const SizedBox(height: 16),
                   TaskProgressCard(
