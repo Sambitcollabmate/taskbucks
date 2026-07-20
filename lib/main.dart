@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'core/config/app_config.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 
@@ -12,7 +13,7 @@ class TaskBucksApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'TaskBucks',
+      title: AppConfig.brandName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       routerConfig: appRouter,

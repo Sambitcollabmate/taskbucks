@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../core/config/app_config.dart';
 import '../../core/theme/app_colors.dart';
 import 'widgets/how_it_works_list.dart';
 import 'widgets/live_stats_strip.dart';
@@ -55,7 +56,7 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          'TaskBucks',
+                          AppConfig.brandName,
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,

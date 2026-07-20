@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/theme/app_colors.dart';
 
 /// Gradient referral link card — same gradient as [BalanceHeroCard] (see
@@ -15,7 +16,7 @@ class ReferralLinkCard extends StatelessWidget {
 
   const ReferralLinkCard({super.key, required this.referralCode});
 
-  String get _referralLink => 'https://taskbucks.in/r/$referralCode';
+  String get _referralLink => 'https://${AppConfig.brandDomain}/r/$referralCode';
 
   Future<void> _onCopy(BuildContext context) async {
     await Clipboard.setData(ClipboardData(text: _referralLink));
@@ -29,7 +30,7 @@ class ReferralLinkCard extends StatelessWidget {
   void _onShare(BuildContext context) {
     SharePlus.instance.share(
       ShareParams(
-        text: 'Join me on TaskBucks and start earning! Use my link: $_referralLink',
+        text: 'Join me on ${AppConfig.brandName} and start earning! Use my link: $_referralLink',
       ),
     );
   }
