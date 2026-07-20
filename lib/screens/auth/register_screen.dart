@@ -55,7 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _onSendOtp() {
     if (!_isValid) return;
-    context.push('/verify-phone');
+    context.push('/verify-phone', extra: _phoneController.text);
   }
 
   @override

@@ -223,8 +223,15 @@ lib/
 - `phone_input` — **built**, first used on Register. A locked +91 box next
   to a free-text digits-only field (not a single text field the user could
   type a country code into); the caller reads the controller for just the
-  10-digit number. Still needed on Login and Forgot Password.
-- `otp_row` — 6-box OTP input, reused in Verify Phone and Forgot Password.
+  10-digit number. Login turned out not to need it — its single identifier
+  field accepts either a mobile number or an email, so a locked +91 prefix
+  doesn't apply there. Still needed on Forgot Password.
+- `otp_row` — **built**, first used on Verify Phone. 6 single-digit boxes,
+  numeric keyboard, auto-advances focus per digit, auto-submits on the 6th
+  digit (no separate Verify tap). `hasError` reddens all boxes without
+  clearing them (wrong-code case); a real reset (resend) clears via
+  `OtpRowState.clear()` through a `GlobalKey`. Still needed on Forgot
+  Password.
 - `main_bottom_nav` — **built**, the 5-tab bar (Home, Tasks, Wallet, Refer,
   Profile). Wired into a go_router `StatefulShellRoute.indexedStack` (see
   `core/router/app_router.dart`) so it persists across tab switches and each
@@ -285,8 +292,27 @@ patterns, so later screens are mostly assembly, not new invention.
   `screens/auth/widgets/`, not listed in 6.3 — only `phone_input`/`otp_row`
   were called out as the shared auth components, though Login/Forgot
   Password will likely reuse `AuthTextField` too.
-- Verify Phone screen (+ otp_row component)
-- Login screen
+- [x] Verify Phone screen (+ otp_row component). Pushed from Register with
+  the 10-digit number as router `extra`, shown masked (`+91 98••••••10`).
+  30-second resend countdown — visually disabled text during the count,
+  becomes a tappable primary-colored "Resend OTP" link at zero. DND/
+  deliverability `notice_card` (info variant) stays always visible, not
+  behind a disclosure. Wrong-code/expired/lockout are stubbed as a private
+  `_OtpError` enum with conditional text — nothing sets them yet since
+  there's no backend; wiring lands with real OTP verification. Android SMS
+  Retriever/User Consent auto-fill is a `// TODO`, left for a native-
+  integration pass. On success, goes to `/home` (post-auth shell).
+- [x] Login screen. Deliberately the simplest pre-auth screen — no back
+  button (`automaticallyImplyLeading: false`), no stats/trust badges/
+  upsell. Single identifier field validates against a 10-digit-mobile
+  regex OR an email regex (no mode picker). Remember me + Forgot password?
+  share one row. "Remember me" persists a real session token via
+  `flutter_secure_storage` (`data/services/session_service.dart`), not just
+  a pre-filled field — token is a `// TODO`-flagged fake until a real login
+  API exists. `flutter_secure_storage` added to pubspec (pinned to ^10.3.1;
+  ^9.x's `win32` constraint conflicted with `share_plus`). "Forgot
+  password?" pushes to a `/forgot-password` placeholder (real screen next).
+  On success, goes to `/home`.
 - Forgot Password screen (reuses phone_input + otp_row)
 - Wire go_router auth redirect logic across all of the above
 
