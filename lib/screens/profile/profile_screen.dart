@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user_profile.dart';
+import '../../providers/auth_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../shared/widgets/upgrade_banner.dart';
 import 'widgets/logout_row.dart';
@@ -106,7 +107,7 @@ class _ProfileScreenBody extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  LogoutRow(onTap: () {}),
+                  LogoutRow(onTap: () => context.read<AuthProvider>().logout()),
                 ],
               ),
             );

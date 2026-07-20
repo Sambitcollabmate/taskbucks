@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../providers/auth_provider.dart';
 import '../../shared/widgets/notice_card.dart';
 import '../../shared/widgets/otp_row.dart';
 
@@ -95,6 +97,7 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
     await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
     setState(() => _isVerifying = false);
+    context.read<AuthProvider>().login();
     context.go('/home');
   }
 

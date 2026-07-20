@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../providers/auth_provider.dart';
 import '../../screens/auth/forgot_password_screen.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/register_screen.dart';
@@ -13,16 +14,44 @@ import '../../screens/tasks/tasks_screen.dart';
 import '../../screens/wallet/wallet_screen.dart';
 import '../../shared/widgets/main_bottom_nav.dart';
 
+/// Single app-wide auth state (PROJECT.md 6.1) — also provided to the
+/// widget tree in `main.dart` so Login/Verify Phone/Profile's log-out row
+/// can call [AuthProvider.login]/[AuthProvider.logout]. Kept as one
+/// top-level instance (rather than created inside a widget) so the
+/// router's `redirect` callback and `refreshListenable` below can both
+/// reference the same object.
+final authProvider = AuthProvider();
+
+const _preAuthPaths = {
+  '/welcome',
+  '/register',
+  '/login',
+  '/forgot-password',
+  '/verify-phone',
+};
+
 /// The 5 core tabs live under one StatefulShellRoute so MainBottomNav stays
 /// mounted (and each tab keeps its own scroll/provider state) across tab
 /// switches, instead of being rebuilt like a plain push route would be.
 ///
-/// `/welcome`, `/register`, and `/login` are a separate, disconnected
-/// pre-auth stack (PROJECT.md 6.1, Phase 3) — Welcome is the app's actual
-/// entry point below, but there's no redirect logic wired between the two
-/// stacks yet; that lands once the rest of Phase 3's auth screens exist.
+/// `redirect` + `refreshListenable` connect the pre-auth stack (`/welcome`,
+/// `/register`, `/login`, `/forgot-password`, `/verify-phone`) to the
+/// post-auth tab bar below (PROJECT.md 6.1): unauthenticated users get
+/// bounced from any post-auth route to `/welcome`, authenticated users get
+/// bounced from any pre-auth route to `/home`. `refreshListenable:
+/// authProvider` means login()/logout() calling notifyListeners() re-runs
+/// this check immediately, without every call site needing its own
+/// `context.go`.
 final appRouter = GoRouter(
   initialLocation: '/welcome',
+  refreshListenable: authProvider,
+  redirect: (context, state) {
+    final isLoggedIn = authProvider.isLoggedIn;
+    final isPreAuthRoute = _preAuthPaths.contains(state.matchedLocation);
+    if (!isLoggedIn && !isPreAuthRoute) return '/welcome';
+    if (isLoggedIn && isPreAuthRoute) return '/home';
+    return null;
+  },
   routes: [
     GoRoute(
       path: '/welcome',
@@ -32,7 +61,10 @@ final appRouter = GoRouter(
       ),
     ),
     GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
-    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => LoginScreen(successMessage: state.extra as String?),
+    ),
     GoRoute(
       path: '/forgot-password',
       builder: (context, state) => const ForgotPasswordScreen(),

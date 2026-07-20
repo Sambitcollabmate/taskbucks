@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'core/config/app_config.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'providers/auth_provider.dart';
 
 void main() {
   runApp(const TaskBucksApp());
@@ -12,11 +15,14 @@ class TaskBucksApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: AppConfig.brandName,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      routerConfig: appRouter,
+    return ChangeNotifierProvider<AuthProvider>.value(
+      value: authProvider,
+      child: MaterialApp.router(
+        title: AppConfig.brandName,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        routerConfig: appRouter,
+      ),
     );
   }
 }

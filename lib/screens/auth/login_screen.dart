@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../data/services/session_service.dart';
+import '../../providers/auth_provider.dart';
 import 'widgets/auth_text_field.dart';
 
 final _mobilePattern = RegExp(r'^\d{10}$');
@@ -12,7 +14,9 @@ final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 /// Login screen (PROJECT.md 7, Phase 3). Deliberately the simplest pre-auth
 /// screen — no back button, no stats/trust badges/upsell — just the form.
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final String? successMessage;
+
+  const LoginScreen({super.key, this.successMessage});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -32,6 +36,14 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _identifierController.addListener(_revalidate);
     _passwordController.addListener(_revalidate);
+    if (widget.successMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(widget.successMessage!)),
+        );
+      });
+    }
   }
 
   @override
@@ -63,6 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     if (!mounted) return;
     setState(() => _isLoggingIn = false);
+    context.read<AuthProvider>().login();
     context.go('/home');
   }
 

@@ -169,12 +169,21 @@ Push-only screens (reachable from tabs, no tab bar of their own):
 The post-auth tab bar is wired up (`core/router/app_router.dart`) with all
 5 tabs now real screens (Home, Tasks, Wallet, Refer & Earn, Profile).
 
-A separate, disconnected pre-auth stack now also exists: `/welcome` (real
-screen, and the router's actual `initialLocation`), `/register` and
-`/login` (placeholders, pushed from Welcome's two CTAs). There is no
-redirect logic between the two stacks yet — reaching the tab bar today
-means manually navigating there (e.g. editing `initialLocation` back to
-`/home` for dev purposes); that wiring is the last item in Phase 3.
+A full pre-auth stack now also exists — `/welcome` (real screen, and the
+router's actual `initialLocation`), `/register`, `/login`,
+`/forgot-password`, `/verify-phone` — and is connected to the post-auth
+tab bar via a `redirect` callback + `AuthProvider` (`providers/
+auth_provider.dart`): unauthenticated users are bounced from any
+post-auth route to `/welcome`, authenticated users are bounced from any
+pre-auth route to `/home`. `AuthProvider.isLoggedIn` is backed by the
+session token `SessionService` persists for Login's "Remember me" (read
+once on startup) and is otherwise set directly by `login()`/`logout()` —
+a login without "Remember me" still counts as logged in for the current
+run, it just won't survive an app restart. `GoRouter`'s
+`refreshListenable: authProvider` means `login()`/`logout()` calling
+`notifyListeners()` re-triggers the redirect check immediately (e.g.
+Profile's log-out row calling `logout()` bounces straight to `/welcome`
+without an explicit `context.go`).
 
 Settings is a single consolidated screen (Profile, Security, Payment
 details as scrollable sections with anchors) — Profile's menu rows deep-link
@@ -313,8 +322,25 @@ patterns, so later screens are mostly assembly, not new invention.
   ^9.x's `win32` constraint conflicted with `share_plus`). "Forgot
   password?" pushes to a `/forgot-password` placeholder (real screen next).
   On success, goes to `/home`.
-- Forgot Password screen (reuses phone_input + otp_row)
-- Wire go_router auth redirect logic across all of the above
+- [x] Forgot Password screen (reuses phone_input + otp_row directly, no
+  rebuild of either). One route, two sequential internal states — request
+  (phone_input + Send OTP) and verify & reset (otp_row + new/confirm
+  password + Update password) — toggled via `setState`, not a second route,
+  so the AppBar's default back button always pops straight to Login
+  regardless of which state is showing. New password requires 6+ chars and
+  must match confirm; both are stubbed client-side since there's no backend
+  yet. On successful update, `context.go('/login', extra: <message>)` —
+  `LoginScreen` now takes an optional `successMessage` and shows it as a
+  `SnackBar` after the first frame.
+- [x] Wire go_router auth redirect logic across all of the above (see 6.1
+  for the `AuthProvider`/`redirect`/`refreshListenable` details). Login and
+  Verify Phone (registration's success path) both call
+  `AuthProvider.login()` right before `context.go('/home')` — Verify Phone
+  needs it too, not just Login, since without it a freshly-registered user
+  would immediately get redirected back to `/welcome` by the new guard.
+  Profile's log-out row is no longer a no-op — it calls
+  `AuthProvider.logout()`, which clears the stored session token and
+  relies on `refreshListenable` to bounce to `/welcome`.
 
 **Phase 4 — Money-critical utility screens**
 - Withdraw screen
