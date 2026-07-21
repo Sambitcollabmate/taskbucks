@@ -8,6 +8,7 @@ import '../../data/models/user_profile.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../shared/widgets/upgrade_banner.dart';
+import '../settings/settings_screen.dart';
 import 'widgets/logout_row.dart';
 import 'widgets/profile_header.dart';
 import 'widgets/profile_menu_card.dart';
@@ -64,24 +65,34 @@ class _ProfileScreenBody extends StatelessWidget {
                   const SizedBox(height: 12),
                   ProfileMenuCard(
                     rows: [
-                      // Edit profile / Security / Payment details all
-                      // deep-link into the consolidated Settings screen's
-                      // anchored sections once it exists (PROJECT.md 3, 6.1,
-                      // Phase 4) — placeholder no-ops until then.
+                      // Edit profile / Security / Payment details deep-link
+                      // into the consolidated Settings screen's anchored
+                      // sections (PROJECT.md 3, 6.1, Phase 4). Manage
+                      // subscription goes to Upgrade instead, since that's
+                      // where subscription state actually lives.
                       ProfileMenuRow(
                         icon: LucideIcons.userPen,
                         label: 'Edit profile',
-                        onTap: () {},
+                        onTap: () => context.push(
+                          '/settings',
+                          extra: SettingsSection.profile,
+                        ),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.shield,
                         label: 'Security & password',
-                        onTap: () {},
+                        onTap: () => context.push(
+                          '/settings',
+                          extra: SettingsSection.security,
+                        ),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.creditCard,
                         label: 'Payment details',
-                        onTap: () {},
+                        onTap: () => context.push(
+                          '/settings',
+                          extra: SettingsSection.payment,
+                        ),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.repeat,

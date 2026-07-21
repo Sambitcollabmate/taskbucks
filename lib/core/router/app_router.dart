@@ -10,6 +10,7 @@ import '../../screens/auth/welcome_screen.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../screens/refer/refer_screen.dart';
+import '../../screens/settings/settings_screen.dart';
 import '../../screens/tasks/tasks_screen.dart';
 import '../../screens/transactions/transactions_screen.dart';
 import '../../screens/upgrade/upgrade_screen.dart';
@@ -124,6 +125,11 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/upgrade',
       builder: (context, state) => const UpgradeScreen(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) =>
+          SettingsScreen(initialSection: state.extra as SettingsSection?),
     ),
   ],
 );

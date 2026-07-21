@@ -379,7 +379,40 @@ patterns, so later screens are mostly assembly, not new invention.
   and Profile's `UpgradeBanner` and Profile's "Manage subscription" row
   (`/upgrade`, pushed outside the tab shell) — all three were no-op
   placeholders until now.
-- Settings screen (consolidated Profile/Security/Payment)
+- [x] Settings screen (consolidated Profile/Security/Payment — PROJECT.md
+  3 item 6, 6.1). One scrollable screen, `SingleChildScrollView` + `Column`
+  (deliberately not `ListView` — a lazily-mounted sliver child's
+  `GlobalKey.currentContext` is null until it scrolls into the viewport's
+  cache extent, which silently broke deep-linking to the Payment section
+  since it starts off-screen; a plain `Column` mounts all 3 sections
+  immediately so the anchor keys always resolve), three `SettingsSectionCard`
+  sections each keyed for `Scrollable.ensureVisible` deep-linking
+  (`SettingsSection.profile`/`.security`/`.payment`, passed as router
+  `extra`):
+  - Profile: name + email fields, "Save changes".
+  - Security: new password field + "Update password"; two-step
+    verification `Switch` defaulting ON. Turning it ON is a single tap;
+    turning it OFF opens a password-confirm `AlertDialog` first — more
+    friction to disable a security feature than to enable one, per
+    instruction. Both re-auth and the password/OTP check itself are
+    `// TODO`s (no backend yet) — any non-empty password confirms for now.
+  - Payment details: editable UPI ID field (`UpiIdField`) validated on
+    every keystroke, not just on save — a typo caught only at withdrawal
+    time is a much worse failure moment (this doc). Shows a "Default"
+    pill and a green check / red alert icon once non-empty. Bank account
+    row is display-only. `// LEGAL-REVIEW:` comment flags Section 3 item
+    2 (PAN/TDS) at this section — no PAN field added until that's
+    resolved by finance/legal.
+  `SettingsProvider`/`SettingsService`/`SettingsData` are a separate fake
+  data source from `ProfileProvider`/`UserProfile` (own name/email/UPI/
+  bank/two-step shape), matching the existing per-screen fake-service
+  convention rather than coupling Settings to Profile's summary shape.
+  Reuses `AuthTextField` from `screens/auth/widgets/` directly (plain
+  label+field widget, nothing auth-specific in its implementation) rather
+  than rebuilding an identical field. Profile's four menu rows now push
+  here with the matching anchor — except "Manage subscription", which
+  goes to `/upgrade` instead since that's where subscription state
+  actually lives, not Settings.
 
 **Phase 5 — Trust & legal screens (mostly static content, low complexity)**
 - How It Works, About, FAQ, Contact, Payment Proofs
