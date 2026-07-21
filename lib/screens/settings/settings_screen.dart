@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/settings_provider.dart';
 import '../auth/widgets/auth_text_field.dart';
+import 'widgets/profile_avatar_picker.dart';
 import 'widgets/settings_section_card.dart';
 import 'widgets/two_step_toggle_row.dart';
 import 'widgets/upi_id_field.dart';
@@ -140,6 +141,26 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        ProfileAvatarPicker(
+                          name: data.name,
+                          imagePath: data.imagePath,
+                          isSaving: provider.isSavingImage,
+                          onImageSelected: (path) async {
+                            await provider.updateProfileImage(path);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    path == null
+                                        ? 'Profile photo removed'
+                                        : 'Profile photo updated',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 20),
                         AuthTextField(
                           controller: _nameController,
                           label: 'Name',

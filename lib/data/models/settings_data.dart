@@ -10,6 +10,7 @@ class SettingsData {
   final bool isUpiDefault;
   final String bankAccountMasked;
   final bool twoStepEnabled;
+  final String? imagePath;
 
   const SettingsData({
     required this.name,
@@ -18,6 +19,7 @@ class SettingsData {
     required this.isUpiDefault,
     required this.bankAccountMasked,
     required this.twoStepEnabled,
+    this.imagePath,
   });
 
   SettingsData copyWith({
@@ -27,6 +29,9 @@ class SettingsData {
     bool? isUpiDefault,
     String? bankAccountMasked,
     bool? twoStepEnabled,
+    // Wrapped in a sentinel so passing `imagePath: null` explicitly clears
+    // it, while omitting the argument leaves the current value unchanged.
+    Object? imagePath = _unset,
   }) {
     return SettingsData(
       name: name ?? this.name,
@@ -35,6 +40,9 @@ class SettingsData {
       isUpiDefault: isUpiDefault ?? this.isUpiDefault,
       bankAccountMasked: bankAccountMasked ?? this.bankAccountMasked,
       twoStepEnabled: twoStepEnabled ?? this.twoStepEnabled,
+      imagePath: imagePath == _unset ? this.imagePath : imagePath as String?,
     );
   }
 }
+
+const _unset = Object();

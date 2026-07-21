@@ -29,6 +29,20 @@ class ProfileScreen extends StatelessWidget {
 class _ProfileScreenBody extends StatelessWidget {
   const _ProfileScreenBody();
 
+  // Settings is a pushed route, not a bottom-nav tab, so this screen's
+  // ProfileProvider stays alive underneath it — reload once it's popped so
+  // an avatar/name change made in Settings shows up here immediately.
+  Future<void> _openSettings(
+    BuildContext context,
+    ProfileProvider provider,
+    SettingsSection section,
+  ) async {
+    await context.push('/settings', extra: section);
+    if (context.mounted) {
+      provider.load();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,25 +87,28 @@ class _ProfileScreenBody extends StatelessWidget {
                       ProfileMenuRow(
                         icon: LucideIcons.userPen,
                         label: 'Edit profile',
-                        onTap: () => context.push(
-                          '/settings',
-                          extra: SettingsSection.profile,
+                        onTap: () => _openSettings(
+                          context,
+                          provider,
+                          SettingsSection.profile,
                         ),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.shield,
                         label: 'Security & password',
-                        onTap: () => context.push(
-                          '/settings',
-                          extra: SettingsSection.security,
+                        onTap: () => _openSettings(
+                          context,
+                          provider,
+                          SettingsSection.security,
                         ),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.creditCard,
                         label: 'Payment details',
-                        onTap: () => context.push(
-                          '/settings',
-                          extra: SettingsSection.payment,
+                        onTap: () => _openSettings(
+                          context,
+                          provider,
+                          SettingsSection.payment,
                         ),
                       ),
                       ProfileMenuRow(

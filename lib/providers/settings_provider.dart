@@ -21,6 +21,7 @@ class SettingsProvider extends ChangeNotifier {
   bool _isUpdatingPassword = false;
   bool _isSavingUpi = false;
   bool _isTogglingTwoStep = false;
+  bool _isSavingImage = false;
 
   SettingsData? get data => _data;
   bool get isLoading => _isLoading;
@@ -28,6 +29,7 @@ class SettingsProvider extends ChangeNotifier {
   bool get isUpdatingPassword => _isUpdatingPassword;
   bool get isSavingUpi => _isSavingUpi;
   bool get isTogglingTwoStep => _isTogglingTwoStep;
+  bool get isSavingImage => _isSavingImage;
 
   Future<void> load() async {
     _isLoading = true;
@@ -50,6 +52,20 @@ class SettingsProvider extends ChangeNotifier {
     _data = _data!.copyWith(name: name, email: email);
 
     _isSavingProfile = false;
+    notifyListeners();
+  }
+
+  Future<void> updateProfileImage(String? imagePath) async {
+    if (_data == null) return;
+    _isSavingImage = true;
+    notifyListeners();
+
+    // TODO: replace with a real "upload profile image" API call once the
+    // Laravel backend exists (PROJECT.md 4).
+    await _service.updateProfileImage(imagePath);
+    _data = _data!.copyWith(imagePath: imagePath);
+
+    _isSavingImage = false;
     notifyListeners();
   }
 

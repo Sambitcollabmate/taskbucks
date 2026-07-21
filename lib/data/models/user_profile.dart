@@ -6,6 +6,12 @@ class UserProfile {
   final String name;
   final String phone;
   final UserTier tier;
+  final String? imagePath;
 
-  const UserProfile({required this.name, required this.phone, required this.tier});
+  const UserProfile({
+    required this.name,
+    required this.phone,
+    required this.tier,
+    this.imagePath,
+  });
 }

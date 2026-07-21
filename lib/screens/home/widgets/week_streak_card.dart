@@ -39,10 +39,11 @@ class WeekStreakCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               for (var i = 0; i < days.length; i++)
-                _DayIndicator(day: days[i], letter: _dayLetters[i]),
+                Expanded(
+                  child: _DayIndicator(day: days[i], letter: _dayLetters[i]),
+                ),
             ],
           ),
         ],
@@ -150,8 +151,9 @@ class _DayIndicatorState extends State<_DayIndicator>
     }
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(height: 44, width: 44, child: Center(child: circle)),
+        SizedBox(height: 44, child: Center(child: circle)),
         const SizedBox(height: 6),
         Container(
           width: 24,
