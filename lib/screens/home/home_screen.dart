@@ -54,10 +54,16 @@ class _HomeScreenBody extends StatelessWidget {
                     balance: summary.balance,
                     primaryLabel: 'Wallet',
                     primaryIcon: LucideIcons.wallet,
-                    onPrimaryTap: () {},
+                    // Switches the persistent bottom-tab branch (index 2 =
+                    // Wallet — see the StatefulShellRoute branch order in
+                    // app_router.dart) rather than pushing a new route, so
+                    // it behaves exactly like tapping the Wallet tab.
+                    onPrimaryTap: () =>
+                        StatefulNavigationShell.of(context).goBranch(2),
                     secondaryLabel: 'Refer & earn',
                     secondaryIcon: LucideIcons.userPlus,
-                    onSecondaryTap: () {},
+                    onSecondaryTap: () =>
+                        StatefulNavigationShell.of(context).goBranch(3),
                   ),
                   const SizedBox(height: 16),
                   TaskProgressCard(
