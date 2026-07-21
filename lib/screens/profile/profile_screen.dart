@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
@@ -56,7 +57,7 @@ class _ProfileScreenBody extends StatelessWidget {
                   // upgrade banner does the same).
                   if (profile.tier == UserTier.free) ...[
                     const SizedBox(height: 16),
-                    UpgradeBanner(onTap: () {}),
+                    UpgradeBanner(onTap: () => context.push('/upgrade')),
                   ],
                   const SizedBox(height: 20),
                   Text('Account', style: Theme.of(context).textTheme.titleLarge),
@@ -85,7 +86,7 @@ class _ProfileScreenBody extends StatelessWidget {
                       ProfileMenuRow(
                         icon: LucideIcons.repeat,
                         label: 'Manage subscription',
-                        onTap: () {},
+                        onTap: () => context.push('/upgrade'),
                       ),
                     ],
                   ),

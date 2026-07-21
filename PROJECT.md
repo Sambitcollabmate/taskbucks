@@ -361,7 +361,24 @@ patterns, so later screens are mostly assembly, not new invention.
   2's weekly-bonus amount is still TBD). Reached from Wallet's History
   button (`/transactions`, pushed outside the tab shell like the other
   push-only screens in 6.1).
-- Upgrade screen (Google Play Billing integration point)
+- [x] Upgrade screen (Google Play Billing integration point). Back button,
+  heading, dark gradient price card (`premiumSurfaceStart`/`End`, same
+  tokens as `UpgradeBanner`) showing ₹49/month with a crown icon and the
+  "cancel anytime — benefits continue until end of paid cycle" line, a
+  "What you get" checklist (the 3 facts in Section 2's Premium-tier
+  bullet: 30 tasks/day, same ₹/task rate, cancel-anytime-until-cycle-end),
+  and two `notice_card` disclosures (billing/cancellation mechanics; the
+  referral-linkage note — completing the purchase is what credits the
+  referrer's ₹15, never signup alone). Reads subscription state from
+  `ProfileProvider` (`UserProfile.tier`, same premium-check pattern as the
+  Home/Profile upgrade banners) — Premium users see an active-status row
+  instead of the Subscribe button, not just a disabled one. Subscribe
+  button shows a "Coming soon" snackbar; real purchase flow is a
+  `// TODO` pointing at Phase 7 (Google Play Billing needs a Play Console
+  app listing first). No AdMob slot on this screen. Reached from Home's
+  and Profile's `UpgradeBanner` and Profile's "Manage subscription" row
+  (`/upgrade`, pushed outside the tab shell) — all three were no-op
+  placeholders until now.
 - Settings screen (consolidated Profile/Security/Payment)
 
 **Phase 5 — Trust & legal screens (mostly static content, low complexity)**

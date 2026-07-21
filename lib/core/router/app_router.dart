@@ -12,6 +12,7 @@ import '../../screens/profile/profile_screen.dart';
 import '../../screens/refer/refer_screen.dart';
 import '../../screens/tasks/tasks_screen.dart';
 import '../../screens/transactions/transactions_screen.dart';
+import '../../screens/upgrade/upgrade_screen.dart';
 import '../../screens/wallet/wallet_screen.dart';
 import '../../shared/widgets/main_bottom_nav.dart';
 
@@ -119,6 +120,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/transactions',
       builder: (context, state) => const TransactionsScreen(),
+    ),
+    GoRoute(
+      path: '/upgrade',
+      builder: (context, state) => const UpgradeScreen(),
     ),
   ],
 );

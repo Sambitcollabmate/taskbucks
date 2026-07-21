@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
@@ -67,7 +68,7 @@ class _HomeScreenBody extends StatelessWidget {
                   WeekStreakCard(days: summary.weekProgress),
                   if (!summary.isPremium) ...[
                     const SizedBox(height: 16),
-                    UpgradeBanner(onTap: () {}),
+                    UpgradeBanner(onTap: () => context.push('/upgrade')),
                   ],
                   const SizedBox(height: 16),
                   WeeklyLeadersCard(leaders: summary.weeklyLeaders),
