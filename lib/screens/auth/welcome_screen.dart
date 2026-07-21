@@ -67,9 +67,9 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 28),
                     Text(
-                      'Earn real money in your free time',
+                      'Earn money in your free time',
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 28,
+                        fontSize: 26,
                         fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
                         height: 1.2,
