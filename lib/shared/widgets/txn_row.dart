@@ -24,6 +24,8 @@ class TxnRow extends StatelessWidget {
         return LucideIcons.userPlus;
       case TransactionCategory.withdrawal:
         return LucideIcons.arrowUpRight;
+      case TransactionCategory.streakBonus:
+        return LucideIcons.flame;
       case TransactionCategory.other:
         return LucideIcons.receipt;
     }

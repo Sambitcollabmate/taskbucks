@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
@@ -55,7 +56,7 @@ class _WalletScreenBody extends StatelessWidget {
                     onPrimaryTap: () {},
                     secondaryLabel: 'History',
                     secondaryIcon: LucideIcons.history,
-                    onSecondaryTap: () {},
+                    onSecondaryTap: () => context.push('/transactions'),
                   ),
                   const SizedBox(height: 16),
                   const NoticeCard(

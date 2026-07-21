@@ -219,10 +219,10 @@ lib/
 
 ### 6.3 Shared components to build once (do not duplicate per-screen)
 
-- `txn_row` — **built**, first used on Wallet's recent activity list. Still
-  needed on Transactions and Notifications — amount color convention (green
-  credit / red debit) must match exactly in all three, don't fork per-screen
-  copies.
+- `txn_row` — **built**, first used on Wallet's recent activity list, now
+  also reused as-is on Transactions. Still needed on Notifications — amount
+  color convention (green credit / red debit) must match exactly in all
+  three, don't fork per-screen copies.
 - `legal_screen` — one shared template for Terms, Privacy, Refund (plain
   text, numbered headings, no cards).
 - `notice_card` (info / warn variants) — **built**, first used on Tasks'
@@ -344,7 +344,23 @@ patterns, so later screens are mostly assembly, not new invention.
 
 **Phase 4 — Money-critical utility screens**
 - Withdraw screen
-- Transactions screen (+ txn_row component)
+- [x] Transactions screen (reuses `txn_row`, no new copy — see PROJECT.md
+  6.3). Back button + AppBar title, All/Tasks/Referrals/Withdrawals filter
+  pills (active = filled `AppColors.primary`, inactive = neutral outline),
+  chronological list, infinite-scroll client-side pagination
+  (`TransactionsProvider`, 8 per page, loads the next page automatically
+  as the list nears its scroll end — no button, so a short filtered list
+  never leaves dead space beneath it). Tasks filter groups both `task` and
+  `ad` categories, matching how the bottom-nav Tasks tab covers both ad and
+  in-app task rewards. Filtering/pagination are both client-side over the
+  full fake history for now — `// TODO` in `transactions_provider.dart`
+  flags moving both server-side once a real Laravel endpoint exists.
+  `TransactionCategory` gained a `streakBonus` case (flame icon) with two
+  fake rows, since Home's week-streak strip is now a tracked mechanic —
+  the ₹ amount is illustrative fake data only, not a locked value (Section
+  2's weekly-bonus amount is still TBD). Reached from Wallet's History
+  button (`/transactions`, pushed outside the tab shell like the other
+  push-only screens in 6.1).
 - Upgrade screen (Google Play Billing integration point)
 - Settings screen (consolidated Profile/Security/Payment)
 

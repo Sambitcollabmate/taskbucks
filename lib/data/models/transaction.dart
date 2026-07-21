@@ -4,7 +4,7 @@
 enum TransactionType { credit, debit }
 
 /// What generated the transaction, used to pick an icon in `txn_row`.
-enum TransactionCategory { task, ad, referral, withdrawal, other }
+enum TransactionCategory { task, ad, referral, withdrawal, streakBonus, other }
 
 class Transaction {
   final String id;
