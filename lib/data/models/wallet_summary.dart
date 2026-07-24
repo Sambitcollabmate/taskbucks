@@ -2,7 +2,7 @@ import 'transaction.dart';
 
 /// Balance breakdown shown on Wallet — task/ad earnings and referral
 /// commissions are already cleared; `pendingAmount` is referral commission
-/// not yet credited (PROJECT.md 2: referral ₹15 shows "pending" until the
+/// not yet credited (PROJECT.md 2: referral ₹125 shows "pending" until the
 /// referred user's Premium purchase clears).
 class WalletBreakdown {
   final double taskAdEarnings;
@@ -26,13 +26,11 @@ class PaymentMethod {
 }
 
 class WalletSummary {
-  final double balance;
   final WalletBreakdown breakdown;
   final PaymentMethod paymentMethod;
   final List<Transaction> recentActivity;
 
   const WalletSummary({
-    required this.balance,
     required this.breakdown,
     required this.paymentMethod,
     required this.recentActivity,

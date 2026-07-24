@@ -1,5 +1,6 @@
 /// Whether a referral has converted (referred user completed the ₹49
-/// Premium purchase — see PROJECT.md 2) or is still pending that purchase.
+/// Premium purchase, crediting the referrer's ₹125 commission, see
+/// PROJECT.md 2) or is still pending that purchase.
 enum ReferralStatus { converted, pending }
 
 class Referral {

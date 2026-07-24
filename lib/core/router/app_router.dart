@@ -2,19 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../providers/auth_provider.dart';
+import '../../providers/transactions_provider.dart';
 import '../../screens/auth/forgot_password_screen.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/register_screen.dart';
 import '../../screens/auth/verify_phone_screen.dart';
 import '../../screens/auth/welcome_screen.dart';
 import '../../screens/home/home_screen.dart';
+import '../../screens/legal/privacy_screen.dart';
+import '../../screens/legal/refund_screen.dart';
+import '../../screens/legal/terms_screen.dart';
+import '../../screens/notifications/notifications_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../screens/refer/refer_screen.dart';
 import '../../screens/settings/settings_screen.dart';
+import '../../screens/support/support_tickets_screen.dart';
 import '../../screens/tasks/tasks_screen.dart';
 import '../../screens/transactions/transactions_screen.dart';
+import '../../screens/trust/about_screen.dart';
+import '../../screens/trust/contact_screen.dart';
+import '../../screens/trust/faq_screen.dart';
+import '../../screens/trust/how_it_works_screen.dart';
+import '../../screens/trust/payment_proofs_screen.dart';
 import '../../screens/upgrade/upgrade_screen.dart';
 import '../../screens/wallet/wallet_screen.dart';
+import '../../screens/withdraw/withdraw_screen.dart';
 import '../../shared/widgets/main_bottom_nav.dart';
 
 /// Single app-wide auth state (PROJECT.md 6.1) — also provided to the
@@ -33,6 +45,21 @@ const _preAuthPaths = {
   '/verify-phone',
 };
 
+/// Routes reachable regardless of auth state — trust/legal pages (PROJECT.md
+/// Phase 5) are linked from both the pre-auth Welcome screen and the
+/// post-auth Profile screen, so they must bypass the redirect below in both
+/// directions rather than belonging to either the pre- or post-auth set.
+const _publicPaths = {
+  '/how-it-works',
+  '/about',
+  '/faq',
+  '/contact',
+  '/payment-proofs',
+  '/terms',
+  '/privacy',
+  '/refund',
+};
+
 /// The 5 core tabs live under one StatefulShellRoute so MainBottomNav stays
 /// mounted (and each tab keeps its own scroll/provider state) across tab
 /// switches, instead of being rebuilt like a plain push route would be.
@@ -49,6 +76,7 @@ final appRouter = GoRouter(
   initialLocation: '/welcome',
   refreshListenable: authProvider,
   redirect: (context, state) {
+    if (_publicPaths.contains(state.matchedLocation)) return null;
     final isLoggedIn = authProvider.isLoggedIn;
     final isPreAuthRoute = _preAuthPaths.contains(state.matchedLocation);
     if (!isLoggedIn && !isPreAuthRoute) return '/welcome';
@@ -120,7 +148,8 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/transactions',
-      builder: (context, state) => const TransactionsScreen(),
+      builder: (context, state) =>
+          TransactionsScreen(initialFilter: state.extra as TransactionFilter?),
     ),
     GoRoute(
       path: '/upgrade',
@@ -130,6 +159,50 @@ final appRouter = GoRouter(
       path: '/settings',
       builder: (context, state) =>
           SettingsScreen(initialSection: state.extra as SettingsSection?),
+    ),
+    GoRoute(
+      path: '/how-it-works',
+      builder: (context, state) => const HowItWorksScreen(),
+    ),
+    GoRoute(
+      path: '/about',
+      builder: (context, state) => const AboutScreen(),
+    ),
+    GoRoute(
+      path: '/faq',
+      builder: (context, state) => const FaqScreen(),
+    ),
+    GoRoute(
+      path: '/contact',
+      builder: (context, state) => const ContactScreen(),
+    ),
+    GoRoute(
+      path: '/payment-proofs',
+      builder: (context, state) => const PaymentProofsScreen(),
+    ),
+    GoRoute(
+      path: '/terms',
+      builder: (context, state) => const TermsScreen(),
+    ),
+    GoRoute(
+      path: '/privacy',
+      builder: (context, state) => const PrivacyScreen(),
+    ),
+    GoRoute(
+      path: '/refund',
+      builder: (context, state) => const RefundScreen(),
+    ),
+    GoRoute(
+      path: '/notifications',
+      builder: (context, state) => const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: '/support-tickets',
+      builder: (context, state) => const SupportTicketsScreen(),
+    ),
+    GoRoute(
+      path: '/withdraw',
+      builder: (context, state) => const WithdrawScreen(),
     ),
   ],
 );

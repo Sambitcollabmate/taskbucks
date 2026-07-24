@@ -126,12 +126,52 @@ class _ProfileScreenBody extends StatelessWidget {
                       ProfileMenuRow(
                         icon: LucideIcons.bell,
                         label: 'Notifications',
-                        onTap: () {},
+                        onTap: () => context.push('/notifications'),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.lifeBuoy,
                         label: 'Support tickets',
-                        onTap: () {},
+                        onTap: () => context.push('/support-tickets'),
+                      ),
+                      ProfileMenuRow(
+                        icon: LucideIcons.circleHelp,
+                        label: 'How it works',
+                        onTap: () => context.push('/how-it-works'),
+                      ),
+                      ProfileMenuRow(
+                        icon: LucideIcons.info,
+                        label: 'About',
+                        onTap: () => context.push('/about'),
+                      ),
+                      ProfileMenuRow(
+                        icon: LucideIcons.messageCircleQuestion,
+                        label: 'FAQ',
+                        onTap: () => context.push('/faq'),
+                      ),
+                      ProfileMenuRow(
+                        icon: LucideIcons.mail,
+                        label: 'Contact us',
+                        onTap: () => context.push('/contact'),
+                      ),
+                      ProfileMenuRow(
+                        icon: LucideIcons.badgeCheck,
+                        label: 'Payment proofs',
+                        onTap: () => context.push('/payment-proofs'),
+                      ),
+                      ProfileMenuRow(
+                        icon: LucideIcons.fileText,
+                        label: 'Terms of Service',
+                        onTap: () => context.push('/terms'),
+                      ),
+                      ProfileMenuRow(
+                        icon: LucideIcons.shieldCheck,
+                        label: 'Privacy Policy',
+                        onTap: () => context.push('/privacy'),
+                      ),
+                      ProfileMenuRow(
+                        icon: LucideIcons.receiptText,
+                        label: 'Refund Policy',
+                        onTap: () => context.push('/refund'),
                       ),
                     ],
                   ),

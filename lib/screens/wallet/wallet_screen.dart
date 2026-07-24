@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../providers/balance_provider.dart';
 import '../../providers/wallet_provider.dart';
 import '../../shared/widgets/balance_hero_card.dart';
 import '../../shared/widgets/notice_card.dart';
@@ -34,6 +35,7 @@ class _WalletScreenBody extends StatelessWidget {
         child: Consumer<WalletProvider>(
           builder: (context, provider, _) {
             final summary = provider.summary;
+            final balance = context.watch<BalanceProvider>().balance;
 
             if (provider.isLoading && summary == null) {
               return const Center(child: CircularProgressIndicator());
@@ -50,10 +52,10 @@ class _WalletScreenBody extends StatelessWidget {
                   Text('Wallet', style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 16),
                   BalanceHeroCard(
-                    balance: summary.balance,
+                    balance: balance,
                     primaryLabel: 'Withdraw',
                     primaryIcon: LucideIcons.arrowUpRight,
-                    onPrimaryTap: () {},
+                    onPrimaryTap: () => context.push('/withdraw'),
                     secondaryLabel: 'History',
                     secondaryIcon: LucideIcons.history,
                     onSecondaryTap: () => context.push('/transactions'),

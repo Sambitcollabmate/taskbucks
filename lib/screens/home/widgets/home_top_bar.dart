@@ -5,8 +5,13 @@ import '../../../core/theme/app_colors.dart';
 
 class HomeTopBar extends StatelessWidget {
   final String userName;
+  final VoidCallback onNotificationsTap;
 
-  const HomeTopBar({super.key, required this.userName});
+  const HomeTopBar({
+    super.key,
+    required this.userName,
+    required this.onNotificationsTap,
+  });
 
   String get _greeting {
     final hour = DateTime.now().hour;
@@ -38,24 +43,23 @@ class HomeTopBar extends StatelessWidget {
             ],
           ),
         ),
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: AppColors.cardBackground,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+        Material(
+          color: AppColors.cardBackground,
+          shape: const CircleBorder(),
+          elevation: 2,
+          shadowColor: Colors.black.withValues(alpha: 0.06),
+          child: InkWell(
+            onTap: onNotificationsTap,
+            customBorder: const CircleBorder(),
+            child: const SizedBox(
+              width: 44,
+              height: 44,
+              child: Icon(
+                LucideIcons.bell,
+                color: AppColors.textPrimary,
+                size: 20,
               ),
-            ],
-          ),
-          child: const Icon(
-            LucideIcons.bell,
-            color: AppColors.textPrimary,
-            size: 20,
+            ),
           ),
         ),
       ],

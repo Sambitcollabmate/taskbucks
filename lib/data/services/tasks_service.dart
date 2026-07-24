@@ -1,3 +1,4 @@
+import '../models/bonus_ad_slot.dart';
 import '../models/task.dart';
 import '../models/tasks_summary.dart';
 
@@ -22,12 +23,20 @@ class TasksService {
       } else {
         state = TaskState.locked;
       }
-      return Task(id: id, state: state, rate: 2.0);
+      return Task(id: id, state: state, rate: 100.0);
     });
+
+    // Demo: this user hit last week's weekly-referral-bonus threshold
+    // (matches ReferService's `bonusAdSlotsAvailable: 5` fake data), so 5
+    // bonus slots are active this week, all available, none watched yet.
+    final bonusSlots = List.generate(
+      5,
+      (i) => BonusAdSlot(id: i + 1, state: BonusAdState.available, rate: 100.0),
+    );
 
     final now = DateTime.now();
     final resetAt = DateTime(now.year, now.month, now.day + 1);
 
-    return TasksSummary(tasks: tasks, resetAt: resetAt);
+    return TasksSummary(tasks: tasks, resetAt: resetAt, bonusSlots: bonusSlots);
   }
 }

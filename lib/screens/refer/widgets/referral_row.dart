@@ -5,7 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/referral.dart';
 
-/// Single recent-referral row. Converted shows the flat +₹15 commission in
+/// Single recent-referral row. Converted shows the flat +₹125 commission in
 /// green; pending shows a gray "Pending" pill instead of an amount, since
 /// nothing has been credited yet (PROJECT.md 2).
 class ReferralRow extends StatelessWidget {

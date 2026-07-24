@@ -12,21 +12,24 @@ class HomeService {
 
     return HomeSummary(
       userName: 'Sambit',
-      balance: 342.50,
       tasksCompletedToday: tasksCompletedToday,
       dailyTaskLimit: dailyLimit,
       isPremium: false,
+      // Scaled to the new ₹100/task, ₹125/referral rates (PROJECT.md 2,
+      // 2026-07-23 update): same underlying weekly volume as before (23
+      // referral conversions, 64 completed tasks), just priced at the new
+      // rates instead of the old ₹15/₹2.
       weeklyLeaders: const [
         LeaderboardEntry(
           rank: 1,
           name: 'Ayesha K.',
-          amount: 345,
+          amount: 2875,
           category: LeaderboardCategory.topReferrer,
         ),
         LeaderboardEntry(
           rank: 1,
           name: 'Vikram S.',
-          amount: 128,
+          amount: 6400,
           category: LeaderboardCategory.topAdWatcher,
         ),
       ],

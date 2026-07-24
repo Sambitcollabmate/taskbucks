@@ -1,4 +1,4 @@
-package com.example.taskbucks_app
+package com.earnbucks.app
 
 import io.flutter.embedding.android.FlutterActivity
 

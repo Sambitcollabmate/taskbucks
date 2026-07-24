@@ -22,14 +22,15 @@ const _pageSize = 8;
 class TransactionsProvider extends ChangeNotifier {
   final TransactionsService _service;
 
-  TransactionsProvider({TransactionsService? service})
-    : _service = service ?? TransactionsService() {
+  TransactionsProvider({TransactionsService? service, TransactionFilter? initialFilter})
+    : _service = service ?? TransactionsService(),
+      _filter = initialFilter ?? TransactionFilter.all {
     load();
   }
 
   List<Transaction> _all = [];
   bool _isLoading = false;
-  TransactionFilter _filter = TransactionFilter.all;
+  TransactionFilter _filter;
   int _visibleCount = _pageSize;
 
   bool get isLoading => _isLoading;

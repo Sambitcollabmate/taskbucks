@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../providers/balance_provider.dart';
 import '../../providers/tasks_provider.dart';
 import '../../shared/widgets/notice_card.dart';
+import 'widgets/bonus_ads_section.dart';
 import 'widgets/featured_task_card.dart';
 import 'widgets/reset_countdown.dart';
 import 'widgets/task_grid.dart';
@@ -15,7 +17,9 @@ class TasksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TasksProvider(),
+      create: (context) => TasksProvider(
+        balanceProvider: context.read<BalanceProvider>(),
+      ),
       child: const _TasksScreenBody(),
     );
   }
@@ -80,6 +84,13 @@ class _TasksScreenBody extends StatelessWidget {
                     tasks: summary.tasks,
                     onTapCurrent: provider.completeCurrentTask,
                   ),
+                  if (summary.bonusSlots.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    BonusAdsSection(
+                      slots: summary.bonusSlots,
+                      onWatch: provider.completeBonusSlot,
+                    ),
+                  ],
                 ],
               ),
             );

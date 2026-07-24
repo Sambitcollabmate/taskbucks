@@ -7,12 +7,14 @@ import '../../shared/widgets/txn_row.dart';
 import 'widgets/transaction_filter_tabs.dart';
 
 class TransactionsScreen extends StatelessWidget {
-  const TransactionsScreen({super.key});
+  final TransactionFilter? initialFilter;
+
+  const TransactionsScreen({super.key, this.initialFilter});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TransactionsProvider(),
+      create: (_) => TransactionsProvider(initialFilter: initialFilter),
       child: const _TransactionsScreenBody(),
     );
   }

@@ -19,7 +19,6 @@ class LeaderboardEntry {
 
 class HomeSummary {
   final String userName;
-  final double balance;
   final int tasksCompletedToday;
   final int dailyTaskLimit;
   final bool isPremium;
@@ -28,7 +27,6 @@ class HomeSummary {
 
   const HomeSummary({
     required this.userName,
-    required this.balance,
     required this.tasksCompletedToday,
     required this.dailyTaskLimit,
     required this.isPremium,

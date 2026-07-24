@@ -10,11 +10,10 @@ class WalletService {
     final now = DateTime.now();
 
     return WalletSummary(
-      balance: 342.50,
       breakdown: const WalletBreakdown(
-        taskAdEarnings: 268.50,
-        referralCommissions: 60,
-        pendingAmount: 15,
+        taskAdEarnings: 1200,
+        referralCommissions: 250,
+        pendingAmount: 125,
       ),
       paymentMethod: const PaymentMethod(upiId: 'sambit@okhdfcbank', isDefault: true),
       recentActivity: [
@@ -22,7 +21,7 @@ class WalletService {
           id: 't1',
           title: 'Ad task reward',
           date: now.subtract(const Duration(hours: 3)),
-          amount: 8.5,
+          amount: 100,
           type: TransactionType.credit,
           category: TransactionCategory.task,
         ),
@@ -30,7 +29,7 @@ class WalletService {
           id: 't2',
           title: 'Referral commission — Ayesha K.',
           date: now.subtract(const Duration(hours: 9)),
-          amount: 15,
+          amount: 125,
           type: TransactionType.credit,
           category: TransactionCategory.referral,
         ),
@@ -46,7 +45,7 @@ class WalletService {
           id: 't4',
           title: 'Ad task reward',
           date: now.subtract(const Duration(days: 2, hours: 4)),
-          amount: 6.25,
+          amount: 100,
           type: TransactionType.credit,
           category: TransactionCategory.ad,
         ),
@@ -54,7 +53,7 @@ class WalletService {
           id: 't5',
           title: 'Referral commission — Vikram S.',
           date: now.subtract(const Duration(days: 3)),
-          amount: 15,
+          amount: 125,
           type: TransactionType.credit,
           category: TransactionCategory.referral,
         ),

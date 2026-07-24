@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:taskbucks_app/main.dart';
+import 'package:earnbucks/main.dart';
 
 void main() {
   testWidgets('Home screen renders the balance hero card', (

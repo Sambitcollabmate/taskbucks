@@ -8,6 +8,7 @@ import 'widgets/refer_stats_row.dart';
 import 'widgets/referral_link_card.dart';
 import 'widgets/referral_row.dart';
 import 'widgets/top_referrers_card.dart';
+import 'widgets/weekly_bonus_card.dart';
 
 class ReferScreen extends StatelessWidget {
   const ReferScreen({super.key});
@@ -52,8 +53,8 @@ class _ReferScreenBody extends StatelessWidget {
                   const NoticeCard(
                     variant: NoticeVariant.warn,
                     message:
-                        'You earn ₹15 only when someone you refer completes '
-                        'the ₹49 Premium purchase — not just for signing up. '
+                        'You earn ₹125 only when someone you refer completes '
+                        'the ₹49 Premium purchase, not just for signing up. '
                         'It shows as pending until their payment clears.',
                   ),
                   const SizedBox(height: 16),
@@ -62,6 +63,8 @@ class _ReferScreenBody extends StatelessWidget {
                     totalConverted: summary.totalConverted,
                     totalEarned: summary.totalEarned,
                   ),
+                  const SizedBox(height: 16),
+                  WeeklyBonusCard(summary: summary),
                   const SizedBox(height: 16),
                   TopReferrersCard(topReferrers: summary.topReferrers),
                   const SizedBox(height: 20),

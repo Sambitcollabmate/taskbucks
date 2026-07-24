@@ -7,7 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../data/models/wallet_summary.dart';
 
 /// Breaks the balance down into task/ad earnings, referral commissions, and
-/// pending referral commission (PROJECT.md 2: referral ₹15 is "pending"
+/// pending referral commission (PROJECT.md 2: referral ₹125 is "pending"
 /// until the referred purchase clears).
 class WalletBreakdownCard extends StatelessWidget {
   final WalletBreakdown breakdown;

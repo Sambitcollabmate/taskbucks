@@ -1,11 +1,11 @@
 {
-    "name": "taskbucks_app",
-    "short_name": "taskbucks_app",
+    "name": "EarnBucks",
+    "short_name": "EarnBucks",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Earn while you play",
+    "description": "EarnBucks: earn money in your free time",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

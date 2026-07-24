@@ -1,6 +1,6 @@
-# taskbucks_app
+# EarnBucks
 
-Earn while you play
+Earn money in your free time.
 
 ## Getting Started
 

@@ -15,6 +15,7 @@ class AuthTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final Widget? suffixIcon;
   final ValueChanged<String>? onChanged;
+  final int maxLines;
 
   const AuthTextField({
     super.key,
@@ -25,6 +26,7 @@ class AuthTextField extends StatelessWidget {
     this.keyboardType,
     this.suffixIcon,
     this.onChanged,
+    this.maxLines = 1,
   });
 
   @override
@@ -46,6 +48,7 @@ class AuthTextField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           onChanged: onChanged,
+          maxLines: maxLines,
           style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: hintText,

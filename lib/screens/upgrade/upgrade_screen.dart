@@ -149,8 +149,15 @@ class _UpgradeScreenBody extends StatelessWidget {
                 const NoticeCard(
                   message:
                       'If you were referred by someone, completing this '
-                      'purchase credits their ₹15 referral commission — '
+                      'purchase credits their ₹125 referral commission, '
                       'it\'s never credited on signup alone.',
+                ),
+                const SizedBox(height: 12),
+                const NoticeCard(
+                  message:
+                      'Premium also unlocks the weekly referral bonus: get '
+                      '5+ referrals converting to Premium in the same week '
+                      'and earn +5 bonus ad slots the week after.',
                 ),
               ],
             );

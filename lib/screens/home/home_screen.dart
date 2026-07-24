@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../providers/balance_provider.dart';
 import '../../providers/home_provider.dart';
 import '../../shared/widgets/balance_hero_card.dart';
 import '../../shared/widgets/upgrade_banner.dart';
@@ -35,6 +36,7 @@ class _HomeScreenBody extends StatelessWidget {
         child: Consumer<HomeProvider>(
           builder: (context, provider, _) {
             final summary = provider.summary;
+            final balance = context.watch<BalanceProvider>().balance;
 
             if (provider.isLoading && summary == null) {
               return const Center(child: CircularProgressIndicator());
@@ -48,10 +50,13 @@ class _HomeScreenBody extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
                 children: [
-                  HomeTopBar(userName: summary.userName),
+                  HomeTopBar(
+                    userName: summary.userName,
+                    onNotificationsTap: () => context.push('/notifications'),
+                  ),
                   const SizedBox(height: 20),
                   BalanceHeroCard(
-                    balance: summary.balance,
+                    balance: balance,
                     primaryLabel: 'Wallet',
                     primaryIcon: LucideIcons.wallet,
                     // Switches the persistent bottom-tab branch (index 2 =
