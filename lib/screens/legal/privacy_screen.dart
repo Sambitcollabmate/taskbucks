@@ -1,7 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../shared/widgets/legal_screen.dart';
 import '../../shared/widgets/pending_legal_card.dart';
+import '../settings/settings_screen.dart';
 
 final _lastUpdated = DateTime(2026, 6, 1);
 
@@ -31,9 +35,9 @@ final _sections = [
     heading: 'How We Use Your Information',
     paragraphs: [
       'We use your information to create and secure your account, credit '
-          'your task and referral earnings accurately, process your '
-          'monthly payout, and communicate with you about your account or '
-          'support requests.',
+          'your task and referral earnings accurately, verify and process '
+          'your monthly payout, prevent fraud and abuse, and communicate '
+          'with you about your account or support requests.',
     ],
   ),
   LegalSection.text(
@@ -57,23 +61,20 @@ final _sections = [
           'obligations.',
     ],
   ),
-  LegalSection.text(
+  LegalSection(
     id: 'rights',
     heading: 'Your Rights',
-    paragraphs: [
-      'You can request access to, correction of, or deletion of your '
-          'personal information by contacting us (see the Contact '
-          "screen). We'll respond within a reasonable time, subject to "
-          "what we're legally required to retain.",
-    ],
+    body: const _RightsSectionBody(),
   ),
   LegalSection.text(
     id: 'security',
     heading: 'Data Security',
     paragraphs: [
-      'We use industry-standard measures — including SSL encryption in '
-          "transit — to protect your information. No system is "
-          "completely secure, so we can't guarantee absolute security.",
+      'We use industry-standard measures to protect your information, '
+          'including SSL/TLS encryption in transit, restricted internal '
+          "access to personal data, and monitoring of account activity "
+          "for signs of fraud. No system is completely secure, so we "
+          "can't guarantee absolute security.",
     ],
   ),
   LegalSection.text(
@@ -148,6 +149,58 @@ class PrivacyScreen extends StatelessWidget {
           LegalTocEntry(id: section.id, label: section.heading),
       ],
       sections: _sections,
+    );
+  }
+}
+
+/// "Your Rights" section body — states the DPDP Act rights (access,
+/// correct, delete, export) and, per the design checklist, deep-links to
+/// where a user can actually act on the ones that have a real self-serve
+/// path today (Settings, for correcting profile/payment details). Deletion
+/// and export aren't self-serve features yet, so those route to Contact
+/// support rather than pretending a working in-app flow exists.
+class _RightsSectionBody extends StatelessWidget {
+  const _RightsSectionBody();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'You may access, correct, delete, or export your personal '
+          "information. You can correct your name, email, and payment "
+          "details yourself, any time, in Settings. For access, deletion, "
+          "or export requests, contact us (see the Contact screen) — "
+          "we'll respond within a reasonable time, subject to what we're "
+          'legally required to retain.',
+          style: TextStyle(
+            fontSize: 13.5,
+            color: AppColors.textSecondary,
+            height: 1.55,
+          ),
+        ),
+        const SizedBox(height: 10),
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primary,
+            ),
+            children: [
+              TextSpan(
+                text: 'Manage your info in Settings →',
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => context.push(
+                        '/settings',
+                        extra: SettingsSection.profile,
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

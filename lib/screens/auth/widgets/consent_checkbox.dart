@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 
-/// Age/terms consent row. Terms and Privacy Policy screens don't exist yet
-/// (PROJECT.md 7, Phase 5) — both taps are no-ops for now.
+/// Age/terms consent row. [onTapTerms]/[onTapPrivacy] push the in-app
+/// `/terms`/`/privacy` legal screens (not an external browser), so the user
+/// stays inside the app during signup.
 class ConsentCheckbox extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;

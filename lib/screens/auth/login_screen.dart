@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/config/app_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/services/session_service.dart';
 import '../../providers/auth_provider.dart';
@@ -93,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
             Text(
-              'Log in',
+              'Log in to your account',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 6),
@@ -105,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
             AuthTextField(
               controller: _identifierController,
               label: 'Mobile number or email',
-              hintText: '9876543210 or you@example.com',
+              hintText: '98765 43210 or you@example.com',
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 16),
@@ -217,12 +218,12 @@ class _LoginScreenState extends State<LoginScreen> {
               child: GestureDetector(
                 onTap: () => context.push('/register'),
                 child: RichText(
-                  text: const TextSpan(
-                    style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  text: TextSpan(
+                    style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                     children: [
-                      TextSpan(text: "Don't have an account? "),
-                      TextSpan(
-                        text: 'Register',
+                      TextSpan(text: 'New to ${AppConfig.brandName}? '),
+                      const TextSpan(
+                        text: 'Create a free account',
                         style: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w700,

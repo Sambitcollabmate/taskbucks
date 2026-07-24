@@ -62,7 +62,7 @@ class _UpgradeScreenBody extends StatelessWidget {
                 Text('Go Premium', style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 4),
                 const Text(
-                  'More tasks a day, same payout rate.',
+                  'Unlock 5 extra tasks every day.',
                   style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 20),
@@ -150,7 +150,8 @@ class _UpgradeScreenBody extends StatelessWidget {
                   message:
                       'If you were referred by someone, completing this '
                       'purchase credits their ₹125 referral commission, '
-                      'it\'s never credited on signup alone.',
+                      'it\'s never credited on signup alone. See Refund '
+                      'Policy for subscription cancellation terms.',
                 ),
                 const SizedBox(height: 12),
                 const NoticeCard(

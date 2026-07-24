@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user_profile.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/language_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../shared/widgets/upgrade_banner.dart';
 import '../settings/settings_screen.dart';
@@ -41,6 +42,106 @@ class _ProfileScreenBody extends StatelessWidget {
     if (context.mounted) {
       provider.load();
     }
+  }
+
+  void _openLanguagePicker(BuildContext context) {
+    final current = context.read<LanguageProvider>().language;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.cardBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'App language',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                for (final language in AppLanguage.values)
+                  ListTile(
+                    title: Text(language.label),
+                    trailing: language == current
+                        ? const Icon(LucideIcons.check, color: AppColors.primary)
+                        : null,
+                    onTap: () {
+                      sheetContext.read<LanguageProvider>().setLanguage(language);
+                      Navigator.of(sheetContext).pop();
+                    },
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _openLegalLinks(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.cardBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Terms & Privacy',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(LucideIcons.fileText, size: 18),
+                  title: const Text('Terms of Service'),
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    context.push('/terms');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(LucideIcons.shieldCheck, size: 18),
+                  title: const Text('Privacy Policy'),
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    context.push('/privacy');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(LucideIcons.receiptText, size: 18),
+                  title: const Text('Refund Policy'),
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    context.push('/refund');
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -92,6 +193,12 @@ class _ProfileScreenBody extends StatelessWidget {
                           provider,
                           SettingsSection.profile,
                         ),
+                      ),
+                      ProfileMenuRow(
+                        icon: LucideIcons.languages,
+                        label: 'App language',
+                        trailingValue: context.watch<LanguageProvider>().language.label,
+                        onTap: () => _openLanguagePicker(context),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.shield,
@@ -160,18 +267,8 @@ class _ProfileScreenBody extends StatelessWidget {
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.fileText,
-                        label: 'Terms of Service',
-                        onTap: () => context.push('/terms'),
-                      ),
-                      ProfileMenuRow(
-                        icon: LucideIcons.shieldCheck,
-                        label: 'Privacy Policy',
-                        onTap: () => context.push('/privacy'),
-                      ),
-                      ProfileMenuRow(
-                        icon: LucideIcons.receiptText,
-                        label: 'Refund Policy',
-                        onTap: () => context.push('/refund'),
+                        label: 'Terms & Privacy',
+                        onTap: () => _openLegalLinks(context),
                       ),
                     ],
                   ),

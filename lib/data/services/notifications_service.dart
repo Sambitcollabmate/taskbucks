@@ -3,7 +3,8 @@ import '../models/notification_type.dart';
 
 /// Fake data source for the Notifications screen — same fake-service-now/
 /// real-API-later convention as the rest of the app (PROJECT.md Section
-/// 4/7). Covers all 4 `NotificationType` cases with a mix of read/unread.
+/// 4/7). Covers all 6 `NotificationType` cases (Earnings/Account/Promotions
+/// categories) with a mix of read/unread.
 class NotificationsService {
   Future<List<AppNotification>> fetchNotifications() async {
     await Future.delayed(const Duration(milliseconds: 400));
@@ -11,6 +12,14 @@ class NotificationsService {
     final now = DateTime.now();
 
     return [
+      AppNotification(
+        id: 'n0',
+        type: NotificationType.newLoginDetected,
+        title: 'New login detected',
+        body: "A login from a new device was detected. Wasn't you? Secure "
+            'your account.',
+        timestamp: now.subtract(const Duration(minutes: 5)),
+      ),
       AppNotification(
         id: 'n1',
         type: NotificationType.taskCredited,
@@ -56,6 +65,14 @@ class NotificationsService {
         body: "Vi***m S. signed up with your code. You'll earn ₹125 once "
             'they go Premium.',
         timestamp: now.subtract(const Duration(days: 2)),
+        isRead: true,
+      ),
+      AppNotification(
+        id: 'n7',
+        type: NotificationType.premiumPromo,
+        title: 'Limited-time: 20% off Premium',
+        body: 'Upgrade this week and get your first month at a reduced rate.',
+        timestamp: now.subtract(const Duration(days: 3)),
         isRead: true,
       ),
     ];

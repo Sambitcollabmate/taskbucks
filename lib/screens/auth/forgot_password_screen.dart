@@ -112,8 +112,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
       const SizedBox(height: 6),
       const Text(
-        "Enter the mobile number on your account and we'll send a 6-digit "
-        'code to verify it\'s you before you set a new password.',
+        "Enter your mobile number and we'll send a 6-digit OTP to reset "
+        'your password.',
         style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
       const SizedBox(height: 24),
@@ -127,12 +127,36 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
       const SizedBox(height: 6),
       PhoneInput(controller: _phoneController),
+      const SizedBox(height: 8),
+      const Text(
+        "Didn't get it? Check that your number can receive SMS, or wait a "
+        'few minutes and try again.',
+        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+      ),
       const SizedBox(height: 24),
       _PrimaryButton(
         label: 'Send OTP',
         enabled: _canSendOtp,
         isLoading: _isSendingOtp,
         onTap: _onSendOtp,
+      ),
+      const SizedBox(height: 20),
+      Center(
+        child: GestureDetector(
+          onTap: () => context.pop(),
+          child: RichText(
+            text: const TextSpan(
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+              children: [
+                TextSpan(text: 'Remembered it? '),
+                TextSpan(
+                  text: 'Back to log in',
+                  style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     ];
   }
@@ -158,7 +182,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       AuthTextField(
         controller: _newPasswordController,
         label: 'New password',
-        hintText: 'Create a new password',
+        hintText: 'At least 8 characters',
         obscureText: _obscureNewPassword,
         suffixIcon: IconButton(
           icon: Icon(
@@ -173,7 +197,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       AuthTextField(
         controller: _confirmPasswordController,
         label: 'Confirm password',
-        hintText: 'Re-enter your new password',
+        hintText: 'Re-enter new password',
         obscureText: _obscureConfirmPassword,
         suffixIcon: IconButton(
           icon: Icon(

@@ -117,6 +117,10 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
 
             _prefillAmount(balance);
 
+            final now = DateTime.now();
+            final daysUntilPayout =
+                payoutDate.difference(DateTime(now.year, now.month, now.day)).inDays;
+
             return ListView(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
               children: [
@@ -137,10 +141,10 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
                 NoticeCard(
                   variant: NoticeVariant.warn,
                   message:
-                      'Withdrawals are processed once a month, on the 1st, '
-                      'to UPI or a verified bank account only. Your request '
-                      'will be queued for ${dateFormat.format(payoutDate)}, '
-                      'not transferred right away.',
+                      'Withdrawals are processed once a month, on the 1st. '
+                      "This month's window opens in $daysUntilPayout days "
+                      '— your request will queue until then, not transfer '
+                      'right away.',
                 ),
                 const SizedBox(height: 20),
                 AuthTextField(
@@ -161,7 +165,7 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
                 const SizedBox(height: 10),
                 WithdrawMethodRow(
                   type: WithdrawMethodType.upi,
-                  label: 'UPI',
+                  label: 'UPI (Google Pay / PhonePe / Paytm)',
                   detail: summary.upiId,
                   selected: _method == WithdrawMethodType.upi,
                   onTap: () => setState(() => _method = WithdrawMethodType.upi),
@@ -169,7 +173,7 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
                 const SizedBox(height: 10),
                 WithdrawMethodRow(
                   type: WithdrawMethodType.bank,
-                  label: 'Bank transfer',
+                  label: 'Bank transfer (IMPS)',
                   detail: summary.bankAccountMasked,
                   selected: _method == WithdrawMethodType.bank,
                   onTap: () => setState(() => _method = WithdrawMethodType.bank),

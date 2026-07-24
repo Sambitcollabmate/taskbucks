@@ -110,11 +110,11 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
   String? get _errorMessage {
     switch (_error) {
       case _OtpError.wrongCode:
-        return 'Incorrect code. Please check and try again.';
+        return "That code didn't match. Check and try again.";
       case _OtpError.expiredCode:
-        return 'This code has expired. Request a new one.';
+        return 'This code has expired — request a new one.';
       case _OtpError.tooManyAttempts:
-        return "Too many attempts. You're temporarily locked out — try again later.";
+        return "Too many attempts. You're temporarily locked out for 5 minutes.";
       case _OtpError.none:
         return null;
     }
@@ -132,13 +132,23 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
+            const Text(
+              'One more step',
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 8),
             Text(
-              'Verify your number',
+              'Verify your phone number',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 6),
             Text(
-              'Enter the 6-digit code sent to +91 $_maskedPhone',
+              "We've sent a 6-digit code by SMS to +91 $_maskedPhone.",
               style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 24),
@@ -173,7 +183,7 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
                         ),
                       )
                     : Text(
-                        "Didn't get the code? Resend in 0:${_resendSecondsLeft.toString().padLeft(2, '0')}",
+                        "Didn't get the code? Resend OTP in 0:${_resendSecondsLeft.toString().padLeft(2, '0')}",
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -250,8 +260,9 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
             const SizedBox(height: 24),
             const NoticeCard(
               variant: NoticeVariant.info,
-              message: "On DND or don't see the SMS? It can take up to 2 minutes to arrive — "
-                  "double-check your messages app before requesting a resend.",
+              message: 'Make sure your number can receive SMS — some DND (Do '
+                  'Not Disturb) settings block OTP messages. Code expires in '
+                  '10 minutes.',
             ),
           ],
         ),

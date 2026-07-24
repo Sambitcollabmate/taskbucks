@@ -7,9 +7,11 @@ import '../../../core/theme/app_colors.dart';
 
 /// "Other ways to reach us" — visually distinct from the form above (its
 /// own bordered card) with real tappable `mailto:` links, not just email
-/// text, plus the same response-time promise repeated here.
+/// text, plus the same tier-aware response-time promise repeated here.
 class ContactChannelsCard extends StatelessWidget {
-  const ContactChannelsCard({super.key});
+  final String responseTimeRange;
+
+  const ContactChannelsCard({super.key, required this.responseTimeRange});
 
   @override
   Widget build(BuildContext context) {
@@ -30,21 +32,21 @@ class ContactChannelsCard extends StatelessWidget {
           const SizedBox(height: 14),
           _MailtoRow(
             icon: LucideIcons.lifeBuoy,
-            label: 'General support',
+            label: 'Support',
             email: supportEmail,
           ),
           const SizedBox(height: 14),
           _MailtoRow(
             icon: LucideIcons.wallet,
-            label: 'Payments & withdrawals',
+            label: 'Payments',
             email: paymentsEmail,
           ),
           const SizedBox(height: 16),
           const Divider(height: 1),
           const SizedBox(height: 14),
-          const Text(
-            'We usually reply within 24 hours.',
-            style: TextStyle(fontSize: 12.5, color: AppColors.textSecondary, height: 1.4),
+          Text(
+            'We usually reply within $responseTimeRange.',
+            style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary, height: 1.4),
           ),
         ],
       ),

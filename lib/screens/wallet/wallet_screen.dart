@@ -9,8 +9,16 @@ import '../../providers/wallet_provider.dart';
 import '../../shared/widgets/balance_hero_card.dart';
 import '../../shared/widgets/notice_card.dart';
 import '../../shared/widgets/txn_row.dart';
+import '../settings/settings_screen.dart';
 import 'widgets/payment_method_card.dart';
 import 'widgets/wallet_breakdown_card.dart';
+
+/// Days remaining until the next monthly payout window (always the 1st).
+int _daysUntilNextPayout() {
+  final now = DateTime.now();
+  final nextFirst = DateTime(now.year, now.month + 1, 1);
+  return nextFirst.difference(DateTime(now.year, now.month, now.day)).inDays;
+}
 
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
@@ -61,18 +69,24 @@ class _WalletScreenBody extends StatelessWidget {
                     onSecondaryTap: () => context.push('/transactions'),
                   ),
                   const SizedBox(height: 16),
-                  const NoticeCard(
+                  NoticeCard(
                     variant: NoticeVariant.warn,
                     message:
-                        'Withdrawals are processed once a month, on the 1st, '
-                        'to your UPI or verified bank account only.',
+                        'Withdrawals are processed once a month, on the 1st. '
+                        'Next window opens in ${_daysUntilNextPayout()} days.',
                   ),
                   const SizedBox(height: 16),
                   WalletBreakdownCard(breakdown: summary.breakdown),
                   const SizedBox(height: 16),
                   Text('Payment method', style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
-                  PaymentMethodCard(method: summary.paymentMethod),
+                  PaymentMethodCard(
+                    method: summary.paymentMethod,
+                    onTap: () => context.push(
+                      '/settings',
+                      extra: SettingsSection.payment,
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   Text('Recent activity', style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),

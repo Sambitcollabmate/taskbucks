@@ -6,12 +6,13 @@ import '../../../core/theme/app_colors.dart';
 const _items = [
   '30 tasks/day, up from Free\'s 25',
   'Same ₹/task rate — no reduced payout per task',
-  'Cancel anytime — benefits continue until the end of the paid cycle',
+  'Priority support — faster reply on tickets',
 ];
 
-/// "What you get" checklist — the 3 Premium facts stated in PROJECT.md
-/// Section 2's Premium-tier bullet, broken into rows. Don't add benefits
-/// beyond what's written there.
+/// "What you get" checklist. The first two facts are PROJECT.md Section 2's
+/// Premium-tier bullet; "Priority support" is a real, differentiated
+/// benefit — Premium members get a faster stated reply time on Contact
+/// (see `ContactScreen`'s tier-aware response-time copy), not just a claim.
 class PremiumChecklistCard extends StatelessWidget {
   const PremiumChecklistCard({super.key});
 

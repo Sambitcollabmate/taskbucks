@@ -13,7 +13,7 @@ class WalletService {
       breakdown: const WalletBreakdown(
         taskAdEarnings: 1200,
         referralCommissions: 250,
-        pendingAmount: 125,
+        bonusRewards: 125,
       ),
       paymentMethod: const PaymentMethod(upiId: 'sambit@okhdfcbank', isDefault: true),
       recentActivity: [

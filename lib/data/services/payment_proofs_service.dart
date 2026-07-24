@@ -22,7 +22,7 @@ class PaymentProofsService {
           "I was skeptical the first month, but the payout landed in my "
           "UPI right on the 1st, exactly what the app showed. I've been "
           "using it for over a year now.",
-      testimonialName: 'Ayesha K., Mumbai',
+      testimonialName: 'Ayesha K., member since 2023',
       proofs: [
         PaymentProofEntry(
           amount: 1245,

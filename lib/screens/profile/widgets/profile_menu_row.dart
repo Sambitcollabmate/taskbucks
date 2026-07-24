@@ -9,12 +9,14 @@ class ProfileMenuRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final String? trailingValue;
 
   const ProfileMenuRow({
     super.key,
     required this.icon,
     required this.label,
     required this.onTap,
+    this.trailingValue,
   });
 
   @override
@@ -48,6 +50,17 @@ class ProfileMenuRow extends StatelessWidget {
                   ),
                 ),
               ),
+              if (trailingValue != null) ...[
+                Text(
+                  trailingValue!,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ],
               const Icon(
                 LucideIcons.chevronRight,
                 size: 18,

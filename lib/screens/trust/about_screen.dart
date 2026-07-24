@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -52,19 +51,19 @@ class _AboutScreenBody extends StatelessWidget {
               return const SizedBox.shrink();
             }
 
-            final countFormat = NumberFormat.decimalPattern('en_IN');
-
             return ListView(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
               children: [
-                Text('About EarnBucks', style: Theme.of(context).textTheme.headlineSmall),
+                Text(
+                  'Built by people who got burned by earning apps that '
+                  'never paid.',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
                 const SizedBox(height: 10),
                 Text(
-                  'We built EarnBucks in ${info.foundingYear} to make earning '
-                  'from your phone simple and honest — watch short video ads, '
-                  'complete daily tasks, and get paid on time, every time. '
-                  'Today, over ${countFormat.format(info.earnerCount)}+ people '
-                  'across ${info.statesCovered} states earn with us.',
+                  'EarnBucks started in ${info.foundingYear} as a reaction '
+                  'to an industry full of apps that vanish when users ask '
+                  'to withdraw.',
                   style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,

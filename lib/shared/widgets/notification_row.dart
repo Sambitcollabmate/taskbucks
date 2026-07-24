@@ -26,6 +26,10 @@ class NotificationRow extends StatelessWidget {
         return LucideIcons.arrowUpRight;
       case NotificationType.streakBonus:
         return LucideIcons.flame;
+      case NotificationType.newLoginDetected:
+        return LucideIcons.shieldAlert;
+      case NotificationType.premiumPromo:
+        return LucideIcons.crown;
     }
   }
 
@@ -39,6 +43,10 @@ class NotificationRow extends StatelessWidget {
         return AppColors.premiumGold;
       case NotificationType.streakBonus:
         return AppColors.warning;
+      case NotificationType.newLoginDetected:
+        return AppColors.danger;
+      case NotificationType.premiumPromo:
+        return AppColors.premiumGold;
     }
   }
 

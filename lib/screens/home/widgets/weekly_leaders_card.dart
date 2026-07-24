@@ -82,6 +82,16 @@ class WeeklyLeadersCard extends StatelessWidget {
             ),
             if (entry != leaders.last) const Divider(height: 20),
           ],
+          const Divider(height: 20),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Top referrer & top ad-watcher each get a bonus gift every week.',
+              maxLines: 1,
+              style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+            ),
+          ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../data/models/notification_type.dart';
 import '../data/models/settings_data.dart';
 import '../data/services/settings_service.dart';
 
@@ -22,6 +23,7 @@ class SettingsProvider extends ChangeNotifier {
   bool _isSavingUpi = false;
   bool _isTogglingTwoStep = false;
   bool _isSavingImage = false;
+  NotificationCategory? _togglingPushCategory;
 
   SettingsData? get data => _data;
   bool get isLoading => _isLoading;
@@ -30,6 +32,7 @@ class SettingsProvider extends ChangeNotifier {
   bool get isSavingUpi => _isSavingUpi;
   bool get isTogglingTwoStep => _isTogglingTwoStep;
   bool get isSavingImage => _isSavingImage;
+  NotificationCategory? get togglingPushCategory => _togglingPushCategory;
 
   Future<void> load() async {
     _isLoading = true;
@@ -110,6 +113,35 @@ class SettingsProvider extends ChangeNotifier {
     _data = _data!.copyWith(twoStepEnabled: enabled);
 
     _isTogglingTwoStep = false;
+    notifyListeners();
+  }
+
+  /// Per-category push preference (PROJECT.md Notifications doc, Section
+  /// 1.1) — a user who wants task-completion/security alerts but not
+  /// promotional pushes can say so, rather than one all-or-nothing switch.
+  Future<void> setPushCategoryEnabled(NotificationCategory category, bool enabled) async {
+    if (_data == null) return;
+    _togglingPushCategory = category;
+    notifyListeners();
+
+    // TODO: replace with a real "update push preference" API call once the
+    // Laravel backend exists (PROJECT.md 4) — and, once the native
+    // permission is granted, gate the OS-level channel/topic subscription
+    // on this too, not just the in-app flag.
+    await _service.setPushCategoryEnabled(category, enabled);
+    switch (category) {
+      case NotificationCategory.earnings:
+        _data = _data!.copyWith(earningsPushEnabled: enabled);
+        break;
+      case NotificationCategory.account:
+        _data = _data!.copyWith(accountPushEnabled: enabled);
+        break;
+      case NotificationCategory.promotions:
+        _data = _data!.copyWith(promotionsPushEnabled: enabled);
+        break;
+    }
+
+    _togglingPushCategory = null;
     notifyListeners();
   }
 }

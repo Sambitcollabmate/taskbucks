@@ -208,7 +208,7 @@ class _PremiumPriceCardState extends State<PremiumPriceCard>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Cancel anytime — benefits continue until the end of your paid cycle',
+                    'Cancel anytime — no long-term contract',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12.5,

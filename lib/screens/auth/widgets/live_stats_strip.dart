@@ -31,14 +31,14 @@ class LiveStatsStrip extends StatelessWidget {
           _StatDivider(),
           Expanded(
             // TODO: replace with real data once API exists.
-            child: _StatItem(icon: LucideIcons.users, value: '12,000+', label: 'Earners'),
+            child: _StatItem(icon: LucideIcons.users, value: '18,204', label: 'Earners'),
           ),
           _StatDivider(),
           Expanded(
             child: _StatItem(
               icon: LucideIcons.calendarCheck,
               value: 'Monthly',
-              label: 'UPI payout',
+              label: 'Payout',
             ),
           ),
         ],

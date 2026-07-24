@@ -1,18 +1,17 @@
 import 'transaction.dart';
 
-/// Balance breakdown shown on Wallet — task/ad earnings and referral
-/// commissions are already cleared; `pendingAmount` is referral commission
-/// not yet credited (PROJECT.md 2: referral ₹125 shows "pending" until the
-/// referred user's Premium purchase clears).
+/// Balance breakdown shown on Wallet — task/ad earnings, referral
+/// commissions, and bonus rewards (weekly leaderboard gifts + bonus ad
+/// slots) as three separate, already-cleared totals.
 class WalletBreakdown {
   final double taskAdEarnings;
   final double referralCommissions;
-  final double pendingAmount;
+  final double bonusRewards;
 
   const WalletBreakdown({
     required this.taskAdEarnings,
     required this.referralCommissions,
-    required this.pendingAmount,
+    required this.bonusRewards,
   });
 }
 

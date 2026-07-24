@@ -1,3 +1,4 @@
+import '../models/notification_type.dart';
 import '../models/settings_data.dart';
 import 'user_avatar_store.dart';
 
@@ -14,8 +15,15 @@ class SettingsService {
       email: 'sambit@example.com',
       upiId: 'sambit@okhdfcbank',
       isUpiDefault: true,
-      bankAccountMasked: 'HDFC Bank •••• 4521',
+      bankAccountMasked: '•••• 4521 (HDFC Bank)',
       twoStepEnabled: true,
+      // Earnings/Account pushes are functionally important (credits,
+      // security alerts) so they default ON; Promotions defaults OFF —
+      // opt-in, not opt-out, for marketing pushes (PROJECT.md Notifications
+      // doc, Section 1: restraint over engagement-at-any-cost).
+      earningsPushEnabled: true,
+      accountPushEnabled: true,
+      promotionsPushEnabled: false,
       imagePath: UserAvatarStore.imagePath,
     );
   }
@@ -38,6 +46,13 @@ class SettingsService {
   }
 
   Future<void> setTwoStepEnabled(bool enabled) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+  }
+
+  Future<void> setPushCategoryEnabled(
+    NotificationCategory category,
+    bool enabled,
+  ) async {
     await Future.delayed(const Duration(milliseconds: 300));
   }
 }

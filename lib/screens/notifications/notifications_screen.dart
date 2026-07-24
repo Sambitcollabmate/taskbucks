@@ -8,6 +8,8 @@ import '../../data/models/notification_type.dart';
 import '../../providers/notifications_provider.dart';
 import '../../providers/transactions_provider.dart';
 import '../../shared/widgets/notification_row.dart';
+import '../settings/settings_screen.dart';
+import 'widgets/notification_filter_tabs.dart';
 
 /// Push-only screen (PROJECT.md 6.1), reached from Profile's Notifications
 /// row. Tapping a notification marks it read and deep-links to the
@@ -20,10 +22,7 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => NotificationsProvider(),
-      child: const _NotificationsScreenBody(),
-    );
+    return const _NotificationsScreenBody();
   }
 }
 
@@ -45,6 +44,12 @@ class _NotificationsScreenBody extends StatelessWidget {
         break;
       case NotificationType.streakBonus:
         context.go('/home');
+        break;
+      case NotificationType.newLoginDetected:
+        context.push('/settings', extra: SettingsSection.security);
+        break;
+      case NotificationType.premiumPromo:
+        context.push('/upgrade');
         break;
     }
   }
@@ -87,46 +92,55 @@ class _NotificationsScreenBody extends StatelessWidget {
             if (provider.isLoading && notifications.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (notifications.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No notifications yet',
-                  style: TextStyle(color: AppColors.textSecondary),
-                ),
-              );
-            }
 
             return RefreshIndicator(
               onRefresh: provider.load,
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.cardBackground,
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        for (final notification in notifications) ...[
-                          NotificationRow(
-                            notification: notification,
-                            onTap: () => _onNotificationTap(context, notification),
-                          ),
-                          if (notification != notifications.last)
-                            const Divider(height: 8),
-                        ],
-                      ],
-                    ),
+                  NotificationFilterTabs(
+                    selected: provider.filter,
+                    unreadCount: provider.unreadCount,
+                    onSelected: provider.setFilter,
                   ),
+                  const SizedBox(height: 16),
+                  if (notifications.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 40),
+                      child: Center(
+                        child: Text(
+                          'No notifications here',
+                          style: TextStyle(color: AppColors.textSecondary),
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.cardBackground,
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          for (final notification in notifications) ...[
+                            NotificationRow(
+                              notification: notification,
+                              onTap: () => _onNotificationTap(context, notification),
+                            ),
+                            if (notification != notifications.last)
+                              const Divider(height: 8),
+                          ],
+                        ],
+                      ),
+                    ),
                 ],
               ),
             );

@@ -26,9 +26,22 @@ class TxnRow extends StatelessWidget {
         return LucideIcons.arrowUpRight;
       case TransactionCategory.streakBonus:
         return LucideIcons.flame;
+      case TransactionCategory.premiumRenewal:
+        return LucideIcons.crown;
       case TransactionCategory.other:
         return LucideIcons.receipt;
     }
+  }
+
+  String _relativeDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final day = DateTime(date.year, date.month, date.day);
+    final diffDays = today.difference(day).inDays;
+
+    if (diffDays == 0) return 'Today, ${DateFormat('h:mm a').format(date)}';
+    if (diffDays < 7) return '$diffDays day${diffDays == 1 ? '' : 's'} ago';
+    return DateFormat('MMM d, yyyy').format(date);
   }
 
   @override
@@ -40,7 +53,6 @@ class TxnRow extends StatelessWidget {
       symbol: '₹',
       decimalDigits: 2,
     );
-    final dateFormatter = DateFormat('d MMM, h:mm a');
 
     return Row(
       children: [
@@ -68,7 +80,7 @@ class TxnRow extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                dateFormatter.format(transaction.date),
+                _relativeDate(transaction.date),
                 style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
             ],

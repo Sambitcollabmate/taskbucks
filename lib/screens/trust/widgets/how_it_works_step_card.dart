@@ -12,22 +12,22 @@ class HowItWorksStepCard extends StatelessWidget {
   static const _steps = [
     (
       title: 'Create your free account',
-      body: 'Just your phone number and a 6-digit OTP — no card required.',
+      body: 'Sign up with your mobile number in under a minute — no fees '
+          'to join.',
     ),
     (
       title: "Open today's tasks",
-      body: "See your day's task list, refreshed at midnight — up to 25 "
-          'tasks free, 30 on Premium.',
+      body: '25 tasks reset daily at midnight (30 on the Premium plan).',
     ),
     (
-      title: 'Watch the ad',
-      body: 'Watch the short video to the end — your ₹ credits the moment '
-          "it finishes, not just for opening it.",
+      title: 'Watch the video ad',
+      body: 'Each task plays one short, non-skippable video ad — stay on '
+          'screen until it finishes.',
     ),
     (
       title: 'Get paid monthly',
-      body: "Everything you've earned is paid out on the 1st, straight to "
-          'your UPI or bank account.',
+      body: 'All earnings are paid out once a month, on the 1st, to UPI '
+          'or bank transfer.',
     ),
   ];
 

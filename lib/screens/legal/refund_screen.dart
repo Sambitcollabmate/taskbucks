@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/config/app_config.dart';
 import '../../shared/widgets/legal_screen.dart';
 import 'widgets/upgrade_cross_reference.dart';
 
@@ -51,6 +52,16 @@ final _sections = [
           "were charged incorrectly, request a refund through Google "
           "Play's own refund process — Google's policies govern whether "
           'that request is approved.',
+    ],
+  ),
+  LegalSection.text(
+    id: 'payment-errors',
+    heading: 'Payment Errors',
+    paragraphs: [
+      'If a monthly payout looks wrong — the amount, method, or timing '
+          "doesn't match what the app shows — report it within 14 days at "
+          'payments@${AppConfig.brandDomain} so we can correct our '
+          'records.',
     ],
   ),
   LegalSection.text(

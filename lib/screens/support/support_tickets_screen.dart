@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
-import '../../data/models/support_ticket.dart';
 import '../../providers/support_provider.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
 import 'widgets/raise_ticket_sheet.dart';
+import 'widgets/support_ticket_filter_tabs.dart';
 import 'widgets/support_ticket_row.dart';
 import 'widgets/ticket_detail_sheet.dart';
 
@@ -41,7 +41,7 @@ class _SupportTicketsScreenBody extends StatelessWidget {
     );
   }
 
-  void _showTicketDetail(BuildContext context, SupportTicket ticket) {
+  void _showTicketDetail(BuildContext context, String ticketId) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -49,7 +49,10 @@ class _SupportTicketsScreenBody extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => TicketDetailSheet(ticket: ticket),
+      builder: (sheetContext) => ChangeNotifierProvider.value(
+        value: context.read<SupportProvider>(),
+        child: TicketDetailSheet(ticketId: ticketId),
+      ),
     );
   }
 
@@ -74,27 +77,36 @@ class _SupportTicketsScreenBody extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
                 children: [
                   GradientCtaButton(
-                    label: 'Raise a new ticket',
+                    label: '+ New ticket',
                     onTap: () => _showRaiseTicketSheet(context, provider),
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Your tickets',
-                    style: Theme.of(context).textTheme.titleLarge,
+                  const SizedBox(height: 16),
+                  const Text(
+                    'We read and reply to every ticket within 24–48 hours.',
+                    style: TextStyle(fontSize: 12.5, color: AppColors.textSecondary),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
+                  SupportTicketFilterTabs(
+                    selected: provider.filter,
+                    openCount: provider.openTickets.length,
+                    closedCount: provider.closedTickets.length,
+                    onSelected: provider.setFilter,
+                  ),
+                  const SizedBox(height: 16),
                   if (provider.isLoading && tickets.isEmpty)
                     const Padding(
                       padding: EdgeInsets.only(top: 40),
                       child: Center(child: CircularProgressIndicator()),
                     )
                   else if (tickets.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.only(top: 24),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
                       child: Center(
                         child: Text(
-                          'No support tickets yet',
-                          style: TextStyle(color: AppColors.textSecondary),
+                          provider.filter == SupportTicketFilter.open
+                              ? 'No open tickets'
+                              : 'No closed tickets',
+                          style: const TextStyle(color: AppColors.textSecondary),
                         ),
                       ),
                     )
@@ -117,7 +129,7 @@ class _SupportTicketsScreenBody extends StatelessWidget {
                           for (final ticket in tickets) ...[
                             SupportTicketRow(
                               ticket: ticket,
-                              onTap: () => _showTicketDetail(context, ticket),
+                              onTap: () => _showTicketDetail(context, ticket.id),
                             ),
                             if (ticket != tickets.last) const Divider(height: 8),
                           ],

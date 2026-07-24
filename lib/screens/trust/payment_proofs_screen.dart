@@ -63,8 +63,8 @@ class _PaymentProofsScreenBody extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
               children: [
                 const Text(
-                  'A look at what real earners have been paid — every '
-                  'payout goes out on the 1st, straight to UPI or bank.',
+                  'Every withdrawal appears here automatically. Nothing is '
+                  'hand-picked.',
                   style: TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,

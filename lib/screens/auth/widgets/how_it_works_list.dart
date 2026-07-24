@@ -15,10 +15,10 @@ class HowItWorksList extends StatelessWidget {
   const HowItWorksList({super.key, this.onSeeMore});
 
   static const _steps = [
-    'Create your free account with just your phone number',
-    'Watch short video ads, up to 25 tasks a day, ₹100 per task',
-    'Refer friends and earn ₹125 when they go Premium',
-    'Get paid straight to your UPI or bank account every month',
+    'Tap a task — 25 available every day',
+    'Watch the video ad — non-skippable, ~20–30 sec',
+    'Get credited — instantly after each ad',
+    'Withdraw monthly — once a month, on the 1st, to UPI or bank',
   ];
 
   @override

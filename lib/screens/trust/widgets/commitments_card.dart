@@ -7,26 +7,26 @@ const _commitments = [
   (
     icon: LucideIcons.eye,
     title: 'Transparency',
-    body: "Every task shows exactly what it pays before you start it — no "
-        'surprise deductions, no rate changes without notice.',
+    body: 'Every payout is published publicly — see real, verified '
+        'withdrawals on our Payment Proofs page, not just a promise.',
   ),
   (
     icon: LucideIcons.ban,
     title: 'No pay-to-join',
-    body: 'Signing up is free, forever. We never ask you to pay, deposit, '
-        "or refer a minimum number of friends to start earning.",
+    body: 'Signing up is free, forever. Never a fee to earn or withdraw '
+        '— no deposits, no hidden charges.',
   ),
   (
     icon: LucideIcons.scale,
     title: 'Fair rates',
-    body: "Your task rate never drops once you're used to it — Premium "
-        'adds more tasks a day, never a smaller cut per task.',
+    body: 'The exact ₹ rate for a task is shown before you start it — no '
+        'surprise deductions, no rate changes without notice.',
   ),
   (
     icon: LucideIcons.headset,
     title: 'Real support',
-    body: 'Every support ticket is answered by our team, not a bot loop '
-        "— you always get a real reply.",
+    body: 'A human reads every support ticket — not a bot loop, you '
+        'always get a real reply.',
   ),
 ];
 

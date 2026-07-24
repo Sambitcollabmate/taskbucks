@@ -81,7 +81,17 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 28),
                     Text(
-                      'Earn money in your free time',
+                      'Simple daily earning, made for India',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.2,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Watch 25 ads a day. Get paid every month.',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 26,
                         fontWeight: FontWeight.w800,
@@ -91,9 +101,9 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      'Complete up to 25 simple tasks a day at ₹100 each, refer '
-                      'friends for ₹125 a pop, and get paid straight to your '
-                      'UPI or bank account every month.',
+                      'Open the app, tap a task, watch one short video ad, '
+                      'earn ₹100. Do it 25 times a day and cash out monthly '
+                      'straight to UPI — no surveys, no complicated offers.',
                       style: TextStyle(
                         fontSize: 14.5,
                         color: AppColors.textSecondary,

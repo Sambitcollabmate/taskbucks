@@ -3,9 +3,11 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../data/models/notification_type.dart';
 import '../../providers/settings_provider.dart';
 import '../auth/widgets/auth_text_field.dart';
 import 'widgets/profile_avatar_picker.dart';
+import 'widgets/push_category_toggle_row.dart';
 import 'widgets/settings_section_card.dart';
 import 'widgets/two_step_toggle_row.dart';
 import 'widgets/upi_id_field.dart';
@@ -163,13 +165,13 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                         const SizedBox(height: 20),
                         AuthTextField(
                           controller: _nameController,
-                          label: 'Name',
+                          label: 'Full name',
                           onChanged: (_) => setState(() {}),
                         ),
                         const SizedBox(height: 16),
                         AuthTextField(
                           controller: _emailController,
-                          label: 'Email',
+                          label: 'Email address',
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 16),
@@ -207,7 +209,7 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                         AuthTextField(
                           controller: _newPasswordController,
                           label: 'New password',
-                          hintText: 'Create a new password',
+                          hintText: 'At least 8 characters',
                           obscureText: _obscureNewPassword,
                           onChanged: (_) => setState(() {}),
                           suffixIcon: IconButton(
@@ -337,6 +339,57 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                               ),
                             ),
                           ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SettingsSectionCard(
+                    title: 'Push notifications',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PushCategoryToggleRow(
+                          title: 'Earnings',
+                          subtitle: 'Task credits, referrals, streak bonuses',
+                          value: data.earningsPushEnabled,
+                          isSaving:
+                              provider.togglingPushCategory ==
+                              NotificationCategory.earnings,
+                          onChanged: (enabled) => provider.setPushCategoryEnabled(
+                            NotificationCategory.earnings,
+                            enabled,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Divider(height: 1),
+                        const SizedBox(height: 16),
+                        PushCategoryToggleRow(
+                          title: 'Account',
+                          subtitle: 'Security alerts, like new-device logins',
+                          value: data.accountPushEnabled,
+                          isSaving:
+                              provider.togglingPushCategory ==
+                              NotificationCategory.account,
+                          onChanged: (enabled) => provider.setPushCategoryEnabled(
+                            NotificationCategory.account,
+                            enabled,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Divider(height: 1),
+                        const SizedBox(height: 16),
+                        PushCategoryToggleRow(
+                          title: 'Promotions',
+                          subtitle: 'Occasional offers, like Premium discounts',
+                          value: data.promotionsPushEnabled,
+                          isSaving:
+                              provider.togglingPushCategory ==
+                              NotificationCategory.promotions,
+                          onChanged: (enabled) => provider.setPushCategoryEnabled(
+                            NotificationCategory.promotions,
+                            enabled,
+                          ),
                         ),
                       ],
                     ),

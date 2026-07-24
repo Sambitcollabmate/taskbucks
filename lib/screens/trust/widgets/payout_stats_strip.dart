@@ -45,7 +45,7 @@ class PayoutStatsStrip extends StatelessWidget {
             child: _StatItem(
               icon: LucideIcons.banknote,
               value: amountFormat.format(lastCycleTotal),
-              label: 'Paid last cycle',
+              label: 'Last cycle',
             ),
           ),
           Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.12)),
@@ -53,7 +53,7 @@ class PayoutStatsStrip extends StatelessWidget {
             child: _StatItem(
               icon: LucideIcons.users,
               value: '${countFormat.format(totalEarners)}+',
-              label: 'Earners paid',
+              label: 'Total earners',
             ),
           ),
         ],

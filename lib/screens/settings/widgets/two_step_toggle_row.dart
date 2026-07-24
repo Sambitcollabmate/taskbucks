@@ -48,7 +48,7 @@ class TwoStepToggleRow extends StatelessWidget {
               ),
               SizedBox(height: 2),
               Text(
-                'Adds an OTP check on top of your password when logging in.',
+                'Extra code at login',
                 style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
             ],

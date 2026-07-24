@@ -35,8 +35,9 @@ class HowItWorksScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
             const Text(
-              'Four simple steps take you from signing up to getting paid — '
-              'no offerwalls, no surveys, no hidden catches.',
+              'One earning method, kept simple. No offer walls, no surveys, '
+              'no confusing task types — just short video ads, up to 25 a '
+              'day.',
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -45,14 +46,18 @@ class HowItWorksScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const HowItWorksStepCard(),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
+            Text('Want more?', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 12),
             const TrustInfoCard(
               icon: LucideIcons.gift,
               iconColor: AppColors.primary,
               title: 'Refer & earn',
-              message: 'You earn ₹125 only when someone you refer completes '
-                  'the ₹49 Premium purchase, not just for signing up. It '
-                  'shows as pending until their payment clears.',
+              message: 'Share your referral link. You earn ₹125 only when the '
+                  'person you referred actually completes the ₹49 Premium '
+                  'purchase, not just for signing up. Earnings show as '
+                  '"pending" until their payment clears, and are reversed if '
+                  'their payment is refunded.',
             ),
             const SizedBox(height: 16),
             const TrustInfoCard(
@@ -62,8 +67,8 @@ class HowItWorksScreen extends StatelessWidget {
               bullets: [
                 '30 tasks/day, up from Free\'s 25',
                 'Same ₹/task rate — no reduced payout per task',
-                'Cancel anytime — benefits continue until the end of the '
-                    'paid cycle',
+                'Billed monthly — cancel anytime from Settings, benefits '
+                    'continue until the end of the paid cycle',
               ],
             ),
             const SizedBox(height: 16),

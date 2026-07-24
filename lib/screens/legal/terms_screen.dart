@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/config/app_config.dart';
+import '../../core/theme/app_colors.dart';
 import '../../shared/widgets/legal_screen.dart';
 import '../../shared/widgets/pending_legal_card.dart';
 
@@ -89,7 +91,8 @@ final _sections = [
           "verified bank account you provide — we don't support PayPal, "
           "Payoneer, or any on-demand withdrawal. It's your responsibility "
           'to keep your payout details accurate and up to date in '
-          'Settings.',
+          'Settings. We may require identity verification before '
+          'releasing a payout.',
     ],
   ),
   LegalSection.text(
@@ -158,11 +161,26 @@ final _sections = [
   LegalSection(
     id: 'grievance',
     heading: 'Grievance Officer',
-    body: const PendingLegalCard(
-      title: 'Grievance Officer',
-      fields: ['Name', 'Contact email', 'Contact phone'],
-      note: "Pending legal designation, required under India's IT Rules — "
-          'do not invent a name or contact detail here.',
+    body: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'For legal notices or questions about these Terms, write to '
+          'legal@${AppConfig.brandDomain}.',
+          style: const TextStyle(
+            fontSize: 13.5,
+            color: AppColors.textSecondary,
+            height: 1.55,
+          ),
+        ),
+        const SizedBox(height: 14),
+        const PendingLegalCard(
+          title: 'Grievance Officer',
+          fields: ['Name', 'Contact email', 'Contact phone'],
+          note: "Pending legal designation, required under India's IT "
+              'Rules — do not invent a name or contact detail here.',
+        ),
+      ],
     ),
   ),
 ];

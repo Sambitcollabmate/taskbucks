@@ -68,12 +68,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
             Text(
-              'Create your account',
+              'Start earning in under a minute',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 6),
             const Text(
-              "Start earning in minutes — it's free.",
+              'Free forever. No card required.',
               style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 24),
@@ -110,7 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             AuthTextField(
               controller: _passwordController,
               label: 'Password',
-              hintText: 'Create a password',
+              hintText: 'At least 8 characters',
               obscureText: _obscurePassword,
               suffixIcon: IconButton(
                 icon: Icon(
@@ -131,8 +131,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ConsentCheckbox(
               value: _consentAccepted,
               onChanged: (v) => setState(() => _consentAccepted = v),
-              onTapTerms: () {},
-              onTapPrivacy: () {},
+              onTapTerms: () => context.push('/terms'),
+              onTapPrivacy: () => context.push('/privacy'),
             ),
             const SizedBox(height: 24),
             SizedBox(

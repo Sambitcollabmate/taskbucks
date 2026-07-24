@@ -5,8 +5,8 @@ import '../models/support_ticket.dart';
 
 /// Fake data source for the Support Tickets screen — same fake-service-now/
 /// real-API-later convention as the rest of the app (PROJECT.md Section
-/// 4/7). `raiseTicket` doesn't persist anywhere real yet; the screen is
-/// responsible for prepending the returned ticket to its own list.
+/// 4/7). `raiseTicket`/`sendReply` don't persist anywhere real yet; the
+/// provider is responsible for updating its own in-memory list.
 class SupportService {
   Future<List<SupportTicket>> fetchTickets() async {
     await Future.delayed(const Duration(milliseconds: 400));
@@ -17,48 +17,95 @@ class SupportService {
       SupportTicket(
         id: 'TCK-2041',
         topic: ContactTopic.withdrawalIssue,
-        message:
-            "My withdrawal from last month's payout cycle hasn't reached my "
-            'UPI account yet. It has been 5 days since the 1st. Can you '
-            'check the status?',
         status: SupportTicketStatus.inProgress,
         date: now.subtract(const Duration(days: 2)),
-        reply:
-            "We've located your payout in the batch — it's confirmed sent "
-            'and should reflect within 24 hours. Sorry for the delay.',
+        messages: [
+          TicketMessage(
+            text:
+                "My withdrawal from last month's payout cycle hasn't reached "
+                'my UPI account yet. It has been 5 days since the 1st. Can '
+                'you check the status?',
+            timestamp: now.subtract(const Duration(days: 2)),
+            isFromUser: true,
+          ),
+          TicketMessage(
+            text:
+                "We've located your payout in the batch — it's confirmed "
+                'sent and should reflect within 24 hours. Sorry for the '
+                'delay.',
+            timestamp: now.subtract(const Duration(days: 1, hours: 20)),
+            isFromUser: false,
+            authorName: 'Aman',
+          ),
+        ],
       ),
       SupportTicket(
         id: 'TCK-2039',
         topic: ContactTopic.adNotCredited,
-        message:
-            'Watched a full rewarded video task this morning but my balance '
-            "didn't update. The ad played to the end before I closed it.",
         status: SupportTicketStatus.open,
         date: now.subtract(const Duration(days: 4)),
+        messages: [
+          TicketMessage(
+            text:
+                'Watched a full rewarded video task this morning but my '
+                "balance didn't update. The ad played to the end before I "
+                'closed it.',
+            timestamp: now.subtract(const Duration(days: 4)),
+            isFromUser: true,
+          ),
+        ],
       ),
       SupportTicket(
         id: 'TCK-2022',
         topic: ContactTopic.referralCommissionMissing,
-        message:
-            'My referral went Premium two weeks ago but I never received '
-            'the ₹125 commission in my wallet.',
         status: SupportTicketStatus.resolved,
         date: now.subtract(const Duration(days: 10)),
-        reply:
-            'Confirmed and credited — the commission was delayed due to a '
-            'processing backlog. It now shows in your Transactions list.',
+        messages: [
+          TicketMessage(
+            text:
+                'My referral went Premium two weeks ago but I never '
+                'received the ₹125 commission in my wallet.',
+            timestamp: now.subtract(const Duration(days: 10)),
+            isFromUser: true,
+          ),
+          TicketMessage(
+            text:
+                'Confirmed and credited — the commission was delayed due to '
+                'a processing backlog. It now shows in your Transactions '
+                'list.',
+            timestamp: now.subtract(const Duration(days: 9, hours: 14)),
+            isFromUser: false,
+            authorName: 'Priya',
+          ),
+          TicketMessage(
+            text: 'Thank you, I can see it now!',
+            timestamp: now.subtract(const Duration(days: 9, hours: 10)),
+            isFromUser: true,
+          ),
+        ],
       ),
       SupportTicket(
         id: 'TCK-2005',
         topic: ContactTopic.accountAccess,
-        message:
-            "I changed my phone number and can't log back in with the OTP "
-            'flow anymore. What are my options?',
         status: SupportTicketStatus.resolved,
         date: now.subtract(const Duration(days: 21)),
-        reply:
-            "We've updated your registered number manually. You should be "
-            'able to log in with your new number now.',
+        messages: [
+          TicketMessage(
+            text:
+                "I changed my phone number and can't log back in with the "
+                'OTP flow anymore. What are my options?',
+            timestamp: now.subtract(const Duration(days: 21)),
+            isFromUser: true,
+          ),
+          TicketMessage(
+            text:
+                "We've updated your registered number manually. You should "
+                'be able to log in with your new number now.',
+            timestamp: now.subtract(const Duration(days: 20, hours: 16)),
+            isFromUser: false,
+            authorName: 'Aman',
+          ),
+        ],
       ),
     ];
   }
@@ -74,9 +121,19 @@ class SupportService {
     return SupportTicket(
       id: id,
       topic: topic,
-      message: message,
       status: SupportTicketStatus.open,
       date: DateTime.now(),
+      messages: [
+        TicketMessage(text: message, timestamp: DateTime.now(), isFromUser: true),
+      ],
     );
+  }
+
+  /// Appends the user's reply — doesn't change ticket status; a real backend
+  /// would likely flip it back to "awaiting support," but there's no
+  /// support-side simulation to reply again here yet.
+  Future<TicketMessage> sendReply(String text) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    return TicketMessage(text: text, timestamp: DateTime.now(), isFromUser: true);
   }
 }

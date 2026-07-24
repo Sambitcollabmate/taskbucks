@@ -7,10 +7,13 @@ import 'widgets/faq_section.dart';
 
 const _tasksFaq = [
   FaqEntry(
-    'How many tasks can I do per day?',
-    'Free accounts get 25 video-ad tasks a day; Premium members get 30 — '
-        'both at the same ₹/task rate. Unused tasks don\'t carry over to '
-        'the next day.',
+    'Why only 25 tasks a day?',
+    'A fixed daily set keeps payouts predictable and sustainable for '
+        'everyone. Premium members get 30/day, at the same ₹/task rate.',
+  ),
+  FaqEntry(
+    'How much does each task pay?',
+    '₹100 per task — complete all 25 and earn up to ₹2,500 a day.',
   ),
   FaqEntry(
     'When do my daily tasks reset?',
@@ -18,10 +21,10 @@ const _tasksFaq = [
         "there's no rollover.",
   ),
   FaqEntry(
-    "Why didn't my task credit after I watched the ad?",
-    'Credit only fires once the ad finishes playing to the end — not on '
-        'tap or open. Closing or skipping early means no credit for that '
-        'task.',
+    "Why can't I skip the ad?",
+    'Your reward is funded by the advertiser paying for a full view — '
+        'skipping early means no reward can be credited. Credit only fires '
+        'once the ad finishes playing to the end, not on tap or open.',
   ),
   FaqEntry(
     'Can I get more tasks by using multiple accounts?',
@@ -34,7 +37,7 @@ const _paymentsFaq = [
   FaqEntry(
     'When do I get paid?',
     "Withdrawals are processed once a month, on the 1st, straight to your "
-        "UPI ID or a verified bank account.",
+        "UPI ID or a verified bank account (IMPS transfer).",
   ),
   FaqEntry(
     'Can I withdraw whenever I want?',
@@ -43,8 +46,8 @@ const _paymentsFaq = [
   ),
   FaqEntry(
     'Which payment methods do you support?',
-    'UPI and verified bank account transfer only — no PayPal, no wallets, '
-        'no other payout methods.',
+    'UPI (Google Pay, PhonePe, Paytm) and verified bank account transfer '
+        'only — no PayPal, no wallets, no other payout methods.',
   ),
   FaqEntry(
     'What if I have the wrong UPI ID saved?',

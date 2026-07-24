@@ -62,6 +62,7 @@ class WeeklyBonusCard extends StatelessWidget {
         icon: LucideIcons.gift,
         iconColor: AppColors.earningsGreen,
         title: 'Weekly referral bonus',
+        highlighted: true,
         child: Text(
           '🎉 ${summary.bonusAdSlotsAvailable} bonus ad slots are active '
           'this week. Head to Tasks to watch them, in any order, any '
@@ -118,12 +119,14 @@ class _CardShell extends StatelessWidget {
   final Color iconColor;
   final String title;
   final Widget child;
+  final bool highlighted;
 
   const _CardShell({
     required this.icon,
     required this.iconColor,
     required this.title,
     required this.child,
+    this.highlighted = false,
   });
 
   @override
@@ -131,11 +134,26 @@ class _CardShell extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        gradient: highlighted
+            ? LinearGradient(
+                colors: [
+                  AppColors.earningsGreen.withValues(alpha: 0.14),
+                  AppColors.earningsGreen.withValues(alpha: 0.04),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : null,
+        color: highlighted ? null : AppColors.cardBackground,
         borderRadius: BorderRadius.circular(18),
+        border: highlighted
+            ? Border.all(color: AppColors.earningsGreen.withValues(alpha: 0.35))
+            : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: highlighted
+                ? AppColors.earningsGreen.withValues(alpha: 0.15)
+                : Colors.black.withValues(alpha: 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

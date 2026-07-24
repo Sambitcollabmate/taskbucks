@@ -10,6 +10,9 @@ class SettingsData {
   final bool isUpiDefault;
   final String bankAccountMasked;
   final bool twoStepEnabled;
+  final bool earningsPushEnabled;
+  final bool accountPushEnabled;
+  final bool promotionsPushEnabled;
   final String? imagePath;
 
   const SettingsData({
@@ -19,6 +22,9 @@ class SettingsData {
     required this.isUpiDefault,
     required this.bankAccountMasked,
     required this.twoStepEnabled,
+    required this.earningsPushEnabled,
+    required this.accountPushEnabled,
+    required this.promotionsPushEnabled,
     this.imagePath,
   });
 
@@ -29,6 +35,9 @@ class SettingsData {
     bool? isUpiDefault,
     String? bankAccountMasked,
     bool? twoStepEnabled,
+    bool? earningsPushEnabled,
+    bool? accountPushEnabled,
+    bool? promotionsPushEnabled,
     // Wrapped in a sentinel so passing `imagePath: null` explicitly clears
     // it, while omitting the argument leaves the current value unchanged.
     Object? imagePath = _unset,
@@ -40,6 +49,9 @@ class SettingsData {
       isUpiDefault: isUpiDefault ?? this.isUpiDefault,
       bankAccountMasked: bankAccountMasked ?? this.bankAccountMasked,
       twoStepEnabled: twoStepEnabled ?? this.twoStepEnabled,
+      earningsPushEnabled: earningsPushEnabled ?? this.earningsPushEnabled,
+      accountPushEnabled: accountPushEnabled ?? this.accountPushEnabled,
+      promotionsPushEnabled: promotionsPushEnabled ?? this.promotionsPushEnabled,
       imagePath: imagePath == _unset ? this.imagePath : imagePath as String?,
     );
   }

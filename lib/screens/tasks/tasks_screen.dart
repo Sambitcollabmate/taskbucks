@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../providers/balance_provider.dart';
 import '../../providers/tasks_provider.dart';
 import '../../shared/widgets/notice_card.dart';
+import '../../shared/widgets/notification_permission_sheet.dart';
 import 'widgets/bonus_ads_section.dart';
 import 'widgets/featured_task_card.dart';
 import 'widgets/reset_countdown.dart';
@@ -27,6 +28,15 @@ class TasksScreen extends StatelessWidget {
 
 class _TasksScreenBody extends StatelessWidget {
   const _TasksScreenBody();
+
+  // Completing a task is the deliberate, explained moment (PROJECT.md
+  // Notifications doc, Section 1.1) the app asks for the POST_NOTIFICATIONS
+  // permission — never an unexplained system dialog on launch. No-ops
+  // after the first time, regardless of how the user answered.
+  void _onCompleteTask(BuildContext context, TasksProvider provider) {
+    provider.completeCurrentTask();
+    maybeShowNotificationPermissionSheet(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,14 +77,15 @@ class _TasksScreenBody extends StatelessWidget {
                   const SizedBox(height: 16),
                   const NoticeCard(
                     message:
-                        'Ads play in full and can\'t be skipped. Your reward '
-                        'credits only after the video finishes.',
+                        'Each task plays one short video ad. The ad cannot '
+                        'be skipped or minimized — stay on screen until it '
+                        'finishes to get credited.',
                   ),
                   if (currentTask != null) ...[
                     const SizedBox(height: 16),
                     FeaturedTaskCard(
                       task: currentTask,
-                      onWatchNow: provider.completeCurrentTask,
+                      onWatchNow: () => _onCompleteTask(context, provider),
                     ),
                   ],
                   const SizedBox(height: 20),
@@ -82,15 +93,13 @@ class _TasksScreenBody extends StatelessWidget {
                   const SizedBox(height: 12),
                   TaskGrid(
                     tasks: summary.tasks,
-                    onTapCurrent: provider.completeCurrentTask,
+                    onTapCurrent: () => _onCompleteTask(context, provider),
                   ),
-                  if (summary.bonusSlots.isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    BonusAdsSection(
-                      slots: summary.bonusSlots,
-                      onWatch: provider.completeBonusSlot,
-                    ),
-                  ],
+                  const SizedBox(height: 20),
+                  BonusAdsSection(
+                    slots: summary.bonusSlots,
+                    onWatch: provider.completeBonusSlot,
+                  ),
                 ],
               ),
             );
