@@ -10,11 +10,11 @@ import 'providers/language_provider.dart';
 import 'providers/notifications_provider.dart';
 
 void main() {
-  runApp(const TaskBucksApp());
+  runApp(const EarnBucksApp());
 }
 
-class TaskBucksApp extends StatelessWidget {
-  const TaskBucksApp({super.key});
+class EarnBucksApp extends StatelessWidget {
+  const EarnBucksApp({super.key});
 
   @override
   Widget build(BuildContext context) {

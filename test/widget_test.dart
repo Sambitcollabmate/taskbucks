@@ -6,7 +6,7 @@ void main() {
   testWidgets('Home screen renders the balance hero card', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const TaskBucksApp());
+    await tester.pumpWidget(const EarnBucksApp());
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('Total balance'), findsOneWidget);

@@ -38,8 +38,10 @@ live only in chat history.
   is a reserved keyword in Kotlin and would fail to compile as a package
   segment. Not touched: the `.iml`/`.idea` IDE workspace files (cosmetic,
   local to whoever has the project open, not part of the built app) and the
-  `TaskBucksApp` Dart class name in `main.dart` (an internal identifier, not
-  user-facing).
+  `TaskBucksApp` Dart class name in `main.dart`, since renamed to
+  `EarnBucksApp` (2026-07-27) for consistency with the rest of the rebrand —
+  it was an internal identifier, not user-facing, so this was low priority
+  and left for later.
 
 ---
 
@@ -259,6 +261,7 @@ the Profile-vs-Settings ambiguity flagged in Section 3.
 lib/
   main.dart
   core/
+    config/           (app_config.dart — AppConfig.brandName etc.)
     theme/          (app_colors.dart, app_theme.dart)
     router/          (go_router config, auth redirect logic)
   data/
@@ -277,6 +280,9 @@ lib/
     trust/            (how_it_works, about, faq, contact, payment_proofs)
     support/          (support_tickets)
     withdraw/
+    notifications/
+    transactions/
+    upgrade/
   shared/
     widgets/          (components reused across 3+ screens — see 6.3)
 ```
@@ -536,7 +542,7 @@ patterns, so later screens are mostly assembly, not new invention.
   bullet: 30 tasks/day, same ₹/task rate, cancel-anytime-until-cycle-end),
   and two `notice_card` disclosures (billing/cancellation mechanics; the
   referral-linkage note — completing the purchase is what credits the
-  referrer's ₹15, never signup alone). Reads subscription state from
+  referrer's ₹125, never signup alone). Reads subscription state from
   `ProfileProvider` (`UserProfile.tier`, same premium-check pattern as the
   Home/Profile upgrade banners) — Premium users see an active-status row
   instead of the Subscribe button, not just a disabled one. Subscribe
@@ -585,7 +591,7 @@ patterns, so later screens are mostly assembly, not new invention.
 - [x] How It Works screen. Back button, intro line, `HowItWorksStepCard`
   (4-step numbered card, gradient number badges — distinct from Welcome's
   `HowItWorksList` teaser, which keeps its flat solid-color badges), two
-  `TrustInfoCard`s (Refer & Earn's ₹15/purchase-triggered disclosure copied
+  `TrustInfoCard`s (Refer & Earn's ₹125/purchase-triggered disclosure copied
   verbatim from Refer & Earn's `NoticeCard`; Go Premium's 3-bullet checklist
   copied verbatim from Upgrade's `PremiumChecklistCard`, so numbers never
   drift between screens). Closing "Create free account" `GradientCtaButton`
@@ -622,7 +628,7 @@ patterns, so later screens are mostly assembly, not new invention.
   section was open (`FaqSection`'s own `_expandedIndex` state), sections are
   independent of each other. All copy is grounded in Section 2's locked
   business rules (task caps, ad-credit-on-completion-only, monthly UPI/bank
-  payout, ₹15 purchase-triggered referral commission with refund reversal,
+  payout, ₹125 purchase-triggered referral commission with refund reversal,
   Premium's 30 tasks/day) — no invented policies (e.g. no minimum-withdrawal
   FAQ, since no such rule exists yet). Closing "Contact support"
   `GradientCtaButton` now pushes `/contact` (updated once that screen
