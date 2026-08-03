@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user_profile.dart';
 import '../../providers/profile_provider.dart';
@@ -9,27 +11,53 @@ import '../../shared/widgets/notice_card.dart';
 import 'widgets/premium_checklist_card.dart';
 import 'widgets/premium_price_card.dart';
 
+String _formatDate(DateTime date) => DateFormat('d MMM yyyy').format(date);
+
 class UpgradeScreen extends StatelessWidget {
   const UpgradeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ProfileProvider(),
-      child: const _UpgradeScreenBody(),
-    );
+    // ProfileProvider is a shared app-wide instance (main.dart) — see
+    // ProfileScreen's doc comment. Subscribing/cancelling here updates the
+    // same instance the Profile tab watches, so it no longer goes stale.
+    return const _UpgradeScreenBody();
   }
 }
 
 class _UpgradeScreenBody extends StatelessWidget {
   const _UpgradeScreenBody();
 
-  void _onSubscribe(BuildContext context) {
-    // TODO: wire real Google Play Billing (see PROJECT.md Phase 7, requires
-    // Play Console app listing)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Coming soon')),
-    );
+  Future<void> _onSubscribe(BuildContext context, ProfileProvider provider) async {
+    try {
+      await provider.subscribeToPremium();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("You're now Premium!")),
+        );
+      }
+    } on ApiException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
+  }
+
+  Future<void> _onCancel(BuildContext context, ProfileProvider provider) async {
+    try {
+      await provider.cancelPremium();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Subscription cancelled — benefits continue until the cycle ends.'),
+          ),
+        );
+      }
+    } on ApiException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
   }
 
   @override
@@ -68,7 +96,7 @@ class _UpgradeScreenBody extends StatelessWidget {
                 const SizedBox(height: 20),
                 const PremiumPriceCard(),
                 const SizedBox(height: 16),
-                if (isPremium)
+                if (isPremium) ...[
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -86,11 +114,13 @@ class _UpgradeScreenBody extends StatelessWidget {
                           color: AppColors.earningsGreen,
                         ),
                         const SizedBox(width: 10),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'You\'re on Premium. Manage or cancel from '
-                            'Profile → Manage subscription.',
-                            style: TextStyle(
+                            profile.premiumCancelPending
+                                ? "Cancellation scheduled. Benefits continue until "
+                                    '${profile.premiumExpiresAt != null ? _formatDate(profile.premiumExpiresAt!) : 'the end of this cycle'}.'
+                                : "You're on Premium.",
+                            style: const TextStyle(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
@@ -100,8 +130,27 @@ class _UpgradeScreenBody extends StatelessWidget {
                         ),
                       ],
                     ),
-                  )
-                else
+                  ),
+                  if (!profile.premiumCancelPending) ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: OutlinedButton(
+                        onPressed: provider.isProcessingBilling
+                            ? null
+                            : () => _onCancel(context, provider),
+                        child: provider.isProcessingBilling
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Text('Cancel subscription'),
+                      ),
+                    ),
+                  ],
+                ] else
                   SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -120,10 +169,21 @@ class _UpgradeScreenBody extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          onTap: () => _onSubscribe(context),
+                          onTap: provider.isProcessingBilling
+                              ? null
+                              : () => _onSubscribe(context, provider),
                           borderRadius: BorderRadius.circular(14),
-                          child: const Center(
-                            child: Text(
+                          child: Center(
+                            child: provider.isProcessingBilling
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.4,
+                                      valueColor: AlwaysStoppedAnimation(Colors.white),
+                                    ),
+                                  )
+                                : const Text(
                               'Subscribe — ₹49/month',
                               style: TextStyle(
                                 fontSize: 15,
