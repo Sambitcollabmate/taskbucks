@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/balance_provider.dart';
 import '../../providers/tasks_provider.dart';
@@ -33,9 +34,25 @@ class _TasksScreenBody extends StatelessWidget {
   // Notifications doc, Section 1.1) the app asks for the POST_NOTIFICATIONS
   // permission — never an unexplained system dialog on launch. No-ops
   // after the first time, regardless of how the user answered.
-  void _onCompleteTask(BuildContext context, TasksProvider provider) {
-    provider.completeCurrentTask();
-    maybeShowNotificationPermissionSheet(context);
+  Future<void> _onCompleteTask(BuildContext context, TasksProvider provider) async {
+    try {
+      await provider.completeCurrentTask();
+      if (context.mounted) maybeShowNotificationPermissionSheet(context);
+    } on ApiException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
+  }
+
+  Future<void> _onWatchBonusSlot(BuildContext context, TasksProvider provider, int id) async {
+    try {
+      await provider.completeBonusSlot(id);
+    } on ApiException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
   }
 
   @override
@@ -98,7 +115,7 @@ class _TasksScreenBody extends StatelessWidget {
                   const SizedBox(height: 20),
                   BonusAdsSection(
                     slots: summary.bonusSlots,
-                    onWatch: provider.completeBonusSlot,
+                    onWatch: (id) => _onWatchBonusSlot(context, provider, id),
                   ),
                 ],
               ),
