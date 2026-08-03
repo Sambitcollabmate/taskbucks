@@ -26,7 +26,11 @@ class PaymentMethod {
 
 class WalletSummary {
   final WalletBreakdown breakdown;
-  final PaymentMethod paymentMethod;
+  // Null when the user hasn't added a UPI ID yet (GET /v1/wallet's
+  // payment_method.upi_id can be null) — no bank-account UI exists yet
+  // (PROJECT.md/api_requirements.md §6), so UPI is the only method this
+  // models.
+  final PaymentMethod? paymentMethod;
   final List<Transaction> recentActivity;
 
   const WalletSummary({

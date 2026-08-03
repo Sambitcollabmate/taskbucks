@@ -14,11 +14,10 @@ const _pageSize = 8;
 /// that watch this rebuild whenever [notifyListeners] fires.
 ///
 /// Filtering and infinite-scroll pagination ([loadMore], called by the
-/// screen as the list nears its scroll end) both happen client-side over
-/// the full fake history returned by [TransactionsService]. TODO: once a
-/// real Laravel endpoint exists, move both to server-side query params
-/// instead of loading the whole history and slicing it here (PROJECT.md
-/// Section 4).
+/// screen as the list nears its scroll end) are both server-side now
+/// (`GET /v1/transactions`, api_requirements.md §5) — switching [setFilter]
+/// restarts from page 1 against the new filter rather than re-slicing a
+/// locally-held full history.
 class TransactionsProvider extends ChangeNotifier {
   final TransactionsService _service;
 
@@ -28,42 +27,46 @@ class TransactionsProvider extends ChangeNotifier {
     load();
   }
 
-  List<Transaction> _all = [];
+  List<Transaction> _items = [];
   bool _isLoading = false;
+  bool _isLoadingMore = false;
   TransactionFilter _filter;
-  int _visibleCount = _pageSize;
+  int _page = 1;
+  bool _hasMore = false;
 
   bool get isLoading => _isLoading;
   TransactionFilter get filter => _filter;
+  List<Transaction> get visibleTransactions => _items;
+  bool get hasMore => _hasMore;
 
-  List<Transaction> get _filtered {
+  ({String? type, String? category, List<String>? categories}) get _filterParams {
     switch (_filter) {
       case TransactionFilter.all:
-        return _all;
+        return (type: null, category: null, categories: null);
       case TransactionFilter.tasks:
-        return _all
-            .where(
-              (t) =>
-                  t.category == TransactionCategory.task ||
-                  t.category == TransactionCategory.ad,
-            )
-            .toList();
+        return (type: null, category: null, categories: const ['task', 'ad']);
       case TransactionFilter.referrals:
-        return _all.where((t) => t.category == TransactionCategory.referral).toList();
+        return (type: null, category: 'referral', categories: null);
       case TransactionFilter.withdrawals:
-        return _all.where((t) => t.category == TransactionCategory.withdrawal).toList();
+        return (type: null, category: 'withdrawal', categories: null);
     }
   }
-
-  List<Transaction> get visibleTransactions => _filtered.take(_visibleCount).toList();
-
-  bool get hasMore => _visibleCount < _filtered.length;
 
   Future<void> load() async {
     _isLoading = true;
     notifyListeners();
 
-    _all = await _service.fetchTransactions();
+    final params = _filterParams;
+    final result = await _service.fetchPage(
+      page: 1,
+      perPage: _pageSize,
+      type: params.type,
+      category: params.category,
+      categories: params.categories,
+    );
+    _items = result.items;
+    _page = result.currentPage;
+    _hasMore = result.hasMore;
 
     _isLoading = false;
     notifyListeners();
@@ -72,12 +75,27 @@ class TransactionsProvider extends ChangeNotifier {
   void setFilter(TransactionFilter filter) {
     if (filter == _filter) return;
     _filter = filter;
-    _visibleCount = _pageSize;
-    notifyListeners();
+    load();
   }
 
-  void loadMore() {
-    _visibleCount += _pageSize;
+  Future<void> loadMore() async {
+    if (_isLoadingMore || !_hasMore) return;
+    _isLoadingMore = true;
+    notifyListeners();
+
+    final params = _filterParams;
+    final result = await _service.fetchPage(
+      page: _page + 1,
+      perPage: _pageSize,
+      type: params.type,
+      category: params.category,
+      categories: params.categories,
+    );
+    _items = [..._items, ...result.items];
+    _page = result.currentPage;
+    _hasMore = result.hasMore;
+
+    _isLoadingMore = false;
     notifyListeners();
   }
 }

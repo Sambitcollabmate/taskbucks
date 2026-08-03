@@ -26,7 +26,7 @@ class WalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => WalletProvider(),
+      create: (context) => WalletProvider(balanceProvider: context.read<BalanceProvider>()),
       child: const _WalletScreenBody(),
     );
   }
@@ -80,13 +80,25 @@ class _WalletScreenBody extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text('Payment method', style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
-                  PaymentMethodCard(
-                    method: summary.paymentMethod,
-                    onTap: () => context.push(
-                      '/settings',
-                      extra: SettingsSection.payment,
+                  if (summary.paymentMethod != null)
+                    PaymentMethodCard(
+                      method: summary.paymentMethod!,
+                      onTap: () => context.push(
+                        '/settings',
+                        extra: SettingsSection.payment,
+                      ),
+                    )
+                  else
+                    GestureDetector(
+                      onTap: () => context.push(
+                        '/settings',
+                        extra: SettingsSection.payment,
+                      ),
+                      child: const NoticeCard(
+                        variant: NoticeVariant.warn,
+                        message: 'Add a UPI ID in Settings to receive payouts.',
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 20),
                   Text('Recent activity', style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),

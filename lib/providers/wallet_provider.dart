@@ -2,13 +2,16 @@ import 'package:flutter/foundation.dart';
 
 import '../data/models/wallet_summary.dart';
 import '../data/services/wallet_service.dart';
+import 'balance_provider.dart';
 
 /// Holds Wallet screen state — same role as [HomeProvider]/[TasksProvider]:
 /// widgets that watch this rebuild whenever [notifyListeners] fires.
 class WalletProvider extends ChangeNotifier {
   final WalletService _service;
+  final BalanceProvider _balanceProvider;
 
-  WalletProvider({WalletService? service}) : _service = service ?? WalletService() {
+  WalletProvider({required this._balanceProvider, WalletService? service})
+      : _service = service ?? WalletService() {
     load();
   }
 
@@ -22,7 +25,9 @@ class WalletProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    _summary = await _service.fetchWalletSummary();
+    final result = await _service.fetchWalletSummary();
+    _summary = result.summary;
+    _balanceProvider.setBalance(result.balance);
 
     _isLoading = false;
     notifyListeners();

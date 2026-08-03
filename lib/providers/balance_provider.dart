@@ -18,6 +18,17 @@ class BalanceProvider extends ChangeNotifier {
     _balance += amount;
     notifyListeners();
   }
+
+  /// Applies the real `balance` figure from `GET /v1/wallet` or
+  /// `GET /v1/home` (api_requirements.md) — called by
+  /// `WalletProvider`/`HomeProvider` after each fetch so this stays the
+  /// server's authoritative number instead of only ever being
+  /// locally-incremented via [credit].
+  void setBalance(double balance) {
+    if (_balance == balance) return;
+    _balance = balance;
+    notifyListeners();
+  }
 }
 
 /// One app-wide instance (PROJECT.md pattern also used for `authProvider`
