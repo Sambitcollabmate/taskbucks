@@ -2,13 +2,16 @@ import 'package:flutter/foundation.dart';
 
 import '../data/models/home_summary.dart';
 import '../data/services/home_service.dart';
+import 'balance_provider.dart';
 
 /// Holds Home screen state. Similar role to a small React context/store:
 /// widgets that `watch` this get rebuilt whenever [notifyListeners] fires.
 class HomeProvider extends ChangeNotifier {
   final HomeService _service;
+  final BalanceProvider _balanceProvider;
 
-  HomeProvider({HomeService? service}) : _service = service ?? HomeService() {
+  HomeProvider({required this._balanceProvider, HomeService? service})
+      : _service = service ?? HomeService() {
     load();
   }
 
@@ -22,7 +25,9 @@ class HomeProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    _summary = await _service.fetchHomeSummary();
+    final result = await _service.fetchHomeSummary();
+    _summary = result.summary;
+    _balanceProvider.setBalance(result.balance);
 
     _isLoading = false;
     notifyListeners();

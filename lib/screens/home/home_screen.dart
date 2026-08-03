@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => HomeProvider(),
+      create: (context) => HomeProvider(balanceProvider: context.read<BalanceProvider>()),
       child: const _HomeScreenBody(),
     );
   }
