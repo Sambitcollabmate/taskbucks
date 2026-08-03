@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/withdraw_summary.dart';
 import '../../providers/balance_provider.dart';
@@ -9,6 +11,7 @@ import '../../providers/withdraw_provider.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
 import '../../shared/widgets/notice_card.dart';
 import '../auth/widgets/auth_text_field.dart';
+import '../settings/settings_screen.dart';
 import 'widgets/withdraw_method_row.dart';
 
 /// Push-only screen (PROJECT.md 6.1), reached from Wallet's Withdraw
@@ -23,7 +26,7 @@ class WithdrawScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => WithdrawProvider(),
+      create: (context) => WithdrawProvider(balanceProvider: context.read<BalanceProvider>()),
       child: const _WithdrawScreenBody(),
     );
   }
@@ -38,7 +41,7 @@ class _WithdrawScreenBody extends StatefulWidget {
 
 class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
   final _amountController = TextEditingController();
-  WithdrawMethodType _method = WithdrawMethodType.upi;
+  final _method = WithdrawMethodType.upi;
   bool _prefilled = false;
 
   @override
@@ -71,17 +74,21 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
       return;
     }
 
-    await provider.queueWithdrawal(amount: amount, method: _method);
-    if (!mounted) return;
-
-    final dateFormat = DateFormat('d MMM yyyy');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Withdrawal requested — queued for the ${dateFormat.format(nextPayoutDate())} payout cycle.',
+    try {
+      await provider.queueWithdrawal(amount: amount, method: _method);
+      if (!mounted) return;
+      final dateFormat = DateFormat('d MMM yyyy');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Withdrawal requested — queued for the ${dateFormat.format(nextPayoutDate())} payout cycle.',
+          ),
         ),
-      ),
-    );
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+    }
   }
 
   @override
@@ -163,22 +170,26 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                WithdrawMethodRow(
-                  type: WithdrawMethodType.upi,
-                  label: 'UPI (Google Pay / PhonePe / Paytm)',
-                  detail: summary.upiId,
-                  selected: _method == WithdrawMethodType.upi,
-                  onTap: () => setState(() => _method = WithdrawMethodType.upi),
-                ),
-                const SizedBox(height: 10),
-                WithdrawMethodRow(
-                  type: WithdrawMethodType.bank,
-                  label: 'Bank transfer (IMPS)',
-                  detail: summary.bankAccountMasked,
-                  selected: _method == WithdrawMethodType.bank,
-                  onTap: () => setState(() => _method = WithdrawMethodType.bank),
-                ),
-                if (_method == WithdrawMethodType.upi && summary.isUpiRecentlyAdded) ...[
+                if (summary.upiId != null)
+                  WithdrawMethodRow(
+                    type: WithdrawMethodType.upi,
+                    label: 'UPI (Google Pay / PhonePe / Paytm)',
+                    detail: summary.upiId!,
+                    selected: true,
+                    onTap: () {},
+                  )
+                else
+                  GestureDetector(
+                    onTap: () => context.push('/settings', extra: SettingsSection.payment),
+                    child: const NoticeCard(
+                      variant: NoticeVariant.warn,
+                      message: 'Add a UPI ID in Settings before requesting a withdrawal.',
+                    ),
+                  ),
+                // No bank-account add/edit flow exists yet, so `bank` isn't
+                // a selectable option here (api_requirements.md §6,
+                // 2026-07-28 decision) — only UPI is offered.
+                if (summary.isUpiRecentlyAdded) ...[
                   const SizedBox(height: 12),
                   const NoticeCard(
                     variant: NoticeVariant.warn,

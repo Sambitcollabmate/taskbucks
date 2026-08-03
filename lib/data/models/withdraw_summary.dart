@@ -1,15 +1,20 @@
-/// Withdrawals only go to UPI or a verified bank account (PROJECT.md 2),
-/// never PayPal/Payoneer.
+/// Withdrawals only go to UPI (PROJECT.md 2) — `bank` stays in the enum for
+/// forward-compat (matches the DB's `method` column, api_requirements.md
+/// §6) but isn't a selectable/submittable option in the UI yet: no
+/// add/edit-bank-account flow exists, and the backend rejects anything but
+/// `upi` (`RequestWithdrawalRequest`).
 enum WithdrawMethodType { upi, bank }
 
-/// Fake data backing the Withdraw screen (PROJECT.md Phase 4). Available
-/// balance itself isn't stored here: it comes from the shared
-/// `BalanceProvider`, same single-source-of-truth fix Home/Wallet already
-/// use, rather than a 4th independent copy of the number.
+/// Backs the Withdraw screen (api_requirements.md §6). Available balance
+/// itself isn't stored here: it comes from the shared `BalanceProvider`,
+/// same single-source-of-truth fix Home/Wallet already use, rather than a
+/// 4th independent copy of the number.
 class WithdrawSummary {
-  final String upiId;
-  final DateTime upiAddedAt;
-  final String bankAccountMasked;
+  // Null until the user adds a UPI ID in Settings — GET /v1/withdrawals'
+  // upi_id/upi_added_at are both nullable.
+  final String? upiId;
+  final DateTime? upiAddedAt;
+  final String? bankAccountMasked;
 
   const WithdrawSummary({
     required this.upiId,
@@ -21,7 +26,7 @@ class WithdrawSummary {
   /// safeguard. The Withdraw screen only surfaces this as a notice; real
   /// enforcement (and the auto-retry it mentions) happens server-side.
   bool get isUpiRecentlyAdded =>
-      DateTime.now().difference(upiAddedAt) < const Duration(hours: 24);
+      upiAddedAt != null && DateTime.now().difference(upiAddedAt!) < const Duration(hours: 24);
 }
 
 /// Withdrawals are processed once a month, on the 1st (PROJECT.md 2). If

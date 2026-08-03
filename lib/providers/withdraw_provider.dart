@@ -2,12 +2,15 @@ import 'package:flutter/foundation.dart';
 
 import '../data/models/withdraw_summary.dart';
 import '../data/services/withdraw_service.dart';
+import 'balance_provider.dart';
 
 /// Holds Withdraw screen state — same role as [WalletProvider]/[TasksProvider].
 class WithdrawProvider extends ChangeNotifier {
   final WithdrawService _service;
+  final BalanceProvider _balanceProvider;
 
-  WithdrawProvider({WithdrawService? service}) : _service = service ?? WithdrawService() {
+  WithdrawProvider({required this._balanceProvider, WithdrawService? service})
+      : _service = service ?? WithdrawService() {
     load();
   }
 
@@ -29,6 +32,9 @@ class WithdrawProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Lets the caller's [ApiException] (invalid amount, no UPI set, recent-
+  /// UPI cap, etc. — `WithdrawalController::store`) propagate rather than
+  /// swallowing it, so the screen can show the server's actual message.
   Future<void> queueWithdrawal({
     required double amount,
     required WithdrawMethodType method,
@@ -36,9 +42,12 @@ class WithdrawProvider extends ChangeNotifier {
     _isSubmitting = true;
     notifyListeners();
 
-    await _service.queueWithdrawal(amount: amount, method: method);
-
-    _isSubmitting = false;
-    notifyListeners();
+    try {
+      final result = await _service.queueWithdrawal(amount: amount, method: method);
+      _balanceProvider.setBalance(result.availableBalance);
+    } finally {
+      _isSubmitting = false;
+      notifyListeners();
+    }
   }
 }

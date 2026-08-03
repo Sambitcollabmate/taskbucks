@@ -1,29 +1,43 @@
+import '../../core/network/api_client.dart';
 import '../models/withdraw_summary.dart';
 
-/// Fake data source for the Withdraw screen. Returns the same shape the
-/// real Laravel endpoint will return once it exists (see PROJECT.md
-/// Section 4/7). `upiAddedAt` is set inside the last 24 hours so the
-/// new-UPI ₹5,000 notice shows up without extra setup; push it further
-/// into the past to see the steady-state (no notice) case.
-class WithdrawService {
-  Future<WithdrawSummary> fetchWithdrawSummary() async {
-    await Future.delayed(const Duration(milliseconds: 400));
+class WithdrawalQueueResult {
+  final double availableBalance;
 
-    return WithdrawSummary(
-      upiId: 'sambit@okhdfcbank',
-      upiAddedAt: DateTime.now().subtract(const Duration(hours: 6)),
-      bankAccountMasked: 'HDFC Bank •••• 4521',
-    );
+  const WithdrawalQueueResult({required this.availableBalance});
+}
+
+/// Real `GET`/`POST /v1/withdrawals` calls (api_requirements.md §6).
+class WithdrawService {
+  Future<WithdrawSummary> fetchWithdrawSummary() {
+    return ApiClient.call((dio) async {
+      final response = await dio.get('/withdrawals');
+      final json = response.data as Map<String, dynamic>;
+      return WithdrawSummary(
+        upiId: json['upi_id'] as String?,
+        upiAddedAt: json['upi_added_at'] == null
+            ? null
+            : DateTime.parse(json['upi_added_at'] as String),
+        bankAccountMasked: json['bank_account_masked'] as String?,
+      );
+    });
   }
 
-  Future<void> queueWithdrawal({
+  /// [method] is always `upi` in practice (see [WithdrawMethodType]'s doc
+  /// comment) — kept as a param for when `bank` becomes real.
+  Future<WithdrawalQueueResult> queueWithdrawal({
     required double amount,
     required WithdrawMethodType method,
-  }) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    // TODO: POST to a real Laravel /withdrawals endpoint once it exists
-    // (PROJECT.md Phase 7). Fake success only for now — nothing here
-    // actually deducts from BalanceProvider, since a real withdrawal
-    // wouldn't clear the balance until the payout cycle actually runs.
+  }) {
+    return ApiClient.call((dio) async {
+      final response = await dio.post('/withdrawals', data: {
+        'amount': amount,
+        'method': method.name,
+      });
+      final json = response.data as Map<String, dynamic>;
+      return WithdrawalQueueResult(
+        availableBalance: double.parse(json['available_balance'] as String),
+      );
+    });
   }
 }
