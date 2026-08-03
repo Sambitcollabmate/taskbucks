@@ -755,10 +755,64 @@ patterns, so later screens are mostly assembly, not new invention.
   works" or the rest of the scroll content changed alongside it.
 
 **Phase 7 — Backend integration**
-- Replace fake service classes with real Laravel API calls (dio)
-- Auth token handling, session persistence
-- AdMob real ad unit wiring (currently placeholder)
-- Google Play Billing real integration (currently placeholder)
+- [x] Replace fake service classes with real Laravel API calls (dio).
+  **Done 2026-08-03** — every `data/services/*` class now calls the real
+  `earnbucks-api` backend (see `api_requirements.md` there for the full
+  endpoint list/status) instead of returning fake data. Added
+  `core/network/api_client.dart` (shared `dio` instance, attaches the
+  bearer token, translates every failure into one `ApiException` type)
+  and `core/network/api_exception.dart`. `AppConfig.resolveApiBaseUrl()`
+  picks `10.0.2.2` for Android emulator vs `127.0.0.1` elsewhere,
+  overridable via `--dart-define=API_BASE_URL=...` for a physical device.
+  - Global 401 handling: `ApiClient.onUnauthorized` (set by `AuthProvider`)
+    force-logs-out locally if any authenticated request comes back 401
+    mid-session (expired/revoked token), instead of requests just silently
+    failing.
+  - `BalanceProvider`/`NotificationsProvider`/`ProfileProvider` are the
+    app's shared/singleton providers (created once in `main.dart`, same
+    pattern) — `WalletProvider`/`HomeProvider`/`TasksProvider`/
+    `WithdrawProvider` all take `BalanceProvider` as a constructor
+    dependency and call `.setBalance()` with the server's real
+    `availableBalance()` after each fetch/mutation, replacing the old
+    purely-local `.credit()` simulation.
+  - `NotificationsProvider` and `ProfileProvider` used to eagerly call
+    `load()` in their constructors — harmless with fake data, a real bug
+    once they hit authenticated endpoints as app-wide singletons
+    constructed before login. Both now load lazily; `AuthProvider` calls
+    `.load()` on login/session-restore and `.clear()` on logout instead.
+    (`ProfileProvider` was originally a separate instance per screen —
+    Profile/Upgrade/Contact each had their own copy, so subscribing to
+    Premium on Upgrade never refreshed the Profile tab underneath it.
+    Converted to a shared singleton 2026-08-03 to fix this.)
+  - Real backend gaps found and fixed *in the backend* while wiring
+    (`earnbucks-api` commits, see its `api_requirements.md`): `balance`
+    was missing from `GET /wallet`/`GET /home` (only Withdrawals exposed
+    it); the Transactions "Tasks" filter tab needed a `categories[]`
+    array param the API didn't have; `GET /profile` was missing
+    `premium_cancel_pending`/`premium_expires_at`; the weekly referral
+    bonus was activating the same week instead of the week after
+    (PROJECT.md §2 — real bug, not a frontend misread).
+  - Withdraw screen's "Bank transfer" method row was removed — the
+    backend explicitly dropped `bank` as a submittable withdrawal method
+    (no add-bank-account UI exists), so offering it in the UI would only
+    ever 422.
+- [x] Auth token handling, session persistence. **Done 2026-08-03** —
+  `data/services/auth_service.dart` covers all 7 `v1/auth/*` endpoints;
+  `AuthProvider` persists the token via `SessionService`
+  (`flutter_secure_storage`) only when "Remember me" is checked, but keeps
+  it usable in `TokenStore` for the rest of the run either way.
+- [ ] AdMob real ad unit wiring (currently placeholder) — still open, no ad
+  unit registered in the AdMob console yet. A local-dev-only bypass
+  (`POST /v1/ads/dev-simulate`, `AdMobService.simulateAdWatch()`) lets the
+  Tasks/Bonus-slot completion loop be exercised end-to-end without one;
+  swapping in the real AdMob SDK is a `// TODO` at that call site in
+  `TasksProvider`.
+- [ ] Google Play Billing real integration (currently placeholder) — still
+  open, no Play Console app listing yet. The backend's own dev-bypass
+  (`GooglePlayBillingClient`, active when `APP_ENV=local`) lets Subscribe/
+  Cancel on the Upgrade screen be tested for real against placeholder
+  purchase tokens; `BillingService.verifyPurchase()` has a matching
+  `// TODO` for the real purchase flow.
 
 **Phase 8 — Pre-launch pass**
 - Resolve every item in Section 3 (compliance/legal placeholders)
