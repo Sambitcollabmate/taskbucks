@@ -70,11 +70,13 @@ class SupportProvider extends ChangeNotifier {
     _isSendingReply = true;
     notifyListeners();
 
-    final reply = await _service.sendReply(text);
+    // The server returns the full updated ticket (all messages, including
+    // this new reply), so it replaces the local copy wholesale rather than
+    // this appending a locally-constructed message.
+    final updatedTicket = await _service.sendReply(ticketId, text);
     final index = _tickets.indexWhere((t) => t.id == ticketId);
     if (index != -1) {
-      final ticket = _tickets[index];
-      _tickets[index] = ticket.copyWith(messages: [...ticket.messages, reply]);
+      _tickets[index] = updatedTicket;
     }
 
     _isSendingReply = false;
