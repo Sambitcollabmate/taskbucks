@@ -9,6 +9,11 @@ import '../data/services/settings_service.dart';
 /// [notifyListeners] fires. Each section (Profile/Security/Payment) has
 /// its own saving flag so one section's in-flight save doesn't disable
 /// controls in the others.
+///
+/// Every mutator here lets a failed API call's [ApiException] propagate to
+/// the caller (rather than swallowing it) so the screen can show the
+/// server's actual validation message — only the loading flag is guaranteed
+/// to reset via `finally`.
 class SettingsProvider extends ChangeNotifier {
   final SettingsService _service;
 
@@ -49,39 +54,56 @@ class SettingsProvider extends ChangeNotifier {
     _isSavingProfile = true;
     notifyListeners();
 
-    // TODO: replace with a real "update profile" API call once the
-    // Laravel backend exists (PROJECT.md 4).
-    await _service.updateProfile(name: name, email: email);
-    _data = _data!.copyWith(name: name, email: email);
-
-    _isSavingProfile = false;
-    notifyListeners();
+    try {
+      // PATCH /v1/profile's response doesn't echo `email` back (only
+      // name/mobile/tier/avatar_url) — apply it locally since no exception
+      // means the server accepted it.
+      final result = await _service.updateProfile(name: name, email: email);
+      _data = _data!.copyWith(name: result.name, email: email, imagePath: result.avatarUrl);
+    } finally {
+      _isSavingProfile = false;
+      notifyListeners();
+    }
   }
 
-  Future<void> updateProfileImage(String? imagePath) async {
+  /// `path == null` means "remove" — there's no `DELETE /v1/profile/avatar`
+  /// endpoint yet (api_requirements.md only specifies upload), so removal
+  /// stays local-only for now rather than silently no-op-ing against the
+  /// server.
+  Future<void> updateProfileImage(String? path) async {
     if (_data == null) return;
     _isSavingImage = true;
     notifyListeners();
 
-    // TODO: replace with a real "upload profile image" API call once the
-    // Laravel backend exists (PROJECT.md 4).
-    await _service.updateProfileImage(imagePath);
-    _data = _data!.copyWith(imagePath: imagePath);
-
-    _isSavingImage = false;
-    notifyListeners();
+    try {
+      if (path == null) {
+        _data = _data!.copyWith(imagePath: null);
+        return;
+      }
+      final avatarUrl = await _service.updateProfileImage(path);
+      _data = _data!.copyWith(imagePath: avatarUrl);
+    } finally {
+      _isSavingImage = false;
+      notifyListeners();
+    }
   }
 
-  Future<void> updatePassword(String newPassword) async {
+  Future<void> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
     _isUpdatingPassword = true;
     notifyListeners();
 
-    // TODO: replace with a real "update password" API call once the
-    // Laravel backend exists (PROJECT.md 4).
-    await _service.updatePassword(newPassword: newPassword);
-
-    _isUpdatingPassword = false;
-    notifyListeners();
+    try {
+      await _service.updatePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      );
+    } finally {
+      _isUpdatingPassword = false;
+      notifyListeners();
+    }
   }
 
   Future<void> saveUpiId(String upiId) async {
@@ -89,13 +111,13 @@ class SettingsProvider extends ChangeNotifier {
     _isSavingUpi = true;
     notifyListeners();
 
-    // TODO: replace with a real "update UPI ID" API call once the Laravel
-    // backend exists (PROJECT.md 4).
-    await _service.updateUpiId(upiId);
-    _data = _data!.copyWith(upiId: upiId);
-
-    _isSavingUpi = false;
-    notifyListeners();
+    try {
+      await _service.updateUpiId(upiId);
+      _data = _data!.copyWith(upiId: upiId);
+    } finally {
+      _isSavingUpi = false;
+      notifyListeners();
+    }
   }
 
   /// Caller is responsible for re-auth friction on the OFF path (PROJECT.md
@@ -107,13 +129,13 @@ class SettingsProvider extends ChangeNotifier {
     _isTogglingTwoStep = true;
     notifyListeners();
 
-    // TODO: replace with a real "update two-step setting" API call once
-    // the Laravel backend exists (PROJECT.md 4).
-    await _service.setTwoStepEnabled(enabled);
-    _data = _data!.copyWith(twoStepEnabled: enabled);
-
-    _isTogglingTwoStep = false;
-    notifyListeners();
+    try {
+      await _service.setTwoStepEnabled(enabled);
+      _data = _data!.copyWith(twoStepEnabled: enabled);
+    } finally {
+      _isTogglingTwoStep = false;
+      notifyListeners();
+    }
   }
 
   /// Per-category push preference (PROJECT.md Notifications doc, Section
@@ -124,24 +146,22 @@ class SettingsProvider extends ChangeNotifier {
     _togglingPushCategory = category;
     notifyListeners();
 
-    // TODO: replace with a real "update push preference" API call once the
-    // Laravel backend exists (PROJECT.md 4) — and, once the native
-    // permission is granted, gate the OS-level channel/topic subscription
-    // on this too, not just the in-app flag.
-    await _service.setPushCategoryEnabled(category, enabled);
-    switch (category) {
-      case NotificationCategory.earnings:
-        _data = _data!.copyWith(earningsPushEnabled: enabled);
-        break;
-      case NotificationCategory.account:
-        _data = _data!.copyWith(accountPushEnabled: enabled);
-        break;
-      case NotificationCategory.promotions:
-        _data = _data!.copyWith(promotionsPushEnabled: enabled);
-        break;
+    try {
+      await _service.setPushCategoryEnabled(category, enabled);
+      switch (category) {
+        case NotificationCategory.earnings:
+          _data = _data!.copyWith(earningsPushEnabled: enabled);
+          break;
+        case NotificationCategory.account:
+          _data = _data!.copyWith(accountPushEnabled: enabled);
+          break;
+        case NotificationCategory.promotions:
+          _data = _data!.copyWith(promotionsPushEnabled: enabled);
+          break;
+      }
+    } finally {
+      _togglingPushCategory = null;
+      notifyListeners();
     }
-
-    _togglingPushCategory = null;
-    notifyListeners();
   }
 }

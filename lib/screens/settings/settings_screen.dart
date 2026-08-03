@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/notification_type.dart';
 import '../../providers/settings_provider.dart';
@@ -42,6 +43,7 @@ class _SettingsScreenBody extends StatefulWidget {
 class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
 
   final _profileKey = GlobalKey();
@@ -50,12 +52,15 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
 
   bool _controllersInitialized = false;
   bool _scrolledToInitialSection = false;
+  bool _obscureCurrentPassword = true;
   bool _obscureNewPassword = true;
+  String? _passwordError;
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _currentPasswordController.dispose();
     _newPasswordController.dispose();
     super.dispose();
   }
@@ -68,6 +73,22 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
         return _securityKey;
       case SettingsSection.payment:
         return _paymentKey;
+    }
+  }
+
+  /// Runs a provider mutation and shows a snackbar either way — a success
+  /// message, or the server's actual error instead of a false "it worked".
+  Future<void> _runWithFeedback(
+    Future<void> Function() action, {
+    required String successMessage,
+  }) async {
+    try {
+      await action();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(successMessage)));
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
     }
   }
 
@@ -147,20 +168,12 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                           name: data.name,
                           imagePath: data.imagePath,
                           isSaving: provider.isSavingImage,
-                          onImageSelected: (path) async {
-                            await provider.updateProfileImage(path);
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    path == null
-                                        ? 'Profile photo removed'
-                                        : 'Profile photo updated',
-                                  ),
-                                ),
-                              );
-                            }
-                          },
+                          onImageSelected: (path) => _runWithFeedback(
+                            () => provider.updateProfileImage(path),
+                            successMessage: path == null
+                                ? 'Profile photo removed'
+                                : 'Profile photo updated',
+                          ),
                         ),
                         const SizedBox(height: 20),
                         AuthTextField(
@@ -181,19 +194,13 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                             label: 'Save changes',
                             isLoading: provider.isSavingProfile,
                             enabled: _nameController.text.trim().isNotEmpty,
-                            onTap: () async {
-                              await provider.saveProfile(
+                            onTap: () => _runWithFeedback(
+                              () => provider.saveProfile(
                                 name: _nameController.text.trim(),
                                 email: _emailController.text.trim(),
-                              );
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Profile updated'),
-                                  ),
-                                );
-                              }
-                            },
+                              ),
+                              successMessage: 'Profile updated',
+                            ),
                           ),
                         ),
                       ],
@@ -206,6 +213,26 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        AuthTextField(
+                          controller: _currentPasswordController,
+                          label: 'Current password',
+                          hintText: 'Your current password',
+                          obscureText: _obscureCurrentPassword,
+                          onChanged: (_) => setState(() {}),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureCurrentPassword
+                                  ? LucideIcons.eye
+                                  : LucideIcons.eyeOff,
+                              size: 18,
+                              color: AppColors.textSecondary,
+                            ),
+                            onPressed: () => setState(
+                              () => _obscureCurrentPassword = !_obscureCurrentPassword,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
                         AuthTextField(
                           controller: _newPasswordController,
                           label: 'New password',
@@ -225,25 +252,51 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                             ),
                           ),
                         ),
+                        if (_passwordError != null) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            _passwordError!,
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.danger,
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 16),
                         Align(
                           alignment: Alignment.centerRight,
                           child: _SectionButton(
                             label: 'Update password',
                             isLoading: provider.isUpdatingPassword,
-                            enabled: _newPasswordController.text.length >= 6,
+                            enabled: _currentPasswordController.text.isNotEmpty &&
+                                _newPasswordController.text.length >= 6,
                             onTap: () async {
-                              await provider.updatePassword(
-                                _newPasswordController.text,
-                              );
-                              _newPasswordController.clear();
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Password updated'),
-                                  ),
+                              setState(() => _passwordError = null);
+                              try {
+                                await provider.updatePassword(
+                                  currentPassword: _currentPasswordController.text,
+                                  newPassword: _newPasswordController.text,
                                 );
+                              } on ApiException catch (e) {
+                                if (context.mounted) {
+                                  setState(
+                                    () => _passwordError =
+                                        e.fieldError('current_password') ??
+                                            e.fieldError('new_password') ??
+                                            e.message,
+                                  );
+                                }
+                                return;
                               }
+                              if (!context.mounted) return;
+                              _currentPasswordController.clear();
+                              _newPasswordController.clear();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Password updated'),
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -286,14 +339,10 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                           initialValue: data.upiId,
                           isDefault: data.isUpiDefault,
                           isSaving: provider.isSavingUpi,
-                          onSave: (upiId) async {
-                            await provider.saveUpiId(upiId);
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('UPI ID updated')),
-                              );
-                            }
-                          },
+                          onSave: (upiId) => _runWithFeedback(
+                            () => provider.saveUpiId(upiId),
+                            successMessage: 'UPI ID updated',
+                          ),
                         ),
                         const SizedBox(height: 16),
                         const Divider(height: 1),

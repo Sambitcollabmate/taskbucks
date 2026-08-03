@@ -20,10 +20,10 @@ class ContactScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ProfileProvider(),
-      child: const _ContactScreenBody(),
-    );
+    // ProfileProvider is a shared app-wide instance (main.dart) — see
+    // ProfileScreen's doc comment. Pre-auth visitors just see a null
+    // profile here, which reads as "not Premium," the correct default.
+    return const _ContactScreenBody();
   }
 }
 

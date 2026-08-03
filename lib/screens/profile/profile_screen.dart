@@ -20,10 +20,11 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ProfileProvider(),
-      child: const _ProfileScreenBody(),
-    );
+    // ProfileProvider is now a shared app-wide instance (provided in
+    // main.dart, same pattern as BalanceProvider) rather than a local one
+    // created here — Upgrade/Contact read and write the same instance, so
+    // e.g. subscribing to Premium there shows up here immediately.
+    return const _ProfileScreenBody();
   }
 }
 

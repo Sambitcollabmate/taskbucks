@@ -1,18 +1,22 @@
+import '../../core/network/api_client.dart';
 import '../models/user_profile.dart';
-import 'user_avatar_store.dart';
 
-/// Fake data source for the Profile screen. Returns the same shape the
-/// real Laravel endpoint will return once it exists (see PROJECT.md
-/// Section 4/7).
+/// Real `GET /v1/profile` call (api_requirements.md §1).
 class ProfileService {
-  Future<UserProfile> fetchProfile() async {
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    return UserProfile(
-      name: 'Sambit',
-      phone: '+91 98765 43211',
-      tier: UserTier.free,
-      imagePath: UserAvatarStore.imagePath,
-    );
+  Future<UserProfile> fetchProfile() {
+    return ApiClient.call((dio) async {
+      final response = await dio.get('/profile');
+      final json = response.data as Map<String, dynamic>;
+      return UserProfile(
+        name: json['name'] as String,
+        phone: json['mobile'] as String,
+        tier: json['tier'] == 'premium' ? UserTier.premium : UserTier.free,
+        imagePath: json['avatar_url'] as String?,
+        premiumCancelPending: json['premium_cancel_pending'] as bool? ?? false,
+        premiumExpiresAt: json['premium_expires_at'] == null
+            ? null
+            : DateTime.parse(json['premium_expires_at'] as String),
+      );
+    });
   }
 }

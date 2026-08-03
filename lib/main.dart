@@ -8,6 +8,7 @@ import 'providers/auth_provider.dart';
 import 'providers/balance_provider.dart';
 import 'providers/language_provider.dart';
 import 'providers/notifications_provider.dart';
+import 'providers/profile_provider.dart';
 
 void main() {
   runApp(const EarnBucksApp());
@@ -25,6 +26,7 @@ class EarnBucksApp extends StatelessWidget {
         ChangeNotifierProvider<NotificationsProvider>.value(
           value: notificationsProvider,
         ),
+        ChangeNotifierProvider<ProfileProvider>.value(value: profileProvider),
         ChangeNotifierProvider<LanguageProvider>.value(value: languageProvider),
       ],
       child: MaterialApp.router(

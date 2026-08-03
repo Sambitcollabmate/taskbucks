@@ -113,12 +113,19 @@ class ProfileAvatarPicker extends StatelessWidget {
             alignment: Alignment.center,
             child: imagePath != null
                 ? ClipOval(
-                    child: Image.file(
-                      File(imagePath!),
-                      width: 84,
-                      height: 84,
-                      fit: BoxFit.cover,
-                    ),
+                    child: imagePath!.startsWith('http')
+                        ? Image.network(
+                            imagePath!,
+                            width: 84,
+                            height: 84,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.file(
+                            File(imagePath!),
+                            width: 84,
+                            height: 84,
+                            fit: BoxFit.cover,
+                          ),
                   )
                 : Text(
                     _initial,

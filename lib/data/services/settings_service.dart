@@ -1,58 +1,90 @@
+import 'package:dio/dio.dart';
+
+import '../../core/network/api_client.dart';
 import '../models/notification_type.dart';
 import '../models/settings_data.dart';
-import 'user_avatar_store.dart';
 
-/// Fake data source for the Settings screen. Returns the same shape the
-/// real Laravel endpoint will return once it exists (see PROJECT.md
-/// Section 4/7). Every mutator is a stubbed round-trip — `// TODO`s in
-/// [SettingsProvider] flag replacing these with real API calls.
+/// Real Laravel `v1/settings`/`v1/profile` calls (api_requirements.md §1) —
+/// replaces the fake-service convention.
 class SettingsService {
-  Future<SettingsData> fetchSettings() async {
-    await Future.delayed(const Duration(milliseconds: 400));
+  Future<SettingsData> fetchSettings() {
+    return ApiClient.call((dio) async {
+      final response = await dio.get('/settings');
+      return _fromJson(response.data as Map<String, dynamic>);
+    });
+  }
 
-    return SettingsData(
-      name: 'Sambit',
-      email: 'sambit@example.com',
-      upiId: 'sambit@okhdfcbank',
-      isUpiDefault: true,
-      bankAccountMasked: '•••• 4521 (HDFC Bank)',
-      twoStepEnabled: true,
-      // Earnings/Account pushes are functionally important (credits,
-      // security alerts) so they default ON; Promotions defaults OFF —
-      // opt-in, not opt-out, for marketing pushes (PROJECT.md Notifications
-      // doc, Section 1: restraint over engagement-at-any-cost).
-      earningsPushEnabled: true,
-      accountPushEnabled: true,
-      promotionsPushEnabled: false,
-      imagePath: UserAvatarStore.imagePath,
+  /// `PATCH /v1/profile` only returns `name`/`mobile`/`tier`/`avatar_url` —
+  /// the caller merges the returned name/avatar into its existing
+  /// [SettingsData] rather than treating this as a full settings snapshot.
+  Future<({String name, String? avatarUrl})> updateProfile({
+    required String name,
+    required String email,
+  }) {
+    return ApiClient.call((dio) async {
+      final response = await dio.patch('/profile', data: {
+        'name': name,
+        'email': email.isEmpty ? null : email,
+      });
+      final profile = response.data as Map<String, dynamic>;
+      return (name: profile['name'] as String, avatarUrl: profile['avatar_url'] as String?);
+    });
+  }
+
+  Future<String?> updateProfileImage(String imagePath) {
+    return ApiClient.call((dio) async {
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(imagePath),
+      });
+      final response = await dio.post('/profile/avatar', data: formData);
+      return response.data['avatar_url'] as String?;
+    });
+  }
+
+  Future<void> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) {
+    return ApiClient.call((dio) => dio.patch('/profile/password', data: {
+          'current_password': currentPassword,
+          'new_password': newPassword,
+          'new_password_confirmation': newPassword,
+        }));
+  }
+
+  Future<void> updateUpiId(String upiId) {
+    return ApiClient.call((dio) => dio.patch('/settings/upi', data: {'upi_id': upiId}));
+  }
+
+  Future<void> setTwoStepEnabled(bool enabled) {
+    return ApiClient.call(
+      (dio) => dio.patch('/settings/two-step', data: {'enabled': enabled}),
     );
   }
 
-  Future<void> updateProfile({required String name, required String email}) async {
-    await Future.delayed(const Duration(milliseconds: 400));
+  Future<void> setPushCategoryEnabled(NotificationCategory category, bool enabled) {
+    final field = switch (category) {
+      NotificationCategory.earnings => 'earnings_push_enabled',
+      NotificationCategory.account => 'account_push_enabled',
+      NotificationCategory.promotions => 'promotions_push_enabled',
+    };
+    return ApiClient.call(
+      (dio) => dio.patch('/settings/push-preferences', data: {field: enabled}),
+    );
   }
 
-  Future<void> updateProfileImage(String? imagePath) async {
-    await Future.delayed(const Duration(milliseconds: 400));
-    UserAvatarStore.imagePath = imagePath;
-  }
-
-  Future<void> updatePassword({required String newPassword}) async {
-    await Future.delayed(const Duration(milliseconds: 400));
-  }
-
-  Future<void> updateUpiId(String upiId) async {
-    await Future.delayed(const Duration(milliseconds: 400));
-  }
-
-  Future<void> setTwoStepEnabled(bool enabled) async {
-    await Future.delayed(const Duration(milliseconds: 300));
-  }
-
-  Future<void> setPushCategoryEnabled(
-    NotificationCategory category,
-    bool enabled,
-  ) async {
-    await Future.delayed(const Duration(milliseconds: 300));
+  SettingsData _fromJson(Map<String, dynamic> json) {
+    return SettingsData(
+      name: json['name'] as String,
+      email: json['email'] as String? ?? '',
+      upiId: json['upi_id'] as String? ?? '',
+      isUpiDefault: json['is_upi_default'] as bool? ?? false,
+      bankAccountMasked: json['bank_account_masked'] as String? ?? '',
+      twoStepEnabled: json['two_step_enabled'] as bool? ?? false,
+      earningsPushEnabled: json['earnings_push_enabled'] as bool? ?? true,
+      accountPushEnabled: json['account_push_enabled'] as bool? ?? true,
+      promotionsPushEnabled: json['promotions_push_enabled'] as bool? ?? false,
+      imagePath: json['avatar_url'] as String?,
+    );
   }
 }

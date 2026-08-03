@@ -47,12 +47,19 @@ class ProfileHeader extends StatelessWidget {
             alignment: Alignment.center,
             child: profile.imagePath != null
                 ? ClipOval(
-                    child: Image.file(
-                      File(profile.imagePath!),
-                      width: 56,
-                      height: 56,
-                      fit: BoxFit.cover,
-                    ),
+                    child: profile.imagePath!.startsWith('http')
+                        ? Image.network(
+                            profile.imagePath!,
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.file(
+                            File(profile.imagePath!),
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
+                          ),
                   )
                 : Text(
                     _initial,
