@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/services/auth_service.dart';
 import '../../shared/widgets/otp_row.dart';
 import '../../shared/widgets/phone_input.dart';
 import 'widgets/auth_text_field.dart';
@@ -26,13 +28,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _otpKey = GlobalKey<OtpRowState>();
+  final _authService = AuthService();
 
   _Step _step = _Step.requestOtp;
+  String? _referenceToken;
   String _otpCode = '';
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
   bool _isSendingOtp = false;
   bool _isUpdating = false;
+  String? _requestError;
+  String? _resetError;
 
   @override
   void initState() {
@@ -66,28 +72,50 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   Future<void> _onSendOtp() async {
     if (!_canSendOtp) return;
-    setState(() => _isSendingOtp = true);
-
-    // TODO: replace with a real send-OTP API call once the Laravel backend
-    // exists (PROJECT.md 4).
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (!mounted) return;
     setState(() {
-      _isSendingOtp = false;
-      _step = _Step.resetPassword;
+      _isSendingOtp = true;
+      _requestError = null;
     });
+
+    try {
+      final challenge = await _authService.forgotPasswordRequest(_phoneController.text);
+      if (!mounted) return;
+      setState(() {
+        _referenceToken = challenge.referenceToken;
+        _step = _Step.resetPassword;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _requestError = e.fieldError('mobile') ?? e.message);
+    } finally {
+      if (mounted) setState(() => _isSendingOtp = false);
+    }
   }
 
   Future<void> _onUpdatePassword() async {
-    if (!_canUpdatePassword) return;
-    setState(() => _isUpdating = true);
+    if (!_canUpdatePassword || _referenceToken == null) return;
+    setState(() {
+      _isUpdating = true;
+      _resetError = null;
+    });
 
-    // TODO: replace with a real verify-OTP + reset-password API call once
-    // the Laravel backend exists (PROJECT.md 4).
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (!mounted) return;
-    setState(() => _isUpdating = false);
-    context.go('/login', extra: 'Password updated. Log in with your new password.');
+    try {
+      await _authService.forgotPasswordReset(
+        referenceToken: _referenceToken!,
+        otp: _otpCode,
+        password: _newPasswordController.text,
+        passwordConfirmation: _confirmPasswordController.text,
+      );
+      if (!mounted) return;
+      context.go('/login', extra: 'Password updated. Log in with your new password.');
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(
+        () => _resetError = e.fieldError('otp') ?? e.fieldError('reference_token') ?? e.message,
+      );
+    } finally {
+      if (mounted) setState(() => _isUpdating = false);
+    }
   }
 
   @override
@@ -133,6 +161,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         'few minutes and try again.',
         style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
       ),
+      if (_requestError != null) ...[
+        const SizedBox(height: 12),
+        Text(
+          _requestError!,
+          style: const TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w600,
+            color: AppColors.danger,
+          ),
+        ),
+      ],
       const SizedBox(height: 24),
       _PrimaryButton(
         label: 'Send OTP',
@@ -213,6 +252,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         const Text(
           'Passwords do not match.',
           style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w600,
+            color: AppColors.danger,
+          ),
+        ),
+      ],
+      if (_resetError != null) ...[
+        const SizedBox(height: 8),
+        Text(
+          _resetError!,
+          style: const TextStyle(
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
             color: AppColors.danger,

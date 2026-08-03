@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/services/auth_service.dart';
 import '../../shared/widgets/phone_input.dart';
+import 'verify_phone_screen.dart';
 import 'widgets/auth_text_field.dart';
 import 'widgets/consent_checkbox.dart';
 
@@ -25,8 +28,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _referralController = TextEditingController();
 
+  final _authService = AuthService();
+
   bool _consentAccepted = false;
   bool _obscurePassword = true;
+  bool _isSendingOtp = false;
+  String? _errorMessage;
+  String? _referralError;
 
   @override
   void initState() {
@@ -53,9 +61,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool get _isValid =>
       _nameController.text.trim().isNotEmpty && _phoneController.text.length == 10;
 
-  void _onSendOtp() {
-    if (!_isValid) return;
-    context.push('/verify-phone', extra: _phoneController.text);
+  Future<void> _onSendOtp() async {
+    if (!_isValid || _isSendingOtp) return;
+    setState(() {
+      _isSendingOtp = true;
+      _errorMessage = null;
+      _referralError = null;
+    });
+
+    try {
+      final challenge = await _authService.register(
+        name: _nameController.text.trim(),
+        mobile: _phoneController.text,
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        referralCode: _referralController.text.trim(),
+      );
+      if (!mounted) return;
+      context.push(
+        '/verify-phone',
+        extra: VerifyPhoneArgs(
+          phoneNumber: _phoneController.text,
+          referenceToken: challenge.referenceToken,
+          resendCooldownSeconds: challenge.resendCooldownSeconds,
+        ),
+      );
+    } on ApiException catch (e) {
+      setState(() => _errorMessage = e.fieldError('mobile') ?? e.fieldError('email') ?? e.message);
+      setState(() => _referralError = e.fieldError('referral_code'));
+    } finally {
+      if (mounted) setState(() => _isSendingOtp = false);
+    }
   }
 
   @override
@@ -127,6 +163,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
               label: 'Referral code (optional)',
               hintText: 'e.g. SAMBIT482',
             ),
+            if (_referralError != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                _referralError!,
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.danger,
+                ),
+              ),
+            ],
+            if (_errorMessage != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                _errorMessage!,
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.danger,
+                ),
+              ),
+            ],
             const SizedBox(height: 20),
             ConsentCheckbox(
               value: _consentAccepted,
@@ -156,19 +214,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: _isValid ? _onSendOtp : null,
+                    onTap: _isValid && !_isSendingOtp ? _onSendOtp : null,
                     borderRadius: BorderRadius.circular(14),
                     child: Center(
-                      child: Text(
-                        'Send OTP',
-                        style: TextStyle(
-                          color: _isValid
-                              ? Colors.white
-                              : Colors.white.withValues(alpha: 0.7),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      child: _isSendingOtp
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.4,
+                                valueColor: AlwaysStoppedAnimation(Colors.white),
+                              ),
+                            )
+                          : Text(
+                              'Send OTP',
+                              style: TextStyle(
+                                color: _isValid
+                                    ? Colors.white
+                                    : Colors.white.withValues(alpha: 0.7),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                     ),
                   ),
                 ),

@@ -103,7 +103,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/verify-phone',
       builder: (context, state) =>
-          VerifyPhoneScreen(phoneNumber: state.extra as String? ?? ''),
+          VerifyPhoneScreen(args: state.extra as VerifyPhoneArgs),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {

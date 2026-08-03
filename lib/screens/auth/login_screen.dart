@@ -4,8 +4,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/config/app_config.dart';
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
-import '../../data/services/session_service.dart';
+import '../../data/services/auth_service.dart';
 import '../../providers/auth_provider.dart';
 import 'widgets/auth_text_field.dart';
 
@@ -26,11 +27,12 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _identifierController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _sessionService = SessionService();
+  final _authService = AuthService();
 
   bool _rememberMe = false;
   bool _obscurePassword = true;
   bool _isLoggingIn = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -65,19 +67,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _onLogin() async {
     if (!_isValid || _isLoggingIn) return;
-    setState(() => _isLoggingIn = true);
+    setState(() {
+      _isLoggingIn = true;
+      _errorMessage = null;
+    });
 
-    // TODO: replace with a real login API call once the Laravel backend
-    // exists (PROJECT.md 4) — this fakes a token so "Remember me" has
-    // something real to persist.
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (_rememberMe) {
-      await _sessionService.saveToken('fake-session-token-${DateTime.now().millisecondsSinceEpoch}');
+    try {
+      final session = await _authService.login(
+        identifier: _identifierController.text.trim(),
+        password: _passwordController.text,
+      );
+      if (!mounted) return;
+      await context.read<AuthProvider>().completeLogin(session, rememberMe: _rememberMe);
+      if (!mounted) return;
+      context.go('/home');
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _errorMessage = e.fieldError('identifier') ?? e.message);
+    } finally {
+      if (mounted) setState(() => _isLoggingIn = false);
     }
-    if (!mounted) return;
-    setState(() => _isLoggingIn = false);
-    context.read<AuthProvider>().login();
-    context.go('/home');
   }
 
   @override
@@ -164,6 +173,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ],
             ),
+            if (_errorMessage != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                _errorMessage!,
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.danger,
+                ),
+              ),
+            ],
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,

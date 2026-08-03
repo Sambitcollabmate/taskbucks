@@ -4,25 +4,42 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/services/auth_service.dart';
 import '../../providers/auth_provider.dart';
 import '../../shared/widgets/notice_card.dart';
 import '../../shared/widgets/otp_row.dart';
 
-const _resendCooldownSeconds = 30;
+const _defaultResendCooldownSeconds = 30;
 
-/// Stub states for the three error cases called out in PROJECT.md's Verify
-/// Phone notes. Nothing currently drives these transitions since there's no
-/// backend yet — real OTP verification wiring will set [_errorState] based
-/// on the API response.
+/// Error cases called out in PROJECT.md's Verify Phone notes, now driven by
+/// the real `POST /v1/auth/verify-otp` response (AUTH_API.md): wrong code
+/// (with attempts-remaining in the message), expired/invalidated reference,
+/// and the 5th-wrong-attempt lockout.
 enum _OtpError { none, wrongCode, expiredCode, tooManyAttempts }
 
-/// Verify Phone screen (PROJECT.md 7, Phase 3). Pushed from Register with
-/// the 10-digit number as `extra` so the masked number can be shown here.
-class VerifyPhoneScreen extends StatefulWidget {
+/// Router `extra` for `/verify-phone` — carries what Register's
+/// `POST /v1/auth/register` call returned, so this screen has a
+/// `reference_token` to verify against and knows the real resend cooldown.
+class VerifyPhoneArgs {
   final String phoneNumber;
+  final String referenceToken;
+  final int resendCooldownSeconds;
 
-  const VerifyPhoneScreen({super.key, this.phoneNumber = ''});
+  const VerifyPhoneArgs({
+    required this.phoneNumber,
+    required this.referenceToken,
+    this.resendCooldownSeconds = _defaultResendCooldownSeconds,
+  });
+}
+
+/// Verify Phone screen (PROJECT.md 7, Phase 3). Pushed from Register with a
+/// [VerifyPhoneArgs] as `extra`.
+class VerifyPhoneScreen extends StatefulWidget {
+  final VerifyPhoneArgs args;
+
+  const VerifyPhoneScreen({super.key, required this.args});
 
   @override
   State<VerifyPhoneScreen> createState() => _VerifyPhoneScreenState();
@@ -30,11 +47,15 @@ class VerifyPhoneScreen extends StatefulWidget {
 
 class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
   final _otpKey = GlobalKey<OtpRowState>();
+  final _authService = AuthService();
 
+  late String _referenceToken = widget.args.referenceToken;
   _OtpError _error = _OtpError.none;
-  int _resendSecondsLeft = _resendCooldownSeconds;
+  String? _errorMessageOverride;
+  int _resendSecondsLeft = _defaultResendCooldownSeconds;
   Timer? _resendTimer;
   bool _isVerifying = false;
+  bool _isResending = false;
   String _currentCode = '';
 
   // TODO: wire SMS auto-fill (see PROJECT.md Verify Phone notes) — Android
@@ -44,7 +65,7 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
   @override
   void initState() {
     super.initState();
-    _startResendTimer();
+    _startResendTimer(widget.args.resendCooldownSeconds);
   }
 
   @override
@@ -53,9 +74,9 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
     super.dispose();
   }
 
-  void _startResendTimer() {
+  void _startResendTimer(int seconds) {
     _resendTimer?.cancel();
-    setState(() => _resendSecondsLeft = _resendCooldownSeconds);
+    setState(() => _resendSecondsLeft = seconds);
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_resendSecondsLeft <= 1) {
         timer.cancel();
@@ -66,20 +87,39 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
     });
   }
 
-  bool get _canResend => _resendSecondsLeft == 0 || _error == _OtpError.expiredCode;
+  bool get _canResend =>
+      (_resendSecondsLeft == 0 || _error == _OtpError.expiredCode) && !_isResending;
 
-  void _onResendTap() {
+  Future<void> _onResendTap() async {
     if (!_canResend) return;
-    // TODO: call resend-OTP API.
-    setState(() => _error = _OtpError.none);
-    _otpKey.currentState?.clear();
-    _startResendTimer();
+    setState(() => _isResending = true);
+    try {
+      final challenge = await _authService.resendOtp(_referenceToken);
+      if (!mounted) return;
+      setState(() {
+        _referenceToken = challenge.referenceToken;
+        _error = _OtpError.none;
+        _errorMessageOverride = null;
+      });
+      _otpKey.currentState?.clear();
+      _startResendTimer(challenge.resendCooldownSeconds);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      if (e.statusCode == 429 && e.retryAfterSeconds != null) {
+        _startResendTimer(e.retryAfterSeconds!);
+      } else {
+        setState(() => _errorMessageOverride = e.fieldError('reference_token') ?? e.message);
+      }
+    } finally {
+      if (mounted) setState(() => _isResending = false);
+    }
   }
 
   void _onOtpChanged(String code) {
     setState(() {
       _currentCode = code;
       if (_error != _OtpError.none) _error = _OtpError.none;
+      _errorMessageOverride = null;
     });
   }
 
@@ -91,23 +131,50 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
     if (_isVerifying || _error == _OtpError.tooManyAttempts) return;
     setState(() => _isVerifying = true);
 
-    // TODO: replace with a real verify-OTP API call. For now any complete
-    // 6-digit code is treated as correct — wrong/expired/lockout states
-    // above are stubbed but nothing sets them yet without a backend.
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (!mounted) return;
-    setState(() => _isVerifying = false);
-    context.read<AuthProvider>().login();
-    context.go('/home');
+    try {
+      final session = await _authService.verifyOtp(
+        referenceToken: _referenceToken,
+        otp: code,
+      );
+      if (!mounted) return;
+      // Registration establishes a fresh session with no "remember me"
+      // checkbox on this flow — persist by default so a freshly-registered
+      // user doesn't get logged out on the next app restart.
+      await context.read<AuthProvider>().completeLogin(session, rememberMe: true);
+      if (!mounted) return;
+      context.go('/home');
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      // Laravel's ValidationException puts the actual reason in
+      // errors.otp/errors.reference_token — the top-level `message` is
+      // just the generic "The given data was invalid."
+      // (AuthController::consumeOtp).
+      final otpError = e.fieldError('otp');
+      final referenceError = e.fieldError('reference_token');
+      setState(() {
+        _isVerifying = false;
+        _errorMessageOverride = otpError ?? referenceError ?? e.message;
+        if (otpError?.contains('Too many incorrect attempts') == true) {
+          _error = _OtpError.tooManyAttempts;
+        } else if (otpError?.contains('expired') == true || referenceError != null) {
+          _error = _OtpError.expiredCode;
+        } else {
+          _error = _OtpError.wrongCode;
+        }
+      });
+      return;
+    }
+    if (mounted) setState(() => _isVerifying = false);
   }
 
   String get _maskedPhone {
-    final digits = widget.phoneNumber;
+    final digits = widget.args.phoneNumber;
     if (digits.length != 10) return digits;
     return '${digits.substring(0, 2)}${'•' * 6}${digits.substring(8)}';
   }
 
   String? get _errorMessage {
+    if (_errorMessageOverride != null) return _errorMessageOverride;
     switch (_error) {
       case _OtpError.wrongCode:
         return "That code didn't match. Check and try again.";
