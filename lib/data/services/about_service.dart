@@ -1,18 +1,18 @@
+import '../../core/network/api_client.dart';
 import '../models/about_info.dart';
 
-/// Fake data source for the About screen — same fake-service-now/real-API-
-/// later convention as the rest of the app (PROJECT.md Section 4/7).
-/// Founding year matches the "7 yrs paying" trust pill on Welcome
-/// (screens/auth/widgets/trust_pills_row.dart) — keep both in sync if either
-/// changes.
+/// Real `GET /v1/about` call (api_requirements.md §10) — deliberately
+/// public, no auth required.
 class AboutService {
-  Future<AboutInfo> fetchAboutInfo() async {
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    return const AboutInfo(
-      foundingYear: 2019,
-      earnerCount: 12000,
-      statesCovered: 28,
-    );
+  Future<AboutInfo> fetchAboutInfo() {
+    return ApiClient.call((dio) async {
+      final response = await dio.get('/about');
+      final json = response.data as Map<String, dynamic>;
+      return AboutInfo(
+        foundingYear: json['founding_year'] as int,
+        earnerCount: json['earner_count'] as int,
+        statesCovered: json['states_covered'] as int,
+      );
+    });
   }
 }
