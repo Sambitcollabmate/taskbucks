@@ -1,80 +1,55 @@
+import '../../core/network/api_client.dart';
 import '../models/app_notification.dart';
 import '../models/notification_type.dart';
 
-/// Fake data source for the Notifications screen — same fake-service-now/
-/// real-API-later convention as the rest of the app (PROJECT.md Section
-/// 4/7). Covers all 6 `NotificationType` cases (Earnings/Account/Promotions
-/// categories) with a mix of read/unread.
+/// Real `GET /v1/notifications`/`PATCH /v1/notifications/{id}/read`/
+/// `PATCH /v1/notifications/read-all` calls (api_requirements.md §8).
 class NotificationsService {
-  Future<List<AppNotification>> fetchNotifications() async {
-    await Future.delayed(const Duration(milliseconds: 400));
+  /// Fetches a single large-ish page rather than building out full
+  /// infinite-scroll (no pagination UI existed for this screen even before
+  /// a real backend did) — `unreadCount` is server-computed across *all*
+  /// notifications, not just this page, so it stays correct regardless.
+  Future<({List<AppNotification> notifications, int unreadCount})> fetchNotifications() {
+    return ApiClient.call((dio) async {
+      final response = await dio.get('/notifications', queryParameters: {'per_page': 50});
+      final json = response.data as Map<String, dynamic>;
+      return (
+        notifications: (json['data'] as List)
+            .cast<Map<String, dynamic>>()
+            .map(_fromJson)
+            .toList(),
+        unreadCount: json['unread_count'] as int,
+      );
+    });
+  }
 
-    final now = DateTime.now();
+  Future<void> markRead(String id) {
+    return ApiClient.call((dio) => dio.patch('/notifications/$id/read'));
+  }
 
-    return [
-      AppNotification(
-        id: 'n0',
-        type: NotificationType.newLoginDetected,
-        title: 'New login detected',
-        body: "A login from a new device was detected. Wasn't you? Secure "
-            'your account.',
-        timestamp: now.subtract(const Duration(minutes: 5)),
-      ),
-      AppNotification(
-        id: 'n1',
-        type: NotificationType.taskCredited,
-        title: 'Task credited',
-        body: 'You earned ₹100 for completing a video-ad task.',
-        timestamp: now.subtract(const Duration(minutes: 20)),
-      ),
-      AppNotification(
-        id: 'n2',
-        type: NotificationType.referralConverted,
-        title: 'Referral converted',
-        body: 'Ay***a K. went Premium. You earned ₹125 referral commission.',
-        timestamp: now.subtract(const Duration(hours: 3)),
-      ),
-      AppNotification(
-        id: 'n3',
-        type: NotificationType.streakBonus,
-        title: 'Week streak bonus',
-        body: "You hit your task cap every day this week — bonus credited.",
-        timestamp: now.subtract(const Duration(hours: 9)),
-        isRead: true,
-      ),
-      AppNotification(
-        id: 'n4',
-        type: NotificationType.withdrawalQueued,
-        title: 'Withdrawal queued',
-        body: 'Your payout is queued for the 1st and will go to your UPI ID.',
-        timestamp: now.subtract(const Duration(days: 1)),
-        isRead: true,
-      ),
-      AppNotification(
-        id: 'n5',
-        type: NotificationType.taskCredited,
-        title: 'Task credited',
-        body: 'You earned ₹100 for completing a video-ad task.',
-        timestamp: now.subtract(const Duration(days: 1, hours: 4)),
-        isRead: true,
-      ),
-      AppNotification(
-        id: 'n6',
-        type: NotificationType.referralConverted,
-        title: 'Referral pending',
-        body: "Vi***m S. signed up with your code. You'll earn ₹125 once "
-            'they go Premium.',
-        timestamp: now.subtract(const Duration(days: 2)),
-        isRead: true,
-      ),
-      AppNotification(
-        id: 'n7',
-        type: NotificationType.premiumPromo,
-        title: 'Limited-time: 20% off Premium',
-        body: 'Upgrade this week and get your first month at a reduced rate.',
-        timestamp: now.subtract(const Duration(days: 3)),
-        isRead: true,
-      ),
-    ];
+  Future<void> markAllRead() {
+    return ApiClient.call((dio) => dio.patch('/notifications/read-all'));
+  }
+
+  AppNotification _fromJson(Map<String, dynamic> json) {
+    return AppNotification(
+      id: json['id'].toString(),
+      type: _typeFromWire(json['type'] as String),
+      title: json['title'] as String,
+      body: json['body'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      isRead: json['is_read'] as bool,
+    );
+  }
+
+  NotificationType _typeFromWire(String wire) {
+    return switch (wire) {
+      'task_credited' => NotificationType.taskCredited,
+      'referral_converted' => NotificationType.referralConverted,
+      'withdrawal_queued' => NotificationType.withdrawalQueued,
+      'streak_bonus' => NotificationType.streakBonus,
+      'new_login_detected' => NotificationType.newLoginDetected,
+      _ => NotificationType.premiumPromo,
+    };
   }
 }
