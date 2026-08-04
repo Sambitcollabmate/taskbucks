@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 import 'core/config/app_config.dart';
@@ -10,7 +11,9 @@ import 'providers/language_provider.dart';
 import 'providers/notifications_provider.dart';
 import 'providers/profile_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await MobileAds.instance.initialize();
   runApp(const EarnBucksApp());
 }
 

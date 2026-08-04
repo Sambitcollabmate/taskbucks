@@ -93,12 +93,12 @@ class OtpRowState extends State<OtpRow> {
         return SizedBox(
           width: 46,
           height: 56,
-          child: KeyboardListener(
-            focusNode: _focusNodes[index],
-            onKeyEvent: (event) {
+          child: Focus(
+            onKeyEvent: (node, event) {
               if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.backspace) {
                 _onBackspace(index);
               }
+              return KeyEventResult.ignored;
             },
             child: TextField(
               controller: _controllers[index],

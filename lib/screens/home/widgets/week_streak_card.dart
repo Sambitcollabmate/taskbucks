@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/daily_progress.dart';
 
-const _dayLetters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+// Matches the backend's Sun-Sat week (HomeController::weekProgress starts
+// at CarbonBase::SUNDAY), not a Monday-first week.
+const _dayLetters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 /// Weekly streak strip below the task progress card: one letter per day of
 /// the current week, today highlighted, and a small bar beside each day

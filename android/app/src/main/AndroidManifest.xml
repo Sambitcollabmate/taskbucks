@@ -1,4 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Every real API call the app makes (auth, tasks, wallet, ads) needs
+         this. The debug/profile manifests already declared it for the
+         Flutter tool's own use, but there was no release-build source of
+         it; a published release APK would have had no network access
+         at all. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Android 13+ (API 33) requires runtime consent before any notification
          can be shown. Requested at a deliberate, explained moment (right
          after a user's first task completion, see NotificationPermissionSheet)
@@ -35,6 +41,22 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- The App ID itself doesn't serve specific ads, so it's safe to
+             use the real one even during development; it's the ad UNIT
+             ID (in ad_mob_service.dart) that must stay a Google test ID
+             until earnbucks-api has a public URL for real SSV. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-6514822944587484~8441061947" />
+
+        <!-- image_cropper's underlying UCrop activity is not auto-merged by
+             the plugin; must be declared explicitly or cropImage() crashes
+             with ActivityNotFoundException. -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

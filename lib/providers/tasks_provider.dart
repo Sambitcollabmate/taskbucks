@@ -51,13 +51,10 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Watches the current "next" task and credits it. Real reward-crediting
-  /// only ever trusts a verified AdMob impression server-side — see
-  /// [AdMobService] for why this currently goes through the local-dev
-  /// simulate endpoint rather than a real rewarded ad.
-  //
-  // LEGAL-REVIEW / TODO(Phase 7): once real AdMob is wired in, this must
-  // only fire from onUserEarnedReward(), never directly on tap.
+  /// Watches the current "next" task's rewarded ad and credits it. Only
+  /// fires the completion request after [AdMobService.watchRewardedAd]
+  /// resolves — i.e. only once the ad was actually shown and the reward
+  /// earned — never directly on tap.
   Future<void> completeCurrentTask() async {
     final summary = _summary;
     final currentTask = summary?.currentTask;
@@ -67,7 +64,7 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final adTransactionId = await _adMobService.simulateAdWatch();
+      final adTransactionId = await _adMobService.watchRewardedAd();
       final result = await _service.completeTask(
         currentTask.id,
         adTransactionId: adTransactionId,
@@ -85,12 +82,9 @@ class TasksProvider extends ChangeNotifier {
     }
   }
 
-  /// Watches a bonus ad slot and credits it. Unlike [completeCurrentTask],
-  /// any available slot can be tapped: bonus slots aren't a sequential
-  /// queue (PROJECT.md 2).
-  //
-  // LEGAL-REVIEW / TODO(Phase 7): same as completeCurrentTask, goes
-  // through the dev-simulate placeholder until real AdMob is wired in.
+  /// Watches a bonus ad slot's rewarded ad and credits it. Unlike
+  /// [completeCurrentTask], any available slot can be tapped: bonus slots
+  /// aren't a sequential queue (PROJECT.md 2).
   Future<void> completeBonusSlot(int id) async {
     final summary = _summary;
     if (summary == null || _completingBonusSlotId != null) return;
@@ -99,7 +93,7 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final adTransactionId = await _adMobService.simulateAdWatch();
+      final adTransactionId = await _adMobService.watchRewardedAd();
       final result = await _service.completeBonusSlot(
         id,
         adTransactionId: adTransactionId,

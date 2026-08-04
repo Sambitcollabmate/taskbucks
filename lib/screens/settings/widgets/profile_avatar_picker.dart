@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -33,9 +34,31 @@ class ProfileAvatarPicker extends StatelessWidget {
       maxHeight: 1024,
       imageQuality: 85,
     );
-    if (picked != null) {
-      onImageSelected(picked.path);
-    }
+    if (picked == null) return;
+
+    // Avatar is always displayed as a circle, so the crop is locked to a
+    // square — no free-form aspect ratio that wouldn't fit that shape.
+    final cropped = await ImageCropper().cropImage(
+      sourcePath: picked.path,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 85,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Crop photo',
+          toolbarColor: AppColors.primary,
+          toolbarWidgetColor: Colors.white,
+          lockAspectRatio: true,
+        ),
+        IOSUiSettings(
+          title: 'Crop photo',
+          aspectRatioLockEnabled: true,
+        ),
+      ],
+    );
+    if (cropped == null) return;
+
+    onImageSelected(cropped.path);
   }
 
   void _showPickerSheet(BuildContext context) {
