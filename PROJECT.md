@@ -801,12 +801,21 @@ patterns, so later screens are mostly assembly, not new invention.
   `AuthProvider` persists the token via `SessionService`
   (`flutter_secure_storage`) only when "Remember me" is checked, but keeps
   it usable in `TokenStore` for the rest of the run either way.
-- [ ] AdMob real ad unit wiring (currently placeholder) — still open, no ad
-  unit registered in the AdMob console yet. A local-dev-only bypass
-  (`POST /v1/ads/dev-simulate`, `AdMobService.simulateAdWatch()`) lets the
-  Tasks/Bonus-slot completion loop be exercised end-to-end without one;
-  swapping in the real AdMob SDK is a `// TODO` at that call site in
-  `TasksProvider`.
+- [x] AdMob SDK wiring. **Done 2026-08-04** — `google_mobile_ads` added;
+  `AdMobService.watchRewardedAd()` loads and shows a real rewarded video ad
+  (Google's shared test ad unit ID, since the real ad unit isn't registered
+  yet), and only after `onUserEarnedReward` actually fires does it call the
+  existing `POST /v1/ads/dev-simulate` to get a verified `ad_transaction_id`
+  for `/tasks/{id}/complete` — `TasksProvider`'s completion methods now only
+  ever run after a real ad was shown, not directly on tap.
+  - [ ] Still open: swap the test ad unit for the real one
+    (`ca-app-pub-6514822944587484/3991648645` — confirm in the AdMob console
+    it's actually a Rewarded/Rewarded-Interstitial unit, not Interstitial,
+    since only those support SSV) and register the real SSV callback URL
+    once `earnbucks-api` has a public HTTPS URL Google's ad servers can
+    reach — impossible against a local/LAN dev server. Until then,
+    `/ads/dev-simulate` remains the only way to produce a verified
+    `ad_transaction_id`.
 - [ ] Google Play Billing real integration (currently placeholder) — still
   open, no Play Console app listing yet. The backend's own dev-bypass
   (`GooglePlayBillingClient`, active when `APP_ENV=local`) lets Subscribe/
