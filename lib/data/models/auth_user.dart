@@ -39,24 +39,23 @@ class AuthUser {
   }
 }
 
-/// `{ reference_token, expires_in_seconds, resend_cooldown_seconds }` —
-/// shared by register/resend-otp/forgot-password-request responses.
-class OtpChallenge {
-  final String referenceToken;
+/// `{ reset_token, expires_in_seconds }` — returned by `verify-otp` when
+/// `purpose` is `password_reset`, once MSG91 confirms the widget's
+/// access-token. Short-lived proof the mobile was verified, required by the
+/// follow-up `forgot-password/reset` call (AUTH_API.md).
+class PasswordResetChallenge {
+  final String resetToken;
   final int expiresInSeconds;
-  final int resendCooldownSeconds;
 
-  const OtpChallenge({
-    required this.referenceToken,
+  const PasswordResetChallenge({
+    required this.resetToken,
     required this.expiresInSeconds,
-    required this.resendCooldownSeconds,
   });
 
-  factory OtpChallenge.fromJson(Map<String, dynamic> json) {
-    return OtpChallenge(
-      referenceToken: json['reference_token'] as String,
+  factory PasswordResetChallenge.fromJson(Map<String, dynamic> json) {
+    return PasswordResetChallenge(
+      resetToken: json['reset_token'] as String,
       expiresInSeconds: json['expires_in_seconds'] as int,
-      resendCooldownSeconds: json['resend_cooldown_seconds'] as int,
     );
   }
 }

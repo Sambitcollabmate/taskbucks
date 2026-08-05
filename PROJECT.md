@@ -1,4 +1,4 @@
-# earnbucks.in — Flutter App Build Instructions
+# earnbucks.tech — Flutter App Build Instructions
 
 **Purpose of this file:** Hand this to Claude Code (or read from it yourself) as the
 single source of truth for building the app. It resolves conflicts between the

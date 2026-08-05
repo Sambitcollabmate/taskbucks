@@ -69,21 +69,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _referralError = null;
     });
 
+    final name = _nameController.text.trim();
+    final mobile = _phoneController.text;
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+    final referralCode = _referralController.text.trim();
+
     try {
-      final challenge = await _authService.register(
-        name: _nameController.text.trim(),
-        mobile: _phoneController.text,
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-        referralCode: _referralController.text.trim(),
+      // Validation-only — no OTP is sent yet. Catching a duplicate
+      // mobile/email or bad referral code here means we never ask MSG91 to
+      // send an SMS for a registration that can't complete anyway.
+      await _authService.registerPrecheck(
+        name: name,
+        mobile: mobile,
+        email: email,
+        password: password,
+        referralCode: referralCode,
       );
       if (!mounted) return;
       context.push(
         '/verify-phone',
         extra: VerifyPhoneArgs(
-          phoneNumber: _phoneController.text,
-          referenceToken: challenge.referenceToken,
-          resendCooldownSeconds: challenge.resendCooldownSeconds,
+          name: name,
+          phoneNumber: mobile,
+          email: email.isEmpty ? null : email,
+          password: password,
+          referralCode: referralCode.isEmpty ? null : referralCode,
         ),
       );
     } on ApiException catch (e) {

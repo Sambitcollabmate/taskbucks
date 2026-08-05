@@ -12,8 +12,7 @@ class ApiException implements Exception {
   /// failure wasn't a `422` validation error.
   final Map<String, List<String>> fieldErrors;
 
-  /// Present only on `429` responses (AUTH_API.md's resend-otp/rate-limit
-  /// cases).
+  /// Present only on `429` responses (AUTH_API.md's rate-limit cases).
   final int? retryAfterSeconds;
 
   const ApiException({

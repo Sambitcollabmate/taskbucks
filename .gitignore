@@ -36,6 +36,12 @@ migrate_working_dir/
 # Symbolication related
 app.*.symbols
 
+# Local dart-define values (MSG91 widget id/token, API_BASE_URL overrides) —
+# real values live here, never committed. See dart_defines.example.json for
+# the template and AppConfig (core/config/app_config.dart) for what reads
+# these.
+/dart_defines.json
+
 # Obfuscation related
 app.*.map.json
 

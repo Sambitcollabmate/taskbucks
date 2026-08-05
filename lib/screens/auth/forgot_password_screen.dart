@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:sendotp_flutter_sdk/sendotp_flutter_sdk.dart';
 
+import '../../core/config/app_config.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/services/auth_service.dart';
@@ -10,6 +12,10 @@ import '../../shared/widgets/phone_input.dart';
 import 'widgets/auth_text_field.dart';
 
 enum _Step { requestOtp, resetPassword }
+
+// SMS retry channel per MSG91's widget SDK (`retryOTP`'s `retryChannel`):
+// 1 = text, 11 = SMS, 2 = voice call.
+const _smsRetryChannel = 11;
 
 /// Forgot Password screen (PROJECT.md 7, Phase 3). Reuses phone_input and
 /// otp_row directly rather than rebuilding either. The mockup shows both
@@ -31,7 +37,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _authService = AuthService();
 
   _Step _step = _Step.requestOtp;
-  String? _referenceToken;
+  String? _reqId;
   String _otpCode = '';
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
@@ -78,12 +84,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     });
 
     try {
-      final challenge = await _authService.forgotPasswordRequest(_phoneController.text);
+      // Pre-check only — confirms an account exists for this mobile before
+      // MSG91 is asked to send anything.
+      await _authService.forgotPasswordPrecheck(_phoneController.text);
+      OTPWidget.initializeWidget(AppConfig.msg91WidgetId, AppConfig.msg91AuthToken);
+      final response = await OTPWidget.sendOTP({
+        'identifier': '91${_phoneController.text}',
+      }) as Map;
       if (!mounted) return;
-      setState(() {
-        _referenceToken = challenge.referenceToken;
-        _step = _Step.resetPassword;
-      });
+      if (response['type'] == 'success') {
+        setState(() {
+          _reqId = response['message'] as String?;
+          _step = _Step.resetPassword;
+        });
+      } else {
+        setState(() => _requestError =
+            response['message'] as String? ?? 'Could not send OTP right now.');
+      }
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _requestError = e.fieldError('mobile') ?? e.message);
@@ -93,16 +110,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Future<void> _onUpdatePassword() async {
-    if (!_canUpdatePassword || _referenceToken == null) return;
+    if (!_canUpdatePassword || _reqId == null) return;
     setState(() {
       _isUpdating = true;
       _resetError = null;
     });
 
     try {
+      final verifyResponse = await OTPWidget.verifyOTP({
+        'reqId': _reqId,
+        'otp': _otpCode,
+      }) as Map;
+
+      if (verifyResponse['type'] != 'success') {
+        if (!mounted) return;
+        setState(() => _resetError =
+            verifyResponse['message'] as String? ?? "That code didn't match.");
+        return;
+      }
+
+      final accessToken = verifyResponse['message'] as String;
+      final challenge = await _authService.verifyPasswordResetOtp(
+        accessToken: accessToken,
+        mobile: _phoneController.text,
+      );
       await _authService.forgotPasswordReset(
-        referenceToken: _referenceToken!,
-        otp: _otpCode,
+        resetToken: challenge.resetToken,
         password: _newPasswordController.text,
         passwordConfirmation: _confirmPasswordController.text,
       );
@@ -110,11 +143,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       context.go('/login', extra: 'Password updated. Log in with your new password.');
     } on ApiException catch (e) {
       if (!mounted) return;
-      setState(
-        () => _resetError = e.fieldError('otp') ?? e.fieldError('reference_token') ?? e.message,
-      );
+      setState(() => _resetError = e.fieldError('password') ?? e.message);
     } finally {
       if (mounted) setState(() => _isUpdating = false);
+    }
+  }
+
+  Future<void> _onResendOtp() async {
+    if (_reqId == null) return;
+    setState(() => _resetError = null);
+    final response = await OTPWidget.retryOTP({
+      'reqId': _reqId,
+      'retryChannel': _smsRetryChannel,
+    }) as Map;
+    if (!mounted) return;
+    if (response['type'] == 'success') {
+      if (response['message'] is String) {
+        setState(() => _reqId = response['message'] as String);
+      }
+      _otpKey.currentState?.clear();
+      setState(() => _otpCode = '');
+    } else {
+      setState(() => _resetError =
+          response['message'] as String? ?? 'Could not resend OTP right now.');
     }
   }
 
@@ -217,7 +268,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         onChanged: (code) => setState(() => _otpCode = code),
         onCompleted: (code) => setState(() => _otpCode = code),
       ),
-      const SizedBox(height: 24),
+      const SizedBox(height: 8),
+      Center(
+        child: GestureDetector(
+          onTap: _onResendOtp,
+          child: const Text(
+            'Resend OTP',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primary,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 16),
       AuthTextField(
         controller: _newPasswordController,
         label: 'New password',
