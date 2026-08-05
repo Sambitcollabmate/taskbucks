@@ -31,9 +31,9 @@ class TransactionsService {
       final response = await dio.get('/transactions', queryParameters: {
         'page': page,
         'per_page': perPage,
-        if (type != null) 'type': type,
-        if (category != null) 'category': category,
-        if (categories != null) 'categories[]': categories,
+        'type': ?type,
+        'category': ?category,
+        'categories[]': ?categories,
       });
       final json = response.data as Map<String, dynamic>;
       final meta = json['meta'] as Map<String, dynamic>;
