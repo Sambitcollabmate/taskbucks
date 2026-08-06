@@ -9,11 +9,13 @@ import '../../../core/theme/app_colors.dart';
 class TaskProgressCard extends StatelessWidget {
   final int completed;
   final int dailyLimit;
+  final VoidCallback? onTap;
 
   const TaskProgressCard({
     super.key,
     required this.completed,
     required this.dailyLimit,
+    this.onTap,
   });
 
   @override
@@ -26,87 +28,94 @@ class TaskProgressCard extends StatelessWidget {
         ? AppColors.premiumGold
         : AppColors.earningsGreen;
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+    return Material(
+      color: AppColors.cardBackground,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: isComplete ? null : onTap,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 72,
-            height: 72,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  width: 72,
-                  height: 72,
-                  child: CircularProgressIndicator(
-                    value: progress,
-                    strokeWidth: 7,
-                    strokeCap: StrokeCap.round,
-                    backgroundColor: AppColors.background,
-                    valueColor: AlwaysStoppedAnimation(ringColor),
-                  ),
-                ),
-                Text(
-                  '$completed/$dailyLimit',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Today's tasks",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  isComplete
-                      ? "You've hit today's cap. Come back tomorrow!"
-                      : '${dailyLimit - completed} more to reach your daily limit',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
+          child: Row(
+            children: [
+              SizedBox(
+                width: 72,
+                height: 72,
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Icon(LucideIcons.play, size: 14, color: ringColor),
-                    const SizedBox(width: 4),
+                    SizedBox(
+                      width: 72,
+                      height: 72,
+                      child: CircularProgressIndicator(
+                        value: progress,
+                        strokeWidth: 7,
+                        strokeCap: StrokeCap.round,
+                        backgroundColor: AppColors.background,
+                        valueColor: AlwaysStoppedAnimation(ringColor),
+                      ),
+                    ),
                     Text(
-                      isComplete ? 'Cap reached' : 'Watch a video to earn',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: ringColor,
+                      '$completed/$dailyLimit',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Today's tasks",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      isComplete
+                          ? "You've hit today's cap. Come back tomorrow!"
+                          : '${dailyLimit - completed} more to reach your daily limit',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Icon(LucideIcons.play, size: 14, color: ringColor),
+                        const SizedBox(width: 4),
+                        Text(
+                          isComplete ? 'Cap reached' : 'Watch a video to earn',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: ringColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

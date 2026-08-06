@@ -74,6 +74,7 @@ class _HomeScreenBody extends StatelessWidget {
                   TaskProgressCard(
                     completed: summary.tasksCompletedToday,
                     dailyLimit: summary.dailyTaskLimit,
+                    onTap: () => StatefulNavigationShell.of(context).goBranch(1),
                   ),
                   const SizedBox(height: 16),
                   WeekStreakCard(days: summary.weekProgress),

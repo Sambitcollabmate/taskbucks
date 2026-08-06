@@ -24,7 +24,7 @@ class _ResetCountdownState extends State<ResetCountdown> {
   void initState() {
     super.initState();
     _remaining = widget.resetAt.difference(DateTime.now());
-    _timer = Timer.periodic(const Duration(minutes: 1), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
         _remaining = widget.resetAt.difference(DateTime.now());
       });
@@ -42,6 +42,7 @@ class _ResetCountdownState extends State<ResetCountdown> {
     final remaining = _remaining.isNegative ? Duration.zero : _remaining;
     final hours = remaining.inHours;
     final minutes = remaining.inMinutes % 60;
+    final seconds = remaining.inSeconds % 60;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -66,7 +67,7 @@ class _ResetCountdownState extends State<ResetCountdown> {
           ),
           const SizedBox(width: 6),
           Text(
-            'Resets in ${hours}h ${minutes}m',
+            'Resets in ${hours}h ${minutes}m ${seconds}s',
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
