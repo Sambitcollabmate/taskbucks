@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../data/models/notification_type.dart';
 import '../data/models/settings_data.dart';
 import '../data/services/settings_service.dart';
+import 'profile_provider.dart';
 
 /// Holds Settings screen state — same role as [ProfileProvider]/
 /// [WalletProvider]: widgets that watch this rebuild whenever
@@ -60,6 +61,7 @@ class SettingsProvider extends ChangeNotifier {
       // means the server accepted it.
       final result = await _service.updateProfile(name: name, email: email);
       _data = _data!.copyWith(name: result.name, email: email, imagePath: result.avatarUrl);
+      await profileProvider.load();
     } finally {
       _isSavingProfile = false;
       notifyListeners();
@@ -82,6 +84,7 @@ class SettingsProvider extends ChangeNotifier {
       }
       final avatarUrl = await _service.updateProfileImage(path);
       _data = _data!.copyWith(imagePath: avatarUrl);
+      await profileProvider.load();
     } finally {
       _isSavingImage = false;
       notifyListeners();
