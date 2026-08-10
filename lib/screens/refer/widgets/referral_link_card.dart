@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Gradient referral link card — same gradient as [BalanceHeroCard] (see
 /// PROJECT.md 5) but its own layout, since it shows a code/link instead of
@@ -27,7 +28,7 @@ class ReferralLinkCard extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: _referralLink));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Referral link copied')),
+        SnackBar(content: Text(AppLocalizations.of(context).referralLinkCopied)),
       );
     }
   }
@@ -36,7 +37,7 @@ class ReferralLinkCard extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: referralCode));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Referral code copied')),
+        SnackBar(content: Text(AppLocalizations.of(context).referralCodeCopied)),
       );
     }
   }
@@ -44,13 +45,15 @@ class ReferralLinkCard extends StatelessWidget {
   void _onShare(BuildContext context) {
     SharePlus.instance.share(
       ShareParams(
-        text: 'Join me on ${AppConfig.brandName} and start earning! Use my link: $_referralLink',
+        text: AppLocalizations.of(context)
+            .shareReferralMessage(AppConfig.brandName, _referralLink),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -72,7 +75,7 @@ class ReferralLinkCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Your referral code',
+            l10n.yourReferralCode,
             style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14),
           ),
           const SizedBox(height: 4),
@@ -111,7 +114,7 @@ class ReferralLinkCard extends StatelessWidget {
               Expanded(
                 child: _LinkButton(
                   icon: LucideIcons.copy,
-                  label: 'Copy link',
+                  label: l10n.copyLink,
                   onTap: () => _onCopy(context),
                 ),
               ),
@@ -119,7 +122,7 @@ class ReferralLinkCard extends StatelessWidget {
               Expanded(
                 child: _LinkButton(
                   icon: LucideIcons.share2,
-                  label: 'Share',
+                  label: l10n.shareLabel,
                   onTap: () => _onShare(context),
                 ),
               ),

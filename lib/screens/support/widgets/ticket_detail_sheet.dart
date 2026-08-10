@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/support_ticket.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/support_provider.dart';
 import 'ticket_status_pill.dart';
 
@@ -65,6 +66,7 @@ class _TicketDetailSheetState extends State<TicketDetailSheet> {
   Widget build(BuildContext context) {
     return Consumer<SupportProvider>(
       builder: (context, provider, _) {
+        final l10n = AppLocalizations.of(context);
         final ticket = provider.ticketById(widget.ticketId);
 
         return Padding(
@@ -108,9 +110,9 @@ class _TicketDetailSheetState extends State<TicketDetailSheet> {
                   ],
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'We read and reply to every ticket within 24–48 hours.',
-                  style: TextStyle(fontSize: 11.5, color: AppColors.textSecondary),
+                Text(
+                  l10n.supportReplyTimeNotice,
+                  style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 12),
                 Expanded(
@@ -127,7 +129,7 @@ class _TicketDetailSheetState extends State<TicketDetailSheet> {
                       child: TextField(
                         controller: _replyController,
                         decoration: InputDecoration(
-                          hintText: 'Type a reply...',
+                          hintText: l10n.typeAReply,
                           hintStyle: const TextStyle(color: AppColors.textSecondary),
                           filled: true,
                           fillColor: AppColors.background,
@@ -183,6 +185,7 @@ class _ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final dateFormat = DateFormat('d MMM, h:mm a');
     final isUser = message.isFromUser;
 
@@ -206,7 +209,7 @@ class _ChatBubble extends StatelessWidget {
           children: [
             if (!isUser && message.authorName != null) ...[
               Text(
-                'Support (${message.authorName})',
+                l10n.supportAuthorLabel(message.authorName!),
                 style: const TextStyle(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// `name@bankhandle` — the standard UPI VPA shape. Validated on every
 /// keystroke (not just on save): PROJECT.md flags a UPI typo caught only
@@ -51,6 +52,7 @@ class _UpiIdFieldState extends State<UpiIdField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final showError = !_isEmpty && !_isValid;
     final borderColor = showError
         ? AppColors.danger
@@ -63,9 +65,9 @@ class _UpiIdFieldState extends State<UpiIdField> {
       children: [
         Row(
           children: [
-            const Text(
-              'UPI ID',
-              style: TextStyle(
+            Text(
+              l10n.upiIdLabel,
+              style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -79,9 +81,9 @@ class _UpiIdFieldState extends State<UpiIdField> {
                   color: AppColors.earningsGreen.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text(
-                  'Default',
-                  style: TextStyle(
+                child: Text(
+                  l10n.defaultLabelLower,
+                  style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     color: AppColors.earningsGreen,
@@ -98,7 +100,7 @@ class _UpiIdFieldState extends State<UpiIdField> {
           autocorrect: false,
           style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
           decoration: InputDecoration(
-            hintText: 'yourname@bank',
+            hintText: l10n.upiIdHint,
             hintStyle: const TextStyle(color: AppColors.textSecondary),
             suffixIcon: _isEmpty
                 ? null
@@ -126,9 +128,9 @@ class _UpiIdFieldState extends State<UpiIdField> {
         ),
         if (showError) ...[
           const SizedBox(height: 6),
-          const Text(
-            'Enter a valid UPI ID, e.g. yourname@okhdfcbank.',
-            style: TextStyle(
+          Text(
+            l10n.upiIdValidationError,
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: AppColors.danger,
@@ -148,9 +150,9 @@ class _UpiIdFieldState extends State<UpiIdField> {
                     height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text(
-                    'Save UPI ID',
-                    style: TextStyle(fontWeight: FontWeight.w700),
+                : Text(
+                    l10n.saveUpiId,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
           ),
         ),

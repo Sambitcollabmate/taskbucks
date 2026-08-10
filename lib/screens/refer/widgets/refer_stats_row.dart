@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Three stat chips: total referred, converted, and total earned.
 class ReferStatsRow extends StatelessWidget {
@@ -20,6 +21,7 @@ class ReferStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final formatter = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
@@ -32,7 +34,7 @@ class ReferStatsRow extends StatelessWidget {
           child: _StatChip(
             icon: LucideIcons.users,
             iconColor: AppColors.primary,
-            label: 'Referred',
+            label: l10n.referredLabel,
             value: '$totalReferred',
           ),
         ),
@@ -41,7 +43,7 @@ class ReferStatsRow extends StatelessWidget {
           child: _StatChip(
             icon: LucideIcons.circleCheck,
             iconColor: AppColors.earningsGreen,
-            label: 'Converted',
+            label: l10n.convertedLabel,
             value: '$totalConverted',
           ),
         ),
@@ -50,7 +52,7 @@ class ReferStatsRow extends StatelessWidget {
           child: _StatChip(
             icon: LucideIcons.wallet,
             iconColor: AppColors.premiumGold,
-            label: 'Earned',
+            label: l10n.earnedLabel,
             value: formatter.format(totalEarned),
           ),
         ),

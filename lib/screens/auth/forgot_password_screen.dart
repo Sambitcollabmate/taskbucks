@@ -7,6 +7,7 @@ import '../../core/config/app_config.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/otp_row.dart';
 import '../../shared/widgets/phone_input.dart';
 import 'widgets/auth_text_field.dart';
@@ -98,8 +99,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           _step = _Step.resetPassword;
         });
       } else {
-        setState(() => _requestError =
-            response['message'] as String? ?? 'Could not send OTP right now.');
+        setState(() => _requestError = response['message'] as String? ??
+            AppLocalizations.of(context).couldNotSendOtp);
       }
     } on ApiException catch (e) {
       if (!mounted) return;
@@ -124,8 +125,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
       if (verifyResponse['type'] != 'success') {
         if (!mounted) return;
-        setState(() => _resetError =
-            verifyResponse['message'] as String? ?? "That code didn't match.");
+        setState(() => _resetError = verifyResponse['message'] as String? ??
+            AppLocalizations.of(context).otpDidNotMatch);
         return;
       }
 
@@ -140,7 +141,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         passwordConfirmation: _confirmPasswordController.text,
       );
       if (!mounted) return;
-      context.go('/login', extra: 'Password updated. Log in with your new password.');
+      context.go('/login', extra: AppLocalizations.of(context).passwordUpdatedLoginMessage);
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _resetError = e.fieldError('password') ?? e.message);
@@ -164,8 +165,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       _otpKey.currentState?.clear();
       setState(() => _otpCode = '');
     } else {
-      setState(() => _resetError =
-          response['message'] as String? ?? 'Could not resend OTP right now.');
+      setState(() => _resetError = response['message'] as String? ??
+          AppLocalizations.of(context).couldNotResendOtp);
     }
   }
 
@@ -184,21 +185,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   List<Widget> _buildRequestStep() {
+    final l10n = AppLocalizations.of(context);
     return [
       Text(
-        'Reset your password',
+        l10n.resetPasswordTitle,
         style: Theme.of(context).textTheme.headlineSmall,
       ),
       const SizedBox(height: 6),
-      const Text(
-        "Enter your mobile number and we'll send a 6-digit OTP to reset "
-        'your password.',
-        style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+      Text(
+        l10n.resetPasswordSubtitle,
+        style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
       const SizedBox(height: 24),
-      const Text(
-        'Mobile number',
-        style: TextStyle(
+      Text(
+        l10n.mobileNumberLabel,
+        style: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
@@ -207,10 +208,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       const SizedBox(height: 6),
       PhoneInput(controller: _phoneController),
       const SizedBox(height: 8),
-      const Text(
-        "Didn't get it? Check that your number can receive SMS, or wait a "
-        'few minutes and try again.',
-        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+      Text(
+        l10n.didntGetOtp,
+        style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
       ),
       if (_requestError != null) ...[
         const SizedBox(height: 12),
@@ -225,7 +225,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ],
       const SizedBox(height: 24),
       _PrimaryButton(
-        label: 'Send OTP',
+        label: l10n.sendOtp,
         enabled: _canSendOtp,
         isLoading: _isSendingOtp,
         onTap: _onSendOtp,
@@ -235,13 +235,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: GestureDetector(
           onTap: () => context.pop(),
           child: RichText(
-            text: const TextSpan(
-              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            text: TextSpan(
+              style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
               children: [
-                TextSpan(text: 'Remembered it? '),
+                TextSpan(text: l10n.remembered),
                 TextSpan(
-                  text: 'Back to log in',
-                  style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
+                  text: l10n.backToLogin,
+                  style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
                 ),
               ],
             ),
@@ -252,14 +252,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   List<Widget> _buildResetStep() {
+    final l10n = AppLocalizations.of(context);
     return [
       Text(
-        'Verify & reset',
+        l10n.verifyAndReset,
         style: Theme.of(context).textTheme.headlineSmall,
       ),
       const SizedBox(height: 6),
       Text(
-        'Enter the 6-digit code sent to +91 $_maskedPhone, then choose a new password.',
+        l10n.verifyResetSubtitle(_maskedPhone),
         style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
       const SizedBox(height: 24),
@@ -272,9 +273,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       Center(
         child: GestureDetector(
           onTap: _onResendOtp,
-          child: const Text(
-            'Resend OTP',
-            style: TextStyle(
+          child: Text(
+            l10n.resendOtp,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: AppColors.primary,
@@ -285,8 +286,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       const SizedBox(height: 16),
       AuthTextField(
         controller: _newPasswordController,
-        label: 'New password',
-        hintText: 'At least 8 characters',
+        label: l10n.newPasswordLabel,
+        hintText: l10n.passwordHintChars,
         obscureText: _obscureNewPassword,
         suffixIcon: IconButton(
           icon: Icon(
@@ -300,8 +301,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       const SizedBox(height: 16),
       AuthTextField(
         controller: _confirmPasswordController,
-        label: 'Confirm password',
-        hintText: 'Re-enter new password',
+        label: l10n.confirmPasswordLabel,
+        hintText: l10n.confirmPasswordHint,
         obscureText: _obscureConfirmPassword,
         suffixIcon: IconButton(
           icon: Icon(
@@ -314,9 +315,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
       if (_passwordsMismatch) ...[
         const SizedBox(height: 8),
-        const Text(
-          'Passwords do not match.',
-          style: TextStyle(
+        Text(
+          l10n.passwordsDoNotMatch,
+          style: const TextStyle(
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
             color: AppColors.danger,
@@ -336,7 +337,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ],
       const SizedBox(height: 24),
       _PrimaryButton(
-        label: 'Update password',
+        label: l10n.updatePassword,
         enabled: _canUpdatePassword,
         isLoading: _isUpdating,
         onTap: _onUpdatePassword,

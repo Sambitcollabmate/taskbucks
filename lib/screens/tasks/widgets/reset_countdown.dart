@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Small pill showing time remaining until the daily task cap resets at
 /// midnight (PROJECT.md 2: unused tasks do not carry over).
@@ -67,7 +68,7 @@ class _ResetCountdownState extends State<ResetCountdown> {
           ),
           const SizedBox(width: 6),
           Text(
-            'Resets in ${hours}h ${minutes}m ${seconds}s',
+            AppLocalizations.of(context).resetsIn(hours, minutes, seconds),
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,

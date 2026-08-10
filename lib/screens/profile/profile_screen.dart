@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user_profile.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/profile_provider.dart';
@@ -60,13 +61,13 @@ class _ProfileScreenBody extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'App language',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      AppLocalizations.of(context).appLanguageLabel,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
@@ -97,25 +98,26 @@ class _ProfileScreenBody extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (sheetContext) {
+        final l10n = AppLocalizations.of(context);
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Terms & Privacy',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      l10n.termsAndPrivacy,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
                 ListTile(
                   leading: const Icon(LucideIcons.fileText, size: 18),
-                  title: const Text('Terms of Service'),
+                  title: Text(l10n.termsOfService),
                   onTap: () {
                     Navigator.of(sheetContext).pop();
                     context.push('/terms');
@@ -123,7 +125,7 @@ class _ProfileScreenBody extends StatelessWidget {
                 ),
                 ListTile(
                   leading: const Icon(LucideIcons.shieldCheck, size: 18),
-                  title: const Text('Privacy Policy'),
+                  title: Text(l10n.privacyPolicy),
                   onTap: () {
                     Navigator.of(sheetContext).pop();
                     context.push('/privacy');
@@ -131,7 +133,7 @@ class _ProfileScreenBody extends StatelessWidget {
                 ),
                 ListTile(
                   leading: const Icon(LucideIcons.receiptText, size: 18),
-                  title: const Text('Refund Policy'),
+                  title: Text(l10n.refundPolicy),
                   onTap: () {
                     Navigator.of(sheetContext).pop();
                     context.push('/refund');
@@ -152,6 +154,7 @@ class _ProfileScreenBody extends StatelessWidget {
       body: SafeArea(
         child: Consumer<ProfileProvider>(
           builder: (context, provider, _) {
+            final l10n = AppLocalizations.of(context);
             final profile = provider.profile;
 
             if (provider.isLoading && profile == null) {
@@ -166,7 +169,7 @@ class _ProfileScreenBody extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
                 children: [
-                  Text('Profile', style: Theme.of(context).textTheme.headlineSmall),
+                  Text(l10n.profileTitle, style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 16),
                   ProfileHeader(profile: profile),
                   // Not just visually hidden — omitted from the widget tree
@@ -177,7 +180,7 @@ class _ProfileScreenBody extends StatelessWidget {
                     UpgradeBanner(onTap: () => context.push('/upgrade')),
                   ],
                   const SizedBox(height: 20),
-                  Text('Account', style: Theme.of(context).textTheme.titleLarge),
+                  Text(l10n.accountLabel, style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
                   ProfileMenuCard(
                     rows: [
@@ -188,7 +191,7 @@ class _ProfileScreenBody extends StatelessWidget {
                       // where subscription state actually lives.
                       ProfileMenuRow(
                         icon: LucideIcons.userPen,
-                        label: 'Edit profile',
+                        label: l10n.editProfile,
                         onTap: () => _openSettings(
                           context,
                           provider,
@@ -197,13 +200,13 @@ class _ProfileScreenBody extends StatelessWidget {
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.languages,
-                        label: 'App language',
+                        label: l10n.appLanguageLabel,
                         trailingValue: context.watch<LanguageProvider>().language.label,
                         onTap: () => _openLanguagePicker(context),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.shield,
-                        label: 'Security & password',
+                        label: l10n.securityAndPassword,
                         onTap: () => _openSettings(
                           context,
                           provider,
@@ -212,7 +215,7 @@ class _ProfileScreenBody extends StatelessWidget {
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.creditCard,
-                        label: 'Payment details',
+                        label: l10n.paymentDetails,
                         onTap: () => _openSettings(
                           context,
                           provider,
@@ -221,54 +224,54 @@ class _ProfileScreenBody extends StatelessWidget {
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.repeat,
-                        label: 'Manage subscription',
+                        label: l10n.manageSubscription,
                         onTap: () => context.push('/upgrade'),
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  Text('Support', style: Theme.of(context).textTheme.titleLarge),
+                  Text(l10n.supportLabel, style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
                   ProfileMenuCard(
                     rows: [
                       ProfileMenuRow(
                         icon: LucideIcons.bell,
-                        label: 'Notifications',
+                        label: l10n.notificationsLabel,
                         onTap: () => context.push('/notifications'),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.lifeBuoy,
-                        label: 'Support tickets',
+                        label: l10n.supportTickets,
                         onTap: () => context.push('/support-tickets'),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.circleHelp,
-                        label: 'How it works',
+                        label: l10n.howItWorks,
                         onTap: () => context.push('/how-it-works'),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.info,
-                        label: 'About',
+                        label: l10n.aboutUs,
                         onTap: () => context.push('/about'),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.messageCircleQuestion,
-                        label: 'FAQ',
+                        label: l10n.faq,
                         onTap: () => context.push('/faq'),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.mail,
-                        label: 'Contact us',
+                        label: l10n.contactUs,
                         onTap: () => context.push('/contact'),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.badgeCheck,
-                        label: 'Payment proofs',
+                        label: l10n.paymentProofs,
                         onTap: () => context.push('/payment-proofs'),
                       ),
                       ProfileMenuRow(
                         icon: LucideIcons.fileText,
-                        label: 'Terms & Privacy',
+                        label: l10n.termsAndPrivacy,
                         onTap: () => _openLegalLinks(context),
                       ),
                     ],

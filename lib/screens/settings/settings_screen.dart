@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/notification_type.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/settings_provider.dart';
 import '../auth/widgets/auth_text_field.dart';
 import 'widgets/profile_avatar_picker.dart';
@@ -115,12 +116,13 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('Settings'),
+        title: Text(AppLocalizations.of(context).settingsTitle),
       ),
       body: SafeArea(
         top: false,
         child: Consumer<SettingsProvider>(
           builder: (context, provider, _) {
+            final l10n = AppLocalizations.of(context);
             final data = provider.data;
 
             if (provider.isLoading && data == null) {
@@ -154,13 +156,13 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Settings',
+                    l10n.settingsTitle,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 16),
                   SettingsSectionCard(
                     key: _profileKey,
-                    title: 'Profile',
+                    title: l10n.profileTitle,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -171,27 +173,27 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                           onImageSelected: (path) => _runWithFeedback(
                             () => provider.updateProfileImage(path),
                             successMessage: path == null
-                                ? 'Profile photo removed'
-                                : 'Profile photo updated',
+                                ? l10n.profilePhotoRemoved
+                                : l10n.profilePhotoUpdated,
                           ),
                         ),
                         const SizedBox(height: 20),
                         AuthTextField(
                           controller: _nameController,
-                          label: 'Full name',
+                          label: l10n.fullNameSettingsLabel,
                           onChanged: (_) => setState(() {}),
                         ),
                         const SizedBox(height: 16),
                         AuthTextField(
                           controller: _emailController,
-                          label: 'Email address',
+                          label: l10n.emailAddressLabel,
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 16),
                         Align(
                           alignment: Alignment.centerRight,
                           child: _SectionButton(
-                            label: 'Save changes',
+                            label: l10n.saveChanges,
                             isLoading: provider.isSavingProfile,
                             enabled: _nameController.text.trim().isNotEmpty,
                             onTap: () => _runWithFeedback(
@@ -199,7 +201,7 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                                 name: _nameController.text.trim(),
                                 email: _emailController.text.trim(),
                               ),
-                              successMessage: 'Profile updated',
+                              successMessage: l10n.profileUpdated,
                             ),
                           ),
                         ),
@@ -209,14 +211,14 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                   const SizedBox(height: 20),
                   SettingsSectionCard(
                     key: _securityKey,
-                    title: 'Security',
+                    title: l10n.securityTitle,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AuthTextField(
                           controller: _currentPasswordController,
-                          label: 'Current password',
-                          hintText: 'Your current password',
+                          label: l10n.currentPasswordLabel,
+                          hintText: l10n.currentPasswordHint,
                           obscureText: _obscureCurrentPassword,
                           onChanged: (_) => setState(() {}),
                           suffixIcon: IconButton(
@@ -235,8 +237,8 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                         const SizedBox(height: 16),
                         AuthTextField(
                           controller: _newPasswordController,
-                          label: 'New password',
-                          hintText: 'At least 8 characters',
+                          label: l10n.newPasswordLabel,
+                          hintText: l10n.passwordHintChars,
                           obscureText: _obscureNewPassword,
                           onChanged: (_) => setState(() {}),
                           suffixIcon: IconButton(
@@ -267,7 +269,7 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: _SectionButton(
-                            label: 'Update password',
+                            label: l10n.updatePassword,
                             isLoading: provider.isUpdatingPassword,
                             enabled: _currentPasswordController.text.isNotEmpty &&
                                 _newPasswordController.text.length >= 6,
@@ -293,8 +295,8 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                               _currentPasswordController.clear();
                               _newPasswordController.clear();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Password updated'),
+                                SnackBar(
+                                  content: Text(l10n.passwordUpdatedShort),
                                 ),
                               );
                             },
@@ -312,9 +314,7 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    enabled
-                                        ? 'Two-step verification turned on'
-                                        : 'Two-step verification turned off',
+                                    enabled ? l10n.twoStepOn : l10n.twoStepOff,
                                   ),
                                 ),
                               );
@@ -331,7 +331,7 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                   // added until that's resolved.
                   SettingsSectionCard(
                     key: _paymentKey,
-                    title: 'Payment details',
+                    title: l10n.paymentDetailsTitle,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -341,7 +341,7 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                           isSaving: provider.isSavingUpi,
                           onSave: (upiId) => _runWithFeedback(
                             () => provider.saveUpiId(upiId),
-                            successMessage: 'UPI ID updated',
+                            successMessage: l10n.upiIdUpdated,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -368,9 +368,9 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Bank account',
-                                    style: TextStyle(
+                                  Text(
+                                    l10n.bankAccountLabel,
+                                    style: const TextStyle(
                                       fontSize: 12,
                                       color: AppColors.textSecondary,
                                     ),
@@ -394,13 +394,13 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                   ),
                   const SizedBox(height: 20),
                   SettingsSectionCard(
-                    title: 'Push notifications',
+                    title: l10n.pushNotificationsTitle,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         PushCategoryToggleRow(
-                          title: 'Earnings',
-                          subtitle: 'Task credits, referrals, streak bonuses',
+                          title: l10n.earningsPushTitle,
+                          subtitle: l10n.earningsPushSubtitle,
                           value: data.earningsPushEnabled,
                           isSaving:
                               provider.togglingPushCategory ==
@@ -414,8 +414,8 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                         const Divider(height: 1),
                         const SizedBox(height: 16),
                         PushCategoryToggleRow(
-                          title: 'Account',
-                          subtitle: 'Security alerts, like new-device logins',
+                          title: l10n.accountPushTitle,
+                          subtitle: l10n.accountPushSubtitle,
                           value: data.accountPushEnabled,
                           isSaving:
                               provider.togglingPushCategory ==
@@ -429,8 +429,8 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                         const Divider(height: 1),
                         const SizedBox(height: 16),
                         PushCategoryToggleRow(
-                          title: 'Promotions',
-                          subtitle: 'Occasional offers, like Premium discounts',
+                          title: l10n.promotionsPushTitle,
+                          subtitle: l10n.promotionsPushSubtitle,
                           value: data.promotionsPushEnabled,
                           isSaving:
                               provider.togglingPushCategory ==

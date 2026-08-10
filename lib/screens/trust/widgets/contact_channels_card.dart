@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// "Other ways to reach us" — visually distinct from the form above (its
 /// own bordered card) with real tappable `mailto:` links, not just email
@@ -15,6 +16,7 @@ class ContactChannelsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final supportEmail = 'support@${AppConfig.brandDomain}';
     final paymentsEmail = 'payments@${AppConfig.brandDomain}';
 
@@ -28,24 +30,24 @@ class ContactChannelsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Other ways to reach us', style: Theme.of(context).textTheme.titleLarge),
+          Text(l10n.otherWaysToReachUs, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 14),
           _MailtoRow(
             icon: LucideIcons.lifeBuoy,
-            label: 'Support',
+            label: l10n.supportChannelLabel,
             email: supportEmail,
           ),
           const SizedBox(height: 14),
           _MailtoRow(
             icon: LucideIcons.wallet,
-            label: 'Payments',
+            label: l10n.paymentsChannelLabel,
             email: paymentsEmail,
           ),
           const SizedBox(height: 16),
           const Divider(height: 1),
           const SizedBox(height: 14),
           Text(
-            'We usually reply within $responseTimeRange.',
+            l10n.weUsuallyReplyWithin(responseTimeRange),
             style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary, height: 1.4),
           ),
         ],
@@ -66,7 +68,7 @@ class _MailtoRow extends StatelessWidget {
     final launched = await launchUrl(uri);
     if (!launched && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No email app found for $email')),
+        SnackBar(content: Text(AppLocalizations.of(context).noEmailAppFound(email))),
       );
     }
   }

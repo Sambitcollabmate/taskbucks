@@ -3,6 +3,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../data/services/notification_permission_service.dart';
+import '../../l10n/app_localizations.dart';
 import 'gradient_cta_button.dart';
 
 /// Shows the POST_NOTIFICATIONS rationale sheet the first time a user
@@ -44,6 +45,7 @@ class _NotificationPermissionSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
@@ -61,28 +63,27 @@ class _NotificationPermissionSheet extends StatelessWidget {
               child: const Icon(LucideIcons.bell, size: 26, color: AppColors.primary),
             ),
             const SizedBox(height: 18),
-            const Text(
-              "Don't lose today's streak",
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+            Text(
+              l10n.dontLoseStreakTitle,
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 8),
-            const Text(
-              "We'll let you know when you're close to missing today's task "
-              'cap, and when a task or referral is credited — nothing more.',
+            Text(
+              l10n.notificationRationale,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13.5, color: AppColors.textSecondary, height: 1.45),
+              style: const TextStyle(fontSize: 13.5, color: AppColors.textSecondary, height: 1.45),
             ),
             const SizedBox(height: 22),
             GradientCtaButton(
-              label: 'Turn on notifications',
+              label: l10n.turnOnNotifications,
               onTap: () => _onEnable(context),
             ),
             const SizedBox(height: 10),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Not now',
-                style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+              child: Text(
+                l10n.notNow,
+                style: const TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
               ),
             ),
           ],

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/withdraw_summary.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/balance_provider.dart';
 import '../../providers/withdraw_provider.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
@@ -59,17 +60,18 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
 
   Future<void> _onSubmit(WithdrawProvider provider, double balance) async {
     if (provider.isSubmitting) return;
+    final l10n = AppLocalizations.of(context);
 
     final amount = double.tryParse(_amountController.text.trim());
     if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a valid withdrawal amount.')),
+        SnackBar(content: Text(l10n.enterValidAmount)),
       );
       return;
     }
     if (amount > balance) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("You can't withdraw more than your available balance.")),
+        SnackBar(content: Text(l10n.cannotExceedBalance)),
       );
       return;
     }
@@ -81,7 +83,7 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Withdrawal requested — queued for the ${dateFormat.format(nextPayoutDate())} payout cycle.',
+            l10n.withdrawalRequestedMessage(dateFormat.format(nextPayoutDate())),
           ),
         ),
       );
@@ -93,6 +95,7 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final balance = context.watch<BalanceProvider>().balance;
     final dateFormat = DateFormat('d MMM yyyy');
     final payoutDate = nextPayoutDate();
@@ -107,7 +110,7 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('Withdraw'),
+        title: Text(l10n.withdrawTitle),
       ),
       body: SafeArea(
         top: false,
@@ -131,9 +134,9 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
             return ListView(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
               children: [
-                const Text(
-                  'Available balance',
-                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                Text(
+                  l10n.availableBalance,
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -147,23 +150,19 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
                 const SizedBox(height: 20),
                 NoticeCard(
                   variant: NoticeVariant.warn,
-                  message:
-                      'Withdrawals are processed once a month, on the 1st. '
-                      "This month's window opens in $daysUntilPayout days "
-                      '— your request will queue until then, not transfer '
-                      'right away.',
+                  message: l10n.withdrawWindowNotice(daysUntilPayout),
                 ),
                 const SizedBox(height: 20),
                 AuthTextField(
                   controller: _amountController,
-                  label: 'Amount',
-                  hintText: 'Enter amount',
+                  label: l10n.amountLabel,
+                  hintText: l10n.enterAmountHint,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'Payout method',
-                  style: TextStyle(
+                Text(
+                  l10n.payoutMethodLabel,
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
@@ -173,7 +172,7 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
                 if (summary.upiId != null)
                   WithdrawMethodRow(
                     type: WithdrawMethodType.upi,
-                    label: 'UPI (Google Pay / PhonePe / Paytm)',
+                    label: l10n.upiMethodLabel,
                     detail: summary.upiId!,
                     selected: true,
                     onTap: () {},
@@ -181,9 +180,9 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
                 else
                   GestureDetector(
                     onTap: () => context.push('/settings', extra: SettingsSection.payment),
-                    child: const NoticeCard(
+                    child: NoticeCard(
                       variant: NoticeVariant.warn,
-                      message: 'Add a UPI ID in Settings before requesting a withdrawal.',
+                      message: l10n.addUpiBeforeWithdrawNotice,
                     ),
                   ),
                 // No bank-account add/edit flow exists yet, so `bank` isn't
@@ -191,26 +190,22 @@ class _WithdrawScreenBodyState extends State<_WithdrawScreenBody> {
                 // 2026-07-28 decision) — only UPI is offered.
                 if (summary.isUpiRecentlyAdded) ...[
                   const SizedBox(height: 12),
-                  const NoticeCard(
+                  NoticeCard(
                     variant: NoticeVariant.warn,
-                    message:
-                        'This UPI ID was added in the last 24 hours, so '
-                        'withdrawals to it are capped at ₹5,000 during that '
-                        "window. If a transfer fails for that reason, it "
-                        'may auto-retry once the 24 hours pass.',
+                    message: l10n.recentUpiCapNotice,
                   ),
                 ],
                 const SizedBox(height: 24),
                 GradientCtaButton(
                   label: provider.isSubmitting
-                      ? 'Queuing...'
-                      : 'Queue withdrawal for ${dateFormat.format(payoutDate)}',
+                      ? l10n.queuingLabel
+                      : l10n.queueWithdrawalFor(dateFormat.format(payoutDate)),
                   onTap: () => _onSubmit(provider, balance),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'First-time withdrawals may need manual verification.',
-                  style: TextStyle(fontSize: 11.5, color: AppColors.textSecondary),
+                Text(
+                  l10n.firstTimeWithdrawalNotice,
+                  style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary),
                   textAlign: TextAlign.center,
                 ),
               ],

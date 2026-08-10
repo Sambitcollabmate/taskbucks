@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Dark strip on Welcome echoing the same core claims as the rest of the
 /// app (25 tasks/day free-tier cap, monthly UPI payout — PROJECT.md 2).
@@ -13,6 +14,7 @@ class LiveStatsStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
       decoration: BoxDecoration(
@@ -23,22 +25,22 @@ class LiveStatsStrip extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(18),
       ),
-      child: const Row(
+      child: Row(
         children: [
           Expanded(
-            child: _StatItem(icon: LucideIcons.playCircle, value: '25', label: 'Tasks/day'),
+            child: _StatItem(icon: LucideIcons.playCircle, value: '25', label: l10n.tasksPerDayLabel),
           ),
-          _StatDivider(),
+          const _StatDivider(),
           Expanded(
             // TODO: replace with real data once API exists.
-            child: _StatItem(icon: LucideIcons.users, value: '18,204', label: 'Earners'),
+            child: _StatItem(icon: LucideIcons.users, value: '18,204', label: l10n.earnersLabel),
           ),
-          _StatDivider(),
+          const _StatDivider(),
           Expanded(
             child: _StatItem(
               icon: LucideIcons.calendarCheck,
-              value: 'Monthly',
-              label: 'Payout',
+              value: l10n.monthlyValue,
+              label: l10n.payoutLabel,
             ),
           ),
         ],

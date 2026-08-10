@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/task.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// The single unlockable task, highlighted the same way as Home's balance
 /// hero (primary gradient) so it reads as "the thing to do right now".
@@ -20,6 +21,7 @@ class FeaturedTaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final formatter = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
@@ -50,7 +52,7 @@ class FeaturedTaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Task ${task.id} of the day',
+                  l10n.taskOfDay(task.id),
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 13,
@@ -58,7 +60,7 @@ class FeaturedTaskCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Watch a video, earn ${formatter.format(task.rate)}',
+                  l10n.watchAndEarn(formatter.format(task.rate)),
                   style: GoogleFonts.plusJakartaSans(
                     color: Colors.white,
                     fontSize: 19,
@@ -75,16 +77,16 @@ class FeaturedTaskCard extends StatelessWidget {
             child: InkWell(
               onTap: onWatchNow,
               borderRadius: BorderRadius.circular(14),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(LucideIcons.play, color: Colors.white, size: 16),
-                    SizedBox(width: 6),
+                    const Icon(LucideIcons.play, color: Colors.white, size: 16),
+                    const SizedBox(width: 6),
                     Text(
-                      'Watch Now',
-                      style: TextStyle(
+                      l10n.watchNow,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,

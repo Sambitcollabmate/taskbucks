@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/dashed_border_box.dart';
 
 /// The "this is fake data" warning for Payment Proofs — dashed *red* border
@@ -17,6 +18,7 @@ class SampleDataBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return DashedBorderBox(
       color: AppColors.danger,
       child: Column(
@@ -27,7 +29,7 @@ class SampleDataBanner extends StatelessWidget {
               const Icon(LucideIcons.triangleAlert, size: 18, color: AppColors.danger),
               const SizedBox(width: 8),
               Text(
-                'Sample data — not live',
+                l10n.sampleDataNotLive,
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(color: AppColors.danger),
@@ -35,11 +37,9 @@ class SampleDataBanner extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          const Text(
-            'Every amount, name, and date on this screen is illustrative, '
-            'not a real payout. This banner stays until this screen is '
-            'wired to real transaction records.',
-            style: TextStyle(
+          Text(
+            l10n.sampleDataExplainer,
+            style: const TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
               color: AppColors.danger,

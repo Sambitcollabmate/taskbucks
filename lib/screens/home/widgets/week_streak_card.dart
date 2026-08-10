@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/daily_progress.dart';
-
-// Matches the backend's Sun-Sat week (HomeController::weekProgress starts
-// at CarbonBase::SUNDAY), not a Monday-first week.
-const _dayLetters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+import '../../../l10n/app_localizations.dart';
 
 /// Weekly streak strip below the task progress card: one letter per day of
 /// the current week, today highlighted, and a small bar beside each day
@@ -17,6 +14,10 @@ class WeekStreakCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    // Matches the backend's Sun-Sat week (HomeController::weekProgress
+    // starts at CarbonBase::SUNDAY), not a Monday-first week.
+    final dayLetters = l10n.dayLetters.split(',');
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -33,18 +34,18 @@ class WeekStreakCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('This week', style: Theme.of(context).textTheme.titleLarge),
+          Text(l10n.thisWeek, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 4),
-          const Text(
-            'Your daily task streak',
-            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          Text(
+            l10n.dailyTaskStreak,
+            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 16),
           Row(
             children: [
               for (var i = 0; i < days.length; i++)
                 Expanded(
-                  child: _DayIndicator(day: days[i], letter: _dayLetters[i]),
+                  child: _DayIndicator(day: days[i], letter: dayLetters[i]),
                 ),
             ],
           ),

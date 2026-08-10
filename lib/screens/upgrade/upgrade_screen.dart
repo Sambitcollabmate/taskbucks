@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user_profile.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/profile_provider.dart';
 import '../../shared/widgets/notice_card.dart';
 import 'widgets/premium_checklist_card.dart';
@@ -29,11 +30,12 @@ class _UpgradeScreenBody extends StatelessWidget {
   const _UpgradeScreenBody();
 
   Future<void> _onSubscribe(BuildContext context, ProfileProvider provider) async {
+    final l10n = AppLocalizations.of(context);
     try {
       await provider.subscribeToPremium();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("You're now Premium!")),
+          SnackBar(content: Text(l10n.nowPremiumMessage)),
         );
       }
     } on ApiException catch (e) {
@@ -44,12 +46,13 @@ class _UpgradeScreenBody extends StatelessWidget {
   }
 
   Future<void> _onCancel(BuildContext context, ProfileProvider provider) async {
+    final l10n = AppLocalizations.of(context);
     try {
       await provider.cancelPremium();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Subscription cancelled — benefits continue until the cycle ends.'),
+          SnackBar(
+            content: Text(l10n.subscriptionCancelledMessage),
           ),
         );
       }
@@ -62,12 +65,13 @@ class _UpgradeScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('Upgrade'),
+        title: Text(l10n.upgradeTitle),
       ),
       body: SafeArea(
         top: false,
@@ -87,11 +91,11 @@ class _UpgradeScreenBody extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
               children: [
-                Text('Go Premium', style: Theme.of(context).textTheme.headlineSmall),
+                Text(l10n.goPremiumTitle, style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 4),
-                const Text(
-                  'Unlock 5 extra tasks every day.',
-                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                Text(
+                  l10n.unlockExtraTasksSubtitle,
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 20),
                 const PremiumPriceCard(),
@@ -117,9 +121,12 @@ class _UpgradeScreenBody extends StatelessWidget {
                         Expanded(
                           child: Text(
                             profile.premiumCancelPending
-                                ? "Cancellation scheduled. Benefits continue until "
-                                    '${profile.premiumExpiresAt != null ? _formatDate(profile.premiumExpiresAt!) : 'the end of this cycle'}.'
-                                : "You're on Premium.",
+                                ? l10n.cancellationScheduled(
+                                    profile.premiumExpiresAt != null
+                                        ? _formatDate(profile.premiumExpiresAt!)
+                                        : l10n.endOfThisCycle,
+                                  )
+                                : l10n.youreOnPremium,
                             style: const TextStyle(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w600,
@@ -146,7 +153,7 @@ class _UpgradeScreenBody extends StatelessWidget {
                                 height: 18,
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
-                            : const Text('Cancel subscription'),
+                            : Text(l10n.cancelSubscription),
                       ),
                     ),
                   ],
@@ -183,9 +190,9 @@ class _UpgradeScreenBody extends StatelessWidget {
                                       valueColor: AlwaysStoppedAnimation(Colors.white),
                                     ),
                                   )
-                                : const Text(
-                              'Subscribe — ₹49/month',
-                              style: TextStyle(
+                                : Text(
+                              l10n.subscribePriceButton,
+                              style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -199,26 +206,16 @@ class _UpgradeScreenBody extends StatelessWidget {
                 const SizedBox(height: 20),
                 const PremiumChecklistCard(),
                 const SizedBox(height: 20),
-                const NoticeCard(
-                  message:
-                      'Billed monthly via Google Play. Cancel anytime from '
-                      'Profile → Manage subscription — Premium benefits '
-                      'continue until the end of the paid cycle.',
+                NoticeCard(
+                  message: l10n.billedMonthlyNotice,
                 ),
                 const SizedBox(height: 12),
-                const NoticeCard(
-                  message:
-                      'If you were referred by someone, completing this '
-                      'purchase credits their ₹125 referral commission, '
-                      'it\'s never credited on signup alone. See Refund '
-                      'Policy for subscription cancellation terms.',
+                NoticeCard(
+                  message: l10n.referralCommissionOnUpgradeNotice,
                 ),
                 const SizedBox(height: 12),
-                const NoticeCard(
-                  message:
-                      'Premium also unlocks the weekly referral bonus: get '
-                      '5+ referrals converting to Premium in the same week '
-                      'and earn +5 bonus ad slots the week after.',
+                NoticeCard(
+                  message: l10n.weeklyBonusUnlockNotice,
                 ),
               ],
             );

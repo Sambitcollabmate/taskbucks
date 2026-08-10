@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Gradient balance card reused on Home and Wallet (see PROJECT.md 6.3).
 /// The two action buttons are configurable so each screen can label them
@@ -57,7 +58,7 @@ class BalanceHeroCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Available balance',
+            AppLocalizations.of(context).availableBalance,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.8),
               fontSize: 14,

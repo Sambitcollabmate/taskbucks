@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/referral.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Single recent-referral row. Converted shows the flat +₹125 commission in
 /// green; pending shows a gray "Pending" pill instead of an amount, since
@@ -71,8 +72,8 @@ class ReferralRow extends StatelessWidget {
               color: AppColors.textSecondary.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
-              'Pending',
+            child: Text(
+              AppLocalizations.of(context).pendingLabel,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,

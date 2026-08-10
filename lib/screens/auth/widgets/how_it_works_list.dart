@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 4-step mini explainer. Step 4's bonus mechanic is a separate open item
 /// (weekly top referrer/ad-watcher bonus, PROJECT.md 2) — not referenced
@@ -14,15 +15,15 @@ class HowItWorksList extends StatelessWidget {
 
   const HowItWorksList({super.key, this.onSeeMore});
 
-  static const _steps = [
-    'Tap a task — 25 available every day',
-    'Watch the video ad — non-skippable, ~20–30 sec',
-    'Get credited — instantly after each ad',
-    'Withdraw monthly — once a month, on the 1st, to UPI or bank',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final steps = [
+      l10n.stepTapTask,
+      l10n.stepWatchAd,
+      l10n.stepGetCredited,
+      l10n.stepWithdraw,
+    ];
     final card = Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -43,7 +44,7 @@ class HowItWorksList extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'How it works',
+                  l10n.howItWorks,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
@@ -56,9 +57,9 @@ class HowItWorksList extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          for (var i = 0; i < _steps.length; i++) ...[
-            _StepRow(number: i + 1, text: _steps[i]),
-            if (i != _steps.length - 1) const SizedBox(height: 14),
+          for (var i = 0; i < steps.length; i++) ...[
+            _StepRow(number: i + 1, text: steps[i]),
+            if (i != steps.length - 1) const SizedBox(height: 14),
           ],
         ],
       ),

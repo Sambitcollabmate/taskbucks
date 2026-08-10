@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 const _cardRadius = 20.0;
 
@@ -44,6 +45,7 @@ class _PremiumPriceCardState extends State<PremiumPriceCard>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(_cardRadius),
       child: Container(
@@ -121,8 +123,8 @@ class _PremiumPriceCardState extends State<PremiumPriceCard>
                       width: 120,
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       color: AppColors.premiumGold,
-                      child: const Text(
-                        'PRO',
+                      child: Text(
+                        l10n.proBadge,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 11,
@@ -196,7 +198,7 @@ class _PremiumPriceCardState extends State<PremiumPriceCard>
                           ),
                         ),
                         TextSpan(
-                          text: ' /month',
+                          text: l10n.perMonthSuffix,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -208,7 +210,7 @@ class _PremiumPriceCardState extends State<PremiumPriceCard>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Cancel anytime — no long-term contract',
+                    l10n.cancelAnytimeNoContract,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12.5,

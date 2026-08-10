@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Two stat chips: today's completed count and today's earnings.
 class TaskStatsRow extends StatelessWidget {
@@ -20,6 +21,7 @@ class TaskStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final formatter = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
@@ -32,7 +34,7 @@ class TaskStatsRow extends StatelessWidget {
           child: _StatChip(
             icon: LucideIcons.circleCheck,
             iconColor: AppColors.earningsGreen,
-            label: 'Completed',
+            label: l10n.completedLabel,
             value: '$completed/$dailyLimit',
           ),
         ),
@@ -41,7 +43,7 @@ class TaskStatsRow extends StatelessWidget {
           child: _StatChip(
             icon: LucideIcons.wallet,
             iconColor: AppColors.premiumGold,
-            label: 'Earned today',
+            label: l10n.earnedTodayLabel,
             value: formatter.format(earnedToday),
           ),
         ),

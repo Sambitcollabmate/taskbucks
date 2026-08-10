@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Small trust signals under the hero — SSL/security, payout track record,
 /// and supported payout rails (UPI/Bank only, per PROJECT.md 2). Each pill
@@ -13,13 +14,14 @@ class TrustPillsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    final l10n = AppLocalizations.of(context);
+    return Row(
       children: [
-        Expanded(child: _TrustPill(icon: LucideIcons.shieldCheck, label: 'SSL secured')),
-        SizedBox(width: 8),
-        Expanded(child: _TrustPill(icon: LucideIcons.badgeCheck, label: '7 yrs paying')),
-        SizedBox(width: 8),
-        Expanded(child: _TrustPill(icon: LucideIcons.landmark, label: 'UPI · Bank')),
+        Expanded(child: _TrustPill(icon: LucideIcons.shieldCheck, label: l10n.sslSecured)),
+        const SizedBox(width: 8),
+        Expanded(child: _TrustPill(icon: LucideIcons.badgeCheck, label: l10n.yearsPaying)),
+        const SizedBox(width: 8),
+        Expanded(child: _TrustPill(icon: LucideIcons.landmark, label: l10n.upiBankPill)),
       ],
     );
   }

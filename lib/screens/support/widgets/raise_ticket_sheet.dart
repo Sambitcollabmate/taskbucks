@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/contact_topic.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/support_provider.dart';
 import '../../../shared/widgets/gradient_cta_button.dart';
 import '../../auth/widgets/auth_text_field.dart';
@@ -37,7 +38,7 @@ class _RaiseTicketSheetState extends State<RaiseTicketSheet> {
     final message = _messageController.text.trim();
     if (message.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Describe your issue before submitting.')),
+        SnackBar(content: Text(AppLocalizations.of(context).describeIssueFirst)),
       );
       return;
     }
@@ -48,6 +49,7 @@ class _RaiseTicketSheetState extends State<RaiseTicketSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.only(
         left: 20,
@@ -70,9 +72,9 @@ class _RaiseTicketSheetState extends State<RaiseTicketSheet> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const Text(
-              'Raise a new ticket',
-              style: TextStyle(
+            Text(
+              l10n.raiseNewTicket,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary,
@@ -86,8 +88,8 @@ class _RaiseTicketSheetState extends State<RaiseTicketSheet> {
             const SizedBox(height: 16),
             AuthTextField(
               controller: _messageController,
-              label: 'Message',
-              hintText: 'Tell us what happened...',
+              label: l10n.messageLabel,
+              hintText: l10n.tellUsWhatHappened,
               maxLines: 5,
             ),
             const SizedBox(height: 20),
@@ -95,7 +97,7 @@ class _RaiseTicketSheetState extends State<RaiseTicketSheet> {
               animation: widget.provider,
               builder: (context, _) {
                 return GradientCtaButton(
-                  label: widget.provider.isSubmitting ? 'Submitting...' : 'Submit ticket',
+                  label: widget.provider.isSubmitting ? l10n.submittingLabel : l10n.submitTicket,
                   onTap: _onSubmit,
                 );
               },

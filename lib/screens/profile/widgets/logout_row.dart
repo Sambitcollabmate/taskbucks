@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Log out — deliberately its own card, tinted danger red and centered
 /// (no chevron, no icon-circle-plus-label layout like the menu rows), so it
@@ -31,8 +32,8 @@ class LogoutRow extends StatelessWidget {
             children: [
               const Icon(LucideIcons.logOut, size: 18, color: AppColors.danger),
               const SizedBox(width: 10),
-              const Text(
-                'Log out',
+              Text(
+                AppLocalizations.of(context).logOut,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,

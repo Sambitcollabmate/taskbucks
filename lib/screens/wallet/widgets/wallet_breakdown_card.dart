@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/wallet_summary.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Breaks the balance down into task/ad earnings, referral commissions, and
 /// pending referral commission (PROJECT.md 2: referral ₹125 is "pending"
@@ -16,6 +17,7 @@ class WalletBreakdownCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final formatter = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
@@ -38,26 +40,26 @@ class WalletBreakdownCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Balance breakdown', style: Theme.of(context).textTheme.titleLarge),
+          Text(l10n.balanceBreakdown, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 14),
           _BreakdownRow(
             icon: LucideIcons.listChecks,
             iconColor: AppColors.earningsGreen,
-            label: 'Task (video ad) earnings',
+            label: l10n.taskAdEarnings,
             value: formatter.format(breakdown.taskAdEarnings),
           ),
           const Divider(height: 24),
           _BreakdownRow(
             icon: LucideIcons.userPlus,
             iconColor: AppColors.primary,
-            label: 'Referral earnings',
+            label: l10n.referralEarnings,
             value: formatter.format(breakdown.referralCommissions),
           ),
           const Divider(height: 24),
           _BreakdownRow(
             icon: LucideIcons.gift,
             iconColor: AppColors.premiumGold,
-            label: 'Bonus rewards',
+            label: l10n.bonusRewards,
             value: formatter.format(breakdown.bonusRewards),
           ),
         ],

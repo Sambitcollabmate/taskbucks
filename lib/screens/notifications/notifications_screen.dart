@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/app_notification.dart';
 import '../../data/models/notification_type.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/notifications_provider.dart';
 import '../../providers/transactions_provider.dart';
 import '../../shared/widgets/notification_row.dart';
@@ -61,14 +62,14 @@ class _NotificationsScreenBody extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('Notifications'),
+        title: Text(AppLocalizations.of(context).notificationsTitle),
         actions: [
           Consumer<NotificationsProvider>(
             builder: (context, provider, _) {
               return TextButton(
                 onPressed: provider.hasUnread ? provider.markAllRead : null,
                 child: Text(
-                  'Mark all read',
+                  AppLocalizations.of(context).markAllRead,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -105,12 +106,12 @@ class _NotificationsScreenBody extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   if (notifications.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Center(
                         child: Text(
-                          'No notifications here',
-                          style: TextStyle(color: AppColors.textSecondary),
+                          AppLocalizations.of(context).noNotificationsHere,
+                          style: const TextStyle(color: AppColors.textSecondary),
                         ),
                       ),
                     )

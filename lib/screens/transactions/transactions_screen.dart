@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/transactions_provider.dart';
 import '../../shared/widgets/txn_row.dart';
 import 'widgets/transaction_filter_tabs.dart';
@@ -82,7 +83,7 @@ class _TransactionsScreenBodyState extends State<_TransactionsScreenBody> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('Transactions'),
+        title: Text(AppLocalizations.of(context).transactionsTitle),
       ),
       body: SafeArea(
         top: false,
@@ -110,12 +111,12 @@ class _TransactionsScreenBodyState extends State<_TransactionsScreenBody> {
                   ),
                   const SizedBox(height: 20),
                   if (transactions.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Center(
                         child: Text(
-                          'No transactions yet',
-                          style: TextStyle(color: AppColors.textSecondary),
+                          AppLocalizations.of(context).noTransactionsYet,
+                          style: const TextStyle(color: AppColors.textSecondary),
                         ),
                       ),
                     )

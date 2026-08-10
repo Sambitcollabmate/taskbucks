@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Circular ring showing today's completed tasks vs the daily cap.
 /// Green while in progress, gold once the cap is complete (PROJECT.md 5).
@@ -20,6 +21,7 @@ class TaskProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final progress = dailyLimit == 0
         ? 0.0
         : (completed / dailyLimit).clamp(0.0, 1.0);
@@ -82,14 +84,14 @@ class TaskProgressCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Today's tasks",
+                      l10n.todaysTasks,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       isComplete
-                          ? "You've hit today's cap. Come back tomorrow!"
-                          : '${dailyLimit - completed} more to reach your daily limit',
+                          ? l10n.capReachedMessage
+                          : l10n.moreToReachLimit(dailyLimit - completed),
                       style: const TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
@@ -101,7 +103,7 @@ class TaskProgressCard extends StatelessWidget {
                         Icon(LucideIcons.play, size: 14, color: ringColor),
                         const SizedBox(width: 4),
                         Text(
-                          isComplete ? 'Cap reached' : 'Watch a video to earn',
+                          isComplete ? l10n.capReached : l10n.watchVideoToEarn,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,

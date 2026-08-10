@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Dark stats strip — same "premium surface" gradient language as
 /// Welcome's `LiveStatsStrip` and `UpgradeBanner`, driven by
@@ -22,6 +23,7 @@ class PayoutStatsStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final amountFormat = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
@@ -45,7 +47,7 @@ class PayoutStatsStrip extends StatelessWidget {
             child: _StatItem(
               icon: LucideIcons.banknote,
               value: amountFormat.format(lastCycleTotal),
-              label: 'Last cycle',
+              label: l10n.lastCycleLabel,
             ),
           ),
           Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.12)),
@@ -53,7 +55,7 @@ class PayoutStatsStrip extends StatelessWidget {
             child: _StatItem(
               icon: LucideIcons.users,
               value: '${countFormat.format(totalEarners)}+',
-              label: 'Total earners',
+              label: l10n.totalEarnersLabel,
             ),
           ),
         ],

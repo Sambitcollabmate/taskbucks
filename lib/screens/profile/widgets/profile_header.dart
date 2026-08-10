@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/user_profile.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Avatar + name + phone + tier badge header.
 class ProfileHeader extends StatelessWidget {
@@ -100,7 +101,9 @@ class ProfileHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              isPremium ? 'Premium' : 'Free',
+              isPremium
+                  ? AppLocalizations.of(context).premiumBadge
+                  : AppLocalizations.of(context).freeBadge,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,

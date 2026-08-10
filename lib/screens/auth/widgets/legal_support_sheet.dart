@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Bottom sheet opened by Welcome's "Legal & support" link — same
 /// `showModalBottomSheet` pattern Settings' `ProfileAvatarPicker` already
@@ -12,17 +13,17 @@ import '../../../core/theme/app_colors.dart';
 class LegalSupportSheet extends StatelessWidget {
   const LegalSupportSheet({super.key});
 
-  static const _rows = [
-    (icon: LucideIcons.info, label: 'About us', path: '/about'),
-    (icon: LucideIcons.messageCircleQuestion, label: 'FAQ', path: '/faq'),
-    (icon: LucideIcons.mail, label: 'Contact', path: '/contact'),
-    (icon: LucideIcons.fileText, label: 'Terms of Service', path: '/terms'),
-    (icon: LucideIcons.shieldCheck, label: 'Privacy Policy', path: '/privacy'),
-    (icon: LucideIcons.receiptText, label: 'Refund Policy', path: '/refund'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final rows = [
+      (icon: LucideIcons.info, label: l10n.aboutUs, path: '/about'),
+      (icon: LucideIcons.messageCircleQuestion, label: l10n.faq, path: '/faq'),
+      (icon: LucideIcons.mail, label: l10n.contact, path: '/contact'),
+      (icon: LucideIcons.fileText, label: l10n.termsOfService, path: '/terms'),
+      (icon: LucideIcons.shieldCheck, label: l10n.privacyPolicy, path: '/privacy'),
+      (icon: LucideIcons.receiptText, label: l10n.refundPolicy, path: '/refund'),
+    ];
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -37,7 +38,7 @@ class LegalSupportSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          for (final row in _rows)
+          for (final row in rows)
             ListTile(
               leading: Icon(row.icon, color: AppColors.primary, size: 20),
               title: Text(row.label),

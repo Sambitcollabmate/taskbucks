@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// One entry in a [LegalScreen]'s table of contents.
 class LegalTocEntry {
@@ -99,6 +100,7 @@ class _LegalScreenState extends State<LegalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final dateFormat = DateFormat('d MMMM yyyy');
 
     return Scaffold(
@@ -123,7 +125,7 @@ class _LegalScreenState extends State<LegalScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Last updated: ${dateFormat.format(widget.lastUpdated)}',
+                l10n.lastUpdatedOn(dateFormat.format(widget.lastUpdated)),
                 style: const TextStyle(
                   fontSize: 12.5,
                   color: AppColors.textSecondary,
@@ -142,9 +144,9 @@ class _LegalScreenState extends State<LegalScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Contents',
-                      style: TextStyle(
+                    Text(
+                      l10n.contentsLabel,
+                      style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textSecondary,

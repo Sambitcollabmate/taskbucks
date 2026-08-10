@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 class _NavItem {
   final IconData icon;
@@ -9,14 +10,6 @@ class _NavItem {
 
   const _NavItem({required this.icon, required this.label});
 }
-
-const _items = [
-  _NavItem(icon: LucideIcons.house, label: 'Home'),
-  _NavItem(icon: LucideIcons.listChecks, label: 'Tasks'),
-  _NavItem(icon: LucideIcons.wallet, label: 'Wallet'),
-  _NavItem(icon: LucideIcons.userPlus, label: 'Refer'),
-  _NavItem(icon: LucideIcons.user, label: 'Profile'),
-];
 
 /// Persistent 5-tab bottom nav (Home, Tasks, Wallet, Refer, Profile) — see
 /// PROJECT.md 6.3. Wrapped around the tabs by a go_router ShellRoute so it
@@ -33,6 +26,14 @@ class MainBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final items = [
+      _NavItem(icon: LucideIcons.house, label: l10n.homeLabel),
+      _NavItem(icon: LucideIcons.listChecks, label: l10n.tasksTitle),
+      _NavItem(icon: LucideIcons.wallet, label: l10n.walletLabel),
+      _NavItem(icon: LucideIcons.userPlus, label: l10n.referLabel),
+      _NavItem(icon: LucideIcons.user, label: l10n.profileTitle),
+    ];
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
@@ -50,10 +51,10 @@ class MainBottomNav extends StatelessWidget {
           height: 60,
           child: Row(
             children: [
-              for (var i = 0; i < _items.length; i++)
+              for (var i = 0; i < items.length; i++)
                 Expanded(
                   child: _NavButton(
-                    item: _items[i],
+                    item: items[i],
                     isActive: i == currentIndex,
                     onTap: () => onTap(i),
                   ),

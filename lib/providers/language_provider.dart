@@ -1,10 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
-/// Languages the app can display in — English is the only one actually
-/// localized today; Hindi is selectable so the picker (and Profile's "App
-/// language" row) reflect the real intended feature, but the app's copy
-/// doesn't change yet. Real l10n wiring is a later phase, same fake-now/
-/// real-later pattern as AdMob and Google Play Billing (see PROJECT.md 7).
 enum AppLanguage { english, hindi }
 
 extension AppLanguageLabel on AppLanguage {
@@ -16,11 +11,21 @@ extension AppLanguageLabel on AppLanguage {
         return 'हिंदी';
     }
   }
+
+  Locale get locale {
+    switch (this) {
+      case AppLanguage.english:
+        return const Locale('en');
+      case AppLanguage.hindi:
+        return const Locale('hi');
+    }
+  }
 }
 
 /// Single source of truth for the selected display language, shared across
 /// Profile's "App language" row and its picker sheet (same singleton
-/// pattern as `balanceProvider`/`notificationsProvider`).
+/// pattern as `balanceProvider`/`notificationsProvider`), and consumed by
+/// `MaterialApp.router`'s `locale` to drive real l10n.
 class LanguageProvider extends ChangeNotifier {
   AppLanguage _language = AppLanguage.english;
 

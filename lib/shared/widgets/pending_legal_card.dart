@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import 'dashed_border_box.dart';
 
 /// Deliberately unfinished-looking placeholder for any legal field that
@@ -85,9 +86,9 @@ class _PendingRow extends StatelessWidget {
             ),
           ),
         ),
-        const Text(
-          'Pending',
-          style: TextStyle(
+        Text(
+          AppLocalizations.of(context).pendingLabel,
+          style: const TextStyle(
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
             fontStyle: FontStyle.italic,

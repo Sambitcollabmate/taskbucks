@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/support_provider.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
 import 'widgets/raise_ticket_sheet.dart';
@@ -63,12 +64,13 @@ class _SupportTicketsScreenBody extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('Support tickets'),
+        title: Text(AppLocalizations.of(context).supportTickets),
       ),
       body: SafeArea(
         top: false,
         child: Consumer<SupportProvider>(
           builder: (context, provider, _) {
+            final l10n = AppLocalizations.of(context);
             final tickets = provider.tickets;
 
             return RefreshIndicator(
@@ -77,13 +79,13 @@ class _SupportTicketsScreenBody extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
                 children: [
                   GradientCtaButton(
-                    label: '+ New ticket',
+                    label: l10n.newTicket,
                     onTap: () => _showRaiseTicketSheet(context, provider),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'We read and reply to every ticket within 24–48 hours.',
-                    style: TextStyle(fontSize: 12.5, color: AppColors.textSecondary),
+                  Text(
+                    l10n.supportReplyTimeNotice,
+                    style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 20),
                   SupportTicketFilterTabs(
@@ -104,8 +106,8 @@ class _SupportTicketsScreenBody extends StatelessWidget {
                       child: Center(
                         child: Text(
                           provider.filter == SupportTicketFilter.open
-                              ? 'No open tickets'
-                              : 'No closed tickets',
+                              ? l10n.noOpenTickets
+                              : l10n.noClosedTickets,
                           style: const TextStyle(color: AppColors.textSecondary),
                         ),
                       ),

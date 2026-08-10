@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
-
-const _items = [
-  '30 tasks/day, up from Free\'s 25',
-  'Same ₹/task rate — no reduced payout per task',
-  'Priority support — faster reply on tickets',
-];
+import '../../../l10n/app_localizations.dart';
 
 /// "What you get" checklist. The first two facts are PROJECT.md Section 2's
 /// Premium-tier bullet; "Priority support" is a real, differentiated
@@ -18,6 +13,12 @@ class PremiumChecklistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final items = [
+      l10n.goPremiumBullet1,
+      l10n.goPremiumBullet2,
+      l10n.prioritySupportBullet,
+    ];
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -34,9 +35,9 @@ class PremiumChecklistCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('What you get', style: Theme.of(context).textTheme.titleLarge),
+          Text(l10n.whatYouGet, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 16),
-          for (final item in _items) ...[
+          for (final item in items) ...[
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -59,7 +60,7 @@ class PremiumChecklistCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (item != _items.last) const SizedBox(height: 12),
+            if (item != items.last) const SizedBox(height: 12),
           ],
         ],
       ),

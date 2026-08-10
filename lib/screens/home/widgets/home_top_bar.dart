@@ -3,6 +3,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/notifications_provider.dart';
 
 class HomeTopBar extends StatelessWidget {
@@ -15,15 +16,16 @@ class HomeTopBar extends StatelessWidget {
     required this.onNotificationsTap,
   });
 
-  String get _greeting {
+  String _greeting(AppLocalizations l10n) {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return l10n.goodMorning;
+    if (hour < 17) return l10n.goodAfternoon;
+    return l10n.goodEvening;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
@@ -31,7 +33,7 @@ class HomeTopBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _greeting,
+                _greeting(l10n),
                 style: const TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,

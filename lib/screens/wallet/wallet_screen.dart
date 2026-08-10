@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/balance_provider.dart';
 import '../../providers/wallet_provider.dart';
 import '../../shared/widgets/balance_hero_card.dart';
@@ -42,6 +43,7 @@ class _WalletScreenBody extends StatelessWidget {
       body: SafeArea(
         child: Consumer<WalletProvider>(
           builder: (context, provider, _) {
+            final l10n = AppLocalizations.of(context);
             final summary = provider.summary;
             final balance = context.watch<BalanceProvider>().balance;
 
@@ -57,28 +59,26 @@ class _WalletScreenBody extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
                 children: [
-                  Text('Wallet', style: Theme.of(context).textTheme.headlineSmall),
+                  Text(l10n.walletTitle, style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 16),
                   BalanceHeroCard(
                     balance: balance,
-                    primaryLabel: 'Withdraw',
+                    primaryLabel: l10n.withdrawLabel,
                     primaryIcon: LucideIcons.arrowUpRight,
                     onPrimaryTap: () => context.push('/withdraw'),
-                    secondaryLabel: 'History',
+                    secondaryLabel: l10n.historyLabel,
                     secondaryIcon: LucideIcons.history,
                     onSecondaryTap: () => context.push('/transactions'),
                   ),
                   const SizedBox(height: 16),
                   NoticeCard(
                     variant: NoticeVariant.warn,
-                    message:
-                        'Withdrawals are processed once a month, on the 1st. '
-                        'Next window opens in ${_daysUntilNextPayout()} days.',
+                    message: l10n.withdrawalWindowNotice(_daysUntilNextPayout()),
                   ),
                   const SizedBox(height: 16),
                   WalletBreakdownCard(breakdown: summary.breakdown),
                   const SizedBox(height: 16),
-                  Text('Payment method', style: Theme.of(context).textTheme.titleLarge),
+                  Text(l10n.paymentMethodTitle, style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
                   if (summary.paymentMethod != null)
                     PaymentMethodCard(
@@ -94,13 +94,13 @@ class _WalletScreenBody extends StatelessWidget {
                         '/settings',
                         extra: SettingsSection.payment,
                       ),
-                      child: const NoticeCard(
+                      child: NoticeCard(
                         variant: NoticeVariant.warn,
-                        message: 'Add a UPI ID in Settings to receive payouts.',
+                        message: l10n.addUpiNotice,
                       ),
                     ),
                   const SizedBox(height: 20),
-                  Text('Recent activity', style: Theme.of(context).textTheme.titleLarge),
+                  Text(l10n.recentActivityTitle, style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(16),

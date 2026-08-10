@@ -3,6 +3,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/top_referrer.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/leader_row.dart';
 
 /// This week's top-3 referrers by conversion count. The weekly bonus gift
@@ -15,6 +16,7 @@ class TopReferrersCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -36,7 +38,7 @@ class TopReferrersCard extends StatelessWidget {
               const Icon(LucideIcons.trophy, size: 18, color: AppColors.premiumGold),
               const SizedBox(width: 8),
               Text(
-                "This week's top referrers",
+                l10n.thisWeeksTopReferrers,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ],
@@ -47,7 +49,7 @@ class TopReferrersCard extends StatelessWidget {
               leading: LeaderRow.medalBadge(referrer.rank),
               name: referrer.maskedUsername,
               trailing: Text(
-                '${referrer.conversions} conversions',
+                l10n.conversionsCount(referrer.conversions),
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -59,7 +61,7 @@ class TopReferrersCard extends StatelessWidget {
           ],
           const SizedBox(height: 12),
           Text(
-            'Top referrer this week wins a bonus gift.',
+            l10n.topReferrerBonusFootnote,
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w500,

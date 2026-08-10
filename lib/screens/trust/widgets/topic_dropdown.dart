@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/contact_topic.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Topic selector for the Contact form, styled to match `AuthTextField`'s
 /// box so it sits in the same form visually. See [ContactTopic] for the
@@ -12,14 +13,30 @@ class TopicDropdown extends StatelessWidget {
 
   const TopicDropdown({super.key, required this.value, required this.onChanged});
 
+  String _label(AppLocalizations l10n, ContactTopic topic) {
+    switch (topic) {
+      case ContactTopic.accountAccess:
+        return l10n.topicAccountAccess;
+      case ContactTopic.withdrawalIssue:
+        return l10n.topicWithdrawalIssue;
+      case ContactTopic.adNotCredited:
+        return l10n.topicAdNotCredited;
+      case ContactTopic.referralCommissionMissing:
+        return l10n.topicReferralCommissionMissing;
+      case ContactTopic.somethingElse:
+        return l10n.topicSomethingElse;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Topic',
-          style: TextStyle(
+        Text(
+          l10n.topicLabel,
+          style: const TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -34,7 +51,7 @@ class TopicDropdown extends StatelessWidget {
           },
           items: [
             for (final topic in ContactTopic.values)
-              DropdownMenuItem(value: topic, child: Text(topic.label)),
+              DropdownMenuItem(value: topic, child: Text(_label(l10n, topic))),
           ],
           style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
           decoration: InputDecoration(

@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/transactions_provider.dart';
-
-const _labels = {
-  TransactionFilter.all: 'All',
-  TransactionFilter.tasks: 'Tasks',
-  TransactionFilter.referrals: 'Referrals',
-  TransactionFilter.withdrawals: 'Withdrawals',
-};
 
 /// Filter tab row for the Transactions screen (PROJECT.md Phase 4) — the
 /// active tab is a filled [AppColors.primary] pill, inactive tabs stay
@@ -25,13 +19,20 @@ class TransactionFilterTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final labels = {
+      TransactionFilter.all: l10n.allFilterLabel,
+      TransactionFilter.tasks: l10n.tasksFilterLabel,
+      TransactionFilter.referrals: l10n.referralsFilterLabel,
+      TransactionFilter.withdrawals: l10n.withdrawalsFilterLabel,
+    };
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
           for (final filter in TransactionFilter.values) ...[
             _FilterPill(
-              label: _labels[filter]!,
+              label: labels[filter]!,
               isActive: filter == selected,
               onTap: () => onSelected(filter),
             ),

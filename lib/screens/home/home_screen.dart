@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/balance_provider.dart';
 import '../../providers/home_provider.dart';
 import '../../shared/widgets/balance_hero_card.dart';
@@ -35,6 +36,7 @@ class _HomeScreenBody extends StatelessWidget {
       body: SafeArea(
         child: Consumer<HomeProvider>(
           builder: (context, provider, _) {
+            final l10n = AppLocalizations.of(context);
             final summary = provider.summary;
             final balance = context.watch<BalanceProvider>().balance;
 
@@ -57,7 +59,7 @@ class _HomeScreenBody extends StatelessWidget {
                   const SizedBox(height: 20),
                   BalanceHeroCard(
                     balance: balance,
-                    primaryLabel: 'Wallet',
+                    primaryLabel: l10n.walletLabel,
                     primaryIcon: LucideIcons.wallet,
                     // Switches the persistent bottom-tab branch (index 2 =
                     // Wallet — see the StatefulShellRoute branch order in
@@ -65,7 +67,7 @@ class _HomeScreenBody extends StatelessWidget {
                     // it behaves exactly like tapping the Wallet tab.
                     onPrimaryTap: () =>
                         StatefulNavigationShell.of(context).goBranch(2),
-                    secondaryLabel: 'Refer & earn',
+                    secondaryLabel: l10n.referAndEarnLabel,
                     secondaryIcon: LucideIcons.userPlus,
                     onSecondaryTap: () =>
                         StatefulNavigationShell.of(context).goBranch(3),

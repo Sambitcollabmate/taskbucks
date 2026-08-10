@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/config/app_config.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
 import 'widgets/how_it_works_list.dart';
 import 'widgets/legal_support_sheet.dart';
@@ -34,6 +35,7 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -81,7 +83,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 28),
                     Text(
-                      'Simple daily earning, made for India',
+                      l10n.heroTagline,
                       style: TextStyle(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w700,
@@ -91,7 +93,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Watch 25 ads a day. Get paid every month.',
+                      l10n.heroHeadline,
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 26,
                         fontWeight: FontWeight.w800,
@@ -100,11 +102,9 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Open the app, tap a task, watch one short video ad, '
-                      'earn ₹100. Do it 25 times a day and cash out monthly '
-                      'straight to UPI — no surveys, no complicated offers.',
-                      style: TextStyle(
+                    Text(
+                      l10n.heroDescription,
+                      style: const TextStyle(
                         fontSize: 14.5,
                         color: AppColors.textSecondary,
                         height: 1.5,
@@ -142,10 +142,10 @@ class WelcomeScreen extends StatelessWidget {
                                 color: AppColors.earningsGreen,
                               ),
                               const SizedBox(width: 10),
-                              const Expanded(
+                              Expanded(
                                 child: Text(
-                                  'See real payment proofs',
-                                  style: TextStyle(
+                                  l10n.seePaymentProofs,
+                                  style: const TextStyle(
                                     fontSize: 13.5,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.textPrimary,
@@ -183,7 +183,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    GradientCtaButton(label: 'Create free account', onTap: onCreateAccount),
+                    GradientCtaButton(label: l10n.createFreeAccount, onTap: onCreateAccount),
                     const SizedBox(height: 10),
                     SizedBox(
                       width: double.infinity,
@@ -196,9 +196,9 @@ class WelcomeScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        child: const Text(
-                          'Log in',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.logIn,
+                          style: const TextStyle(
                             color: AppColors.primary,
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
@@ -211,9 +211,9 @@ class WelcomeScreen extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
-                            'Legal & support',
-                            style: TextStyle(
+                          Text(
+                            l10n.legalAndSupport,
+                            style: const TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 12,
                               fontWeight: FontWeight.w700,

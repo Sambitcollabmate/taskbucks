@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/refer_provider.dart';
 import '../../shared/widgets/notice_card.dart';
 import 'widgets/refer_stats_row.dart';
@@ -32,6 +33,7 @@ class _ReferScreenBody extends StatelessWidget {
       body: SafeArea(
         child: Consumer<ReferProvider>(
           builder: (context, provider, _) {
+            final l10n = AppLocalizations.of(context);
             final summary = provider.summary;
 
             if (provider.isLoading && summary == null) {
@@ -46,16 +48,13 @@ class _ReferScreenBody extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
                 children: [
-                  Text('Refer & earn', style: Theme.of(context).textTheme.headlineSmall),
+                  Text(l10n.referAndEarnTitle, style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 16),
                   ReferralLinkCard(referralCode: summary.referralCode),
                   const SizedBox(height: 16),
-                  const NoticeCard(
+                  NoticeCard(
                     variant: NoticeVariant.warn,
-                    message:
-                        'You earn ₹125 only when someone you refer completes '
-                        'the ₹49 Premium purchase, not just for signing up. '
-                        'It shows as pending until their payment clears.',
+                    message: l10n.referralCommissionNotice,
                   ),
                   const SizedBox(height: 16),
                   ReferStatsRow(
@@ -68,7 +67,7 @@ class _ReferScreenBody extends StatelessWidget {
                   const SizedBox(height: 16),
                   WeeklyBonusCard(summary: summary),
                   const SizedBox(height: 20),
-                  Text('Recent referrals', style: Theme.of(context).textTheme.titleLarge),
+                  Text(l10n.recentReferralsTitle, style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(16),

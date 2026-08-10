@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/balance_provider.dart';
 import '../../providers/tasks_provider.dart';
 import '../../shared/widgets/notice_card.dart';
@@ -62,6 +63,7 @@ class _TasksScreenBody extends StatelessWidget {
       body: SafeArea(
         child: Consumer<TasksProvider>(
           builder: (context, provider, _) {
+            final l10n = AppLocalizations.of(context);
             final summary = provider.summary;
 
             if (provider.isLoading && summary == null) {
@@ -81,7 +83,7 @@ class _TasksScreenBody extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Tasks', style: Theme.of(context).textTheme.headlineSmall),
+                      Text(l10n.tasksTitle, style: Theme.of(context).textTheme.headlineSmall),
                       ResetCountdown(resetAt: summary.resetAt),
                     ],
                   ),
@@ -92,11 +94,8 @@ class _TasksScreenBody extends StatelessWidget {
                     earnedToday: summary.earnedToday,
                   ),
                   const SizedBox(height: 16),
-                  const NoticeCard(
-                    message:
-                        'Each task plays one short video ad. The ad cannot '
-                        'be skipped or minimized — stay on screen until it '
-                        'finishes to get credited.',
+                  NoticeCard(
+                    message: l10n.adNoticeMessage,
                   ),
                   if (currentTask != null) ...[
                     const SizedBox(height: 16),
@@ -106,7 +105,7 @@ class _TasksScreenBody extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 20),
-                  Text("Today's tasks", style: Theme.of(context).textTheme.titleLarge),
+                  Text(l10n.todaysTasks, style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
                   TaskGrid(
                     tasks: summary.tasks,

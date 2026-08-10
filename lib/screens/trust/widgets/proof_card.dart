@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/payment_proof.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// One repeating row in the Payment Proofs list — amount in green (the
 /// same credit-amount convention as `TxnRow`), masked username, method,
@@ -79,8 +80,8 @@ class ProofCard extends StatelessWidget {
                 color: AppColors.earningsGreen.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text(
-                'PAID',
+              child: Text(
+                AppLocalizations.of(context).paidBadge,
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,

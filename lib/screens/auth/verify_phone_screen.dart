@@ -9,6 +9,7 @@ import '../../core/config/app_config.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../shared/widgets/notice_card.dart';
 import '../../shared/widgets/otp_row.dart';
@@ -105,8 +106,13 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
         });
         _startResendTimer(_defaultResendCooldownSeconds);
       } else if (mounted) {
+        setState(() => _errorMessageOverride = response['message'] as String? ??
+            AppLocalizations.of(context).couldNotSendOtp);
+      }
+    } catch (e) {
+      if (mounted) {
         setState(() => _errorMessageOverride =
-            response['message'] as String? ?? 'Could not send OTP right now.');
+            AppLocalizations.of(context).couldNotSendOtpWithError('$e'));
       }
     } finally {
       if (mounted) setState(() => _isSendingInitialOtp = false);
@@ -162,8 +168,13 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
         _otpKey.currentState?.clear();
         _startResendTimer(_defaultResendCooldownSeconds);
       } else {
+        setState(() => _errorMessageOverride = response['message'] as String? ??
+            AppLocalizations.of(context).couldNotResendOtp);
+      }
+    } catch (e) {
+      if (mounted) {
         setState(() => _errorMessageOverride =
-            response['message'] as String? ?? 'Could not resend OTP right now.');
+            AppLocalizations.of(context).couldNotResendOtpWithError('$e'));
       }
     } finally {
       if (mounted) setState(() => _isResending = false);
@@ -186,11 +197,23 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
     if (_isVerifying || _reqId == null || _error == _OtpError.tooManyAttempts) return;
     setState(() => _isVerifying = true);
 
-    final response = await OTPWidget.verifyOTP({'reqId': _reqId, 'otp': code}) as Map;
+    final Map response;
+    try {
+      response = await OTPWidget.verifyOTP({'reqId': _reqId, 'otp': code}) as Map;
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isVerifying = false;
+        _errorMessageOverride = AppLocalizations.of(context).couldNotVerifyRightNow('$e');
+        _error = _OtpError.wrongCode;
+      });
+      return;
+    }
 
     if (response['type'] != 'success') {
       if (!mounted) return;
-      final message = response['message'] as String? ?? "That code didn't match.";
+      final message =
+          response['message'] as String? ?? AppLocalizations.of(context).otpDidNotMatch;
       setState(() {
         _isVerifying = false;
         _errorMessageOverride = message;
@@ -244,13 +267,14 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
 
   String? get _errorMessage {
     if (_errorMessageOverride != null) return _errorMessageOverride;
+    final l10n = AppLocalizations.of(context);
     switch (_error) {
       case _OtpError.wrongCode:
-        return "That code didn't match. Check and try again.";
+        return l10n.otpCodeMismatchRetry;
       case _OtpError.expiredCode:
-        return 'This code has expired — request a new one.';
+        return l10n.otpCodeExpired;
       case _OtpError.tooManyAttempts:
-        return "Too many attempts. You're temporarily locked out for 5 minutes.";
+        return l10n.otpTooManyAttempts;
       case _OtpError.none:
         return null;
     }
@@ -258,6 +282,7 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final notLockedOut = _error != _OtpError.tooManyAttempts;
     final canSubmit = notLockedOut &&
         _currentCode.length == otpLength &&
@@ -271,9 +296,9 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
-            const Text(
-              'One more step',
-              style: TextStyle(
+            Text(
+              l10n.oneMoreStep,
+              style: const TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.2,
@@ -282,14 +307,14 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Verify your phone number',
+              l10n.verifyYourPhone,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 6),
             Text(
               _isSendingInitialOtp
-                  ? 'Sending a 6-digit code by SMS to +91 $_maskedPhone…'
-                  : "We've sent a 6-digit code by SMS to +91 $_maskedPhone.",
+                  ? l10n.sendingCodeMessage(_maskedPhone)
+                  : l10n.sentCodeMessage(_maskedPhone),
               style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 24),
@@ -316,7 +341,7 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
                 onTap: _canResend ? _onResendTap : null,
                 child: _canResend
                     ? Text(
-                        _initialSendFailed ? 'Try again' : 'Resend OTP',
+                        _initialSendFailed ? l10n.tryAgain : l10n.resendOtp,
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -324,7 +349,9 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
                         ),
                       )
                     : Text(
-                        "Didn't get the code? Resend OTP in 0:${_resendSecondsLeft.toString().padLeft(2, '0')}",
+                        l10n.resendOtpInCountdown(
+                          _resendSecondsLeft.toString().padLeft(2, '0'),
+                        ),
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -370,7 +397,7 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
                               ),
                             )
                           : Text(
-                              'Verify & continue',
+                              l10n.verifyAndContinue,
                               style: TextStyle(
                                 color: canSubmit
                                     ? Colors.white
@@ -388,9 +415,9 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
             Center(
               child: GestureDetector(
                 onTap: () => context.pop(),
-                child: const Text(
-                  'Change mobile number',
-                  style: TextStyle(
+                child: Text(
+                  l10n.changeMobileNumber,
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textSecondary,
@@ -399,11 +426,9 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            const NoticeCard(
+            NoticeCard(
               variant: NoticeVariant.info,
-              message: 'Make sure your number can receive SMS — some DND (Do '
-                  'Not Disturb) settings block OTP messages. Code expires in '
-                  '10 minutes.',
+              message: l10n.smsDndNotice,
             ),
           ],
         ),

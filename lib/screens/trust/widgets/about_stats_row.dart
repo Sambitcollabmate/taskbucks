@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/about_info.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Three stat chips (founded year, earner count, states covered) — same
 /// chip shape as Refer & Earn's `ReferStatsRow`, driven entirely by
@@ -16,6 +17,7 @@ class AboutStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final countFormat = NumberFormat.decimalPattern('en_IN');
 
     return Row(
@@ -25,7 +27,7 @@ class AboutStatsRow extends StatelessWidget {
             icon: LucideIcons.calendarDays,
             iconColor: AppColors.primary,
             value: '${info.foundingYear}',
-            label: 'Founded',
+            label: l10n.foundedLabel,
           ),
         ),
         const SizedBox(width: 10),
@@ -34,7 +36,7 @@ class AboutStatsRow extends StatelessWidget {
             icon: LucideIcons.users,
             iconColor: AppColors.earningsGreen,
             value: '${countFormat.format(info.earnerCount)}+',
-            label: 'Earners',
+            label: l10n.earnersLabel,
           ),
         ),
         const SizedBox(width: 10),
@@ -43,7 +45,7 @@ class AboutStatsRow extends StatelessWidget {
             icon: LucideIcons.map,
             iconColor: AppColors.premiumGold,
             value: '${info.statesCovered}',
-            label: 'States',
+            label: l10n.statesLabel,
           ),
         ),
       ],

@@ -7,6 +7,7 @@ import '../../core/config/app_config.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import 'widgets/auth_text_field.dart';
 
@@ -91,6 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -103,26 +105,26 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
             Text(
-              'Log in to your account',
+              l10n.loginTitle,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 6),
-            const Text(
-              'Welcome back — enter your details to continue.',
-              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+            Text(
+              l10n.loginSubtitle,
+              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 24),
             AuthTextField(
               controller: _identifierController,
-              label: 'Mobile number or email',
-              hintText: '98765 43210 or you@example.com',
+              label: l10n.mobileOrEmailLabel,
+              hintText: l10n.mobileOrEmailHint,
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: _passwordController,
-              label: 'Password',
-              hintText: 'Your password',
+              label: l10n.passwordLabel,
+              hintText: l10n.passwordHint,
               obscureText: _obscurePassword,
               suffixIcon: IconButton(
                 icon: Icon(
@@ -153,17 +155,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Text(
-                        'Remember me',
-                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                      Text(
+                        l10n.rememberMe,
+                        style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                       ),
                     ],
                   ),
                 ),
                 GestureDetector(
                   onTap: () => context.push('/forgot-password'),
-                  child: const Text(
-                    'Forgot password?',
+                  child: Text(
+                    l10n.forgotPassword,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
@@ -219,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             )
                           : Text(
-                              'Log in',
+                              l10n.logIn,
                               style: TextStyle(
                                 color: _isValid
                                     ? Colors.white
@@ -241,10 +243,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   text: TextSpan(
                     style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                     children: [
-                      TextSpan(text: 'New to ${AppConfig.brandName}? '),
-                      const TextSpan(
-                        text: 'Create a free account',
-                        style: TextStyle(
+                      TextSpan(text: l10n.newToApp(AppConfig.brandName)),
+                      TextSpan(
+                        text: l10n.createAccountLink,
+                        style: const TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w700,
                         ),

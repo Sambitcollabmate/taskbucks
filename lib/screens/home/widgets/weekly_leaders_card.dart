@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/home_summary.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/leader_row.dart';
 
 /// Weekly bonus mechanic is still TBD (PROJECT.md Section 2) — this just
@@ -13,12 +14,12 @@ class WeeklyLeadersCard extends StatelessWidget {
 
   const WeeklyLeadersCard({super.key, required this.leaders});
 
-  String _categoryLabel(LeaderboardCategory category) {
+  String _categoryLabel(AppLocalizations l10n, LeaderboardCategory category) {
     switch (category) {
       case LeaderboardCategory.topReferrer:
-        return 'Top referrer';
+        return l10n.topReferrer;
       case LeaderboardCategory.topAdWatcher:
-        return 'Top ad-watcher';
+        return l10n.topAdWatcher;
     }
   }
 
@@ -33,6 +34,7 @@ class WeeklyLeadersCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final formatter = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
@@ -60,7 +62,7 @@ class WeeklyLeadersCard extends StatelessWidget {
               const Icon(LucideIcons.trophy, size: 18, color: AppColors.premiumGold),
               const SizedBox(width: 8),
               Text(
-                "This week's leaders",
+                l10n.thisWeeksLeaders,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ],
@@ -70,7 +72,7 @@ class WeeklyLeadersCard extends StatelessWidget {
             LeaderRow(
               leading: LeaderRow.iconBadge(_categoryIcon(entry.category), AppColors.primary),
               name: entry.name,
-              subtitle: _categoryLabel(entry.category),
+              subtitle: _categoryLabel(l10n, entry.category),
               trailing: Text(
                 formatter.format(entry.amount),
                 style: const TextStyle(
@@ -87,7 +89,7 @@ class WeeklyLeadersCard extends StatelessWidget {
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
             child: Text(
-              'Top referrer & top ad-watcher each get a bonus gift every week.',
+              l10n.weeklyBonusFootnote,
               maxLines: 1,
               style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
             ),

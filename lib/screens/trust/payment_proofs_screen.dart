@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/payment_proofs_provider.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
@@ -44,12 +45,13 @@ class _PaymentProofsScreenBody extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('Payment Proofs'),
+        title: Text(AppLocalizations.of(context).paymentProofsTitle),
       ),
       body: SafeArea(
         top: false,
         child: Consumer<PaymentProofsProvider>(
           builder: (context, provider, _) {
+            final l10n = AppLocalizations.of(context);
             final summary = provider.summary;
 
             if (provider.isLoading && summary == null) {
@@ -62,10 +64,9 @@ class _PaymentProofsScreenBody extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
               children: [
-                const Text(
-                  'Every withdrawal appears here automatically. Nothing is '
-                  'hand-picked.',
-                  style: TextStyle(
+                Text(
+                  l10n.paymentProofsIntro,
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
                     height: 1.5,
@@ -109,7 +110,7 @@ class _PaymentProofsScreenBody extends StatelessWidget {
                 const SizedBox(height: 28),
                 if (!isLoggedIn)
                   GradientCtaButton(
-                    label: 'Create free account',
+                    label: l10n.createFreeAccount,
                     onTap: () => context.push('/register'),
                   ),
               ],

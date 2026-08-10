@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Avatar shown at the top of Settings' Profile section, with a camera
 /// badge that opens a picker sheet (camera / gallery / remove) and reports
@@ -35,9 +36,11 @@ class ProfileAvatarPicker extends StatelessWidget {
       imageQuality: 85,
     );
     if (picked == null) return;
+    if (!context.mounted) return;
 
     // Avatar is always displayed as a circle, so the crop is locked to a
     // square — no free-form aspect ratio that wouldn't fit that shape.
+    final cropTitle = AppLocalizations.of(context).cropPhoto;
     final cropped = await ImageCropper().cropImage(
       sourcePath: picked.path,
       aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
@@ -45,13 +48,13 @@ class ProfileAvatarPicker extends StatelessWidget {
       compressQuality: 85,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop photo',
+          toolbarTitle: cropTitle,
           toolbarColor: AppColors.primary,
           toolbarWidgetColor: Colors.white,
           lockAspectRatio: true,
         ),
         IOSUiSettings(
-          title: 'Crop photo',
+          title: cropTitle,
           aspectRatioLockEnabled: true,
         ),
       ],
@@ -69,6 +72,7 @@ class ProfileAvatarPicker extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (sheetContext) {
+        final l10n = AppLocalizations.of(context);
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -85,7 +89,7 @@ class ProfileAvatarPicker extends StatelessWidget {
               const SizedBox(height: 8),
               ListTile(
                 leading: const Icon(LucideIcons.camera, color: AppColors.primary),
-                title: const Text('Take a photo'),
+                title: Text(l10n.takeAPhoto),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _pickImage(context, ImageSource.camera);
@@ -93,7 +97,7 @@ class ProfileAvatarPicker extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(LucideIcons.image, color: AppColors.primary),
-                title: const Text('Choose from gallery'),
+                title: Text(l10n.chooseFromGallery),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _pickImage(context, ImageSource.gallery);
@@ -102,7 +106,7 @@ class ProfileAvatarPicker extends StatelessWidget {
               if (imagePath != null)
                 ListTile(
                   leading: const Icon(LucideIcons.trash2, color: Colors.red),
-                  title: const Text('Remove photo', style: TextStyle(color: Colors.red)),
+                  title: Text(l10n.removePhoto, style: const TextStyle(color: Colors.red)),
                   onTap: () {
                     Navigator.pop(sheetContext);
                     onImageSelected(null);

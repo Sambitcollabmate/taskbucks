@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/contact_topic.dart';
 import '../../data/models/user_profile.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/profile_provider.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
 import '../auth/widgets/auth_text_field.dart';
@@ -52,17 +53,18 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
   /// Premium members get a faster stated reply time — a real, differentiated
   /// "Priority support" benefit (see `PremiumChecklistCard`), not just a
   /// marketing claim with nothing behind it.
-  String _responseTimeRange(bool isPremium) => isPremium ? '12–24 hours' : '24–48 hours';
+  String _responseTimeRange(AppLocalizations l10n, bool isPremium) =>
+      isPremium ? l10n.responseTimePremium : l10n.responseTimeStandard;
 
-  void _onSend(bool isPremium) {
+  void _onSend(AppLocalizations l10n, bool isPremium) {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final message = _messageController.text.trim();
 
     if (name.isEmpty || !_emailPattern.hasMatch(email) || message.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Fill in your name, a valid email, and a message.'),
+        SnackBar(
+          content: Text(l10n.fillContactFormNotice),
         ),
       );
       return;
@@ -74,7 +76,7 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          "Message sent — we'll reply within ${_responseTimeRange(isPremium)}.",
+          l10n.messageSentNotice(_responseTimeRange(l10n, isPremium)),
         ),
       ),
     );
@@ -87,6 +89,7 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isPremium = context.watch<ProfileProvider>().profile?.tier == UserTier.premium;
 
     return Scaffold(
@@ -94,7 +97,7 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('Contact us'),
+        title: Text(l10n.contactUsTitle),
       ),
       body: SafeArea(
         top: false,
@@ -102,8 +105,10 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
             Text(
-              'Every ticket is read and answered within '
-              '${_responseTimeRange(isPremium)}${isPremium ? ' — Premium priority' : ''}.',
+              l10n.everyTicketAnswered(
+                _responseTimeRange(l10n, isPremium),
+                isPremium ? l10n.premiumPrioritySuffix : '',
+              ),
               style: const TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -113,13 +118,13 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
             const SizedBox(height: 20),
             AuthTextField(
               controller: _nameController,
-              label: 'Full name',
-              hintText: 'Your name',
+              label: l10n.fullNameLabel,
+              hintText: l10n.fullNameHint,
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: _emailController,
-              label: 'Email address',
+              label: l10n.emailAddressLabel,
               hintText: 'you@example.com',
               keyboardType: TextInputType.emailAddress,
             ),
@@ -131,17 +136,17 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
             const SizedBox(height: 16),
             AuthTextField(
               controller: _messageController,
-              label: 'Message',
-              hintText: "Tell us what's going on...",
+              label: l10n.messageLabel,
+              hintText: l10n.contactMessageHint,
               maxLines: 5,
             ),
             const SizedBox(height: 20),
             GradientCtaButton(
-              label: 'Send message',
-              onTap: () => _onSend(isPremium),
+              label: l10n.sendMessageButton,
+              onTap: () => _onSend(l10n, isPremium),
             ),
             const SizedBox(height: 28),
-            ContactChannelsCard(responseTimeRange: _responseTimeRange(isPremium)),
+            ContactChannelsCard(responseTimeRange: _responseTimeRange(l10n, isPremium)),
           ],
         ),
       ),

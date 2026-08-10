@@ -3,6 +3,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/bonus_ad_slot.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Number of bonus ad slots a user gets from hitting the weekly referral
 /// threshold (see `WeeklyBonusCard`/`weeklyBonusAdSlots` on Refer & Earn) —
@@ -28,6 +29,7 @@ class BonusAdsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (slots.isEmpty) return const _LockedBonusSection();
 
+    final l10n = AppLocalizations.of(context);
     final watchedCount = slots.where((s) => s.state == BonusAdState.watched).length;
     final remaining = slots.length - watchedCount;
 
@@ -58,18 +60,17 @@ class BonusAdsSection extends StatelessWidget {
                   children: [
                     Text(
                       remaining == 0
-                          ? 'All ${slots.length} bonus slots watched this week 🎉'
-                          : '$remaining bonus ad slot${remaining == 1 ? '' : 's'} left this week',
+                          ? l10n.allBonusSlotsWatched(slots.length)
+                          : l10n.bonusSlotsLeft(remaining),
                       style: const TextStyle(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const Text(
-                      "From last week's referral bonus. Watch any time before "
-                      'the week resets.',
-                      style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary),
+                    Text(
+                      l10n.bonusAdsFootnote,
+                      style: const TextStyle(fontSize: 10.5, color: AppColors.textSecondary),
                     ),
                   ],
                 ),
@@ -81,9 +82,9 @@ class BonusAdsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Bonus ads', style: Theme.of(context).textTheme.titleLarge),
+            Text(l10n.bonusAdsTitle, style: Theme.of(context).textTheme.titleLarge),
             Text(
-              '$watchedCount of ${slots.length} watched',
+              l10n.watchedOfTotal(watchedCount, slots.length),
               style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
             ),
           ],
@@ -121,6 +122,7 @@ class _LockedBonusSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -143,18 +145,17 @@ class _LockedBonusSection extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'No bonus ad slots this week',
-                      style: TextStyle(
+                    Text(
+                      l10n.noBonusSlots,
+                      style: const TextStyle(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const Text(
-                      'Get 5 Premium referrals to convert in the same week and '
-                      "you'll unlock 5 bonus ad slots the week after.",
-                      style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary),
+                    Text(
+                      l10n.noBonusSlotsExplainer,
+                      style: const TextStyle(fontSize: 10.5, color: AppColors.textSecondary),
                     ),
                   ],
                 ),
@@ -166,10 +167,10 @@ class _LockedBonusSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Bonus ads', style: Theme.of(context).textTheme.titleLarge),
-            const Text(
-              'Locked',
-              style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+            Text(l10n.bonusAdsTitle, style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              l10n.lockedLabel,
+              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
             ),
           ],
         ),

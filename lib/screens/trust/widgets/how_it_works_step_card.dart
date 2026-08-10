@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// The 4-step core loop (PROJECT.md Phase 5), each with a gradient number
 /// badge — distinct from the flat solid-color badges [HowItWorksList] (the
@@ -9,30 +10,15 @@ import '../../../core/theme/app_colors.dart';
 class HowItWorksStepCard extends StatelessWidget {
   const HowItWorksStepCard({super.key});
 
-  static const _steps = [
-    (
-      title: 'Create your free account',
-      body: 'Sign up with your mobile number in under a minute — no fees '
-          'to join.',
-    ),
-    (
-      title: "Open today's tasks",
-      body: '25 tasks reset daily at midnight (30 on the Premium plan).',
-    ),
-    (
-      title: 'Watch the video ad',
-      body: 'Each task plays one short, non-skippable video ad — stay on '
-          'screen until it finishes.',
-    ),
-    (
-      title: 'Get paid monthly',
-      body: 'All earnings are paid out once a month, on the 1st, to UPI '
-          'or bank transfer.',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final steps = [
+      (title: l10n.stepCreateAccountTitle, body: l10n.stepCreateAccountBody),
+      (title: l10n.stepOpenTasksTitle, body: l10n.stepOpenTasksBody),
+      (title: l10n.stepWatchAdTitle, body: l10n.stepWatchAdBody),
+      (title: l10n.stepGetPaidTitle, body: l10n.stepGetPaidBody),
+    ];
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -49,9 +35,9 @@ class HowItWorksStepCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (var i = 0; i < _steps.length; i++) ...[
-            _StepRow(number: i + 1, title: _steps[i].title, body: _steps[i].body),
-            if (i != _steps.length - 1) const SizedBox(height: 20),
+          for (var i = 0; i < steps.length; i++) ...[
+            _StepRow(number: i + 1, title: steps[i].title, body: steps[i].body),
+            if (i != steps.length - 1) const SizedBox(height: 20),
           ],
         ],
       ),

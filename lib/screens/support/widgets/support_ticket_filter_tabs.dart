@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/support_provider.dart';
 
 /// Filter tab row for the Support Tickets screen — same pill style as
@@ -22,11 +23,12 @@ class SupportTicketFilterTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
           child: _FilterPill(
-            label: 'Open ($openCount)',
+            label: l10n.openWithCount(openCount),
             isActive: selected == SupportTicketFilter.open,
             onTap: () => onSelected(SupportTicketFilter.open),
           ),
@@ -34,7 +36,7 @@ class SupportTicketFilterTabs extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _FilterPill(
-            label: 'Closed ($closedCount)',
+            label: l10n.closedWithCount(closedCount),
             isActive: selected == SupportTicketFilter.closed,
             onTap: () => onSelected(SupportTicketFilter.closed),
           ),

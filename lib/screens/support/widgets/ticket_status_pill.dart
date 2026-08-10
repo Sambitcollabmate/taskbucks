@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/support_ticket.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Gray open / orange in-progress / green resolved, per PROJECT.md Phase 6.
 class TicketStatusPill extends StatelessWidget {
@@ -20,6 +21,17 @@ class TicketStatusPill extends StatelessWidget {
     }
   }
 
+  String _label(AppLocalizations l10n) {
+    switch (status) {
+      case SupportTicketStatus.open:
+        return l10n.ticketStatusOpen;
+      case SupportTicketStatus.inProgress:
+        return l10n.ticketStatusReply;
+      case SupportTicketStatus.resolved:
+        return l10n.ticketStatusClosed;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = _color;
@@ -31,7 +43,7 @@ class TicketStatusPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        status.label,
+        _label(AppLocalizations.of(context)),
         style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color),
       ),
     );

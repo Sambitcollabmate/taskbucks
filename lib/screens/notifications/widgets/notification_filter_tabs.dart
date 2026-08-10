@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../providers/notifications_provider.dart';
-
-const _labels = {
-  NotificationFilter.earnings: 'Earnings',
-  NotificationFilter.account: 'Account',
-  NotificationFilter.promotions: 'Promotions',
-};
 
 /// Filter tab row for the Notifications screen — same pill style as
 /// Transactions' `TransactionFilterTabs`, so both filtered lists in the app
@@ -26,12 +21,20 @@ class NotificationFilterTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final labels = {
+      NotificationFilter.earnings: l10n.earningsPushTitle,
+      NotificationFilter.account: l10n.accountPushTitle,
+      NotificationFilter.promotions: l10n.promotionsPushTitle,
+    };
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
           _FilterPill(
-            label: unreadCount > 0 ? 'All ($unreadCount)' : 'All',
+            label: unreadCount > 0
+                ? l10n.allFilterLabelWithCount(unreadCount)
+                : l10n.allFilterLabel,
             isActive: selected == NotificationFilter.all,
             onTap: () => onSelected(NotificationFilter.all),
           ),
@@ -42,7 +45,7 @@ class NotificationFilterTabs extends StatelessWidget {
             NotificationFilter.promotions,
           ]) ...[
             _FilterPill(
-              label: _labels[filter]!,
+              label: labels[filter]!,
               isActive: filter == selected,
               onTap: () => onSelected(filter),
             ),

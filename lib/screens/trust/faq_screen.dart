@@ -2,103 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
 import 'widgets/faq_section.dart';
-
-const _tasksFaq = [
-  FaqEntry(
-    'Why only 25 tasks a day?',
-    'A fixed daily set keeps payouts predictable and sustainable for '
-        'everyone. Premium members get 30/day, at the same ₹/task rate.',
-  ),
-  FaqEntry(
-    'How much does each task pay?',
-    '₹100 per task — complete all 25 and earn up to ₹2,500 a day.',
-  ),
-  FaqEntry(
-    'When do my daily tasks reset?',
-    "At midnight, every day. Whatever's left of today's cap disappears — "
-        "there's no rollover.",
-  ),
-  FaqEntry(
-    "Why can't I skip the ad?",
-    'Your reward is funded by the advertiser paying for a full view — '
-        'skipping early means no reward can be credited. Credit only fires '
-        'once the ad finishes playing to the end, not on tap or open.',
-  ),
-  FaqEntry(
-    'Can I get more tasks by using multiple accounts?',
-    'No — each phone number gets one account, and using multiple accounts '
-        'is against our terms.',
-  ),
-];
-
-const _paymentsFaq = [
-  FaqEntry(
-    'When do I get paid?',
-    "Withdrawals are processed once a month, on the 1st, straight to your "
-        "UPI ID or a verified bank account (IMPS transfer).",
-  ),
-  FaqEntry(
-    'Can I withdraw whenever I want?',
-    "Not right now — payouts are monthly only, there's no on-demand "
-        'withdrawal.',
-  ),
-  FaqEntry(
-    'Which payment methods do you support?',
-    'UPI (Google Pay, PhonePe, Paytm) and verified bank account transfer '
-        'only — no PayPal, no wallets, no other payout methods.',
-  ),
-  FaqEntry(
-    'What if I have the wrong UPI ID saved?',
-    "Payouts go to whatever's saved in Settings, so double-check it before "
-        'the 1st — a typo means a delayed payout while our team helps you '
-        'fix it.',
-  ),
-];
-
-const _referralsFaq = [
-  FaqEntry(
-    'How much do I earn per referral?',
-    '₹125 flat, credited only when the person you referred completes the '
-        '₹49 Premium purchase — never for signing up alone.',
-  ),
-  FaqEntry(
-    'Why is my referral still showing as "pending"?',
-    "It stays pending until your referral's Premium payment clears. Once "
-        "it does, the ₹125 credits automatically.",
-  ),
-  FaqEntry(
-    'What does Premium include?',
-    '30 tasks/day instead of 25, at the same ₹/task rate — never a '
-        'smaller cut per task.',
-  ),
-  FaqEntry(
-    'Can I cancel Premium anytime?',
-    'Yes, from Profile → Manage subscription. Your benefits continue '
-        'until the end of the paid cycle, even after you cancel.',
-  ),
-  FaqEntry(
-    "What happens if my referral's Premium purchase is refunded?",
-    "The ₹125 commission is reversed — deducted from your balance, even "
-        "from a future payout if it's already been paid out.",
-  ),
-  FaqEntry(
-    'What is the weekly referral bonus?',
-    'Premium members who get 5 or more referrals converting to Premium '
-        'within the same Sunday–Saturday week earn +5 bonus ad slots, '
-        "active the following week. It's gated on you holding Premium "
-        "yourself. Free-tier accounts still earn the ₹125 commission, "
-        'just never this bonus.',
-  ),
-  FaqEntry(
-    'Does it matter when my referral signed up, or when they went Premium?',
-    "Only the week their Premium purchase lands counts toward your 5. "
-        "Signup timing doesn't matter, and each week is judged on its own. "
-        "If 4 convert one week and a 5th converts the next, neither week "
-        'reaches 5 and no bonus fires for either.',
-  ),
-];
 
 /// Trust page (PROJECT.md Phase 5) — reachable from Welcome and Profile,
 /// same as `/how-it-works` and `/about`. No AdMob slot — trust/legal pages
@@ -108,26 +14,49 @@ class FaqScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final tasksFaq = [
+      FaqEntry(l10n.faqQ1, l10n.faqA1),
+      FaqEntry(l10n.faqQ2, l10n.faqA2),
+      FaqEntry(l10n.faqQ3, l10n.faqA3),
+      FaqEntry(l10n.faqQ4, l10n.faqA4),
+      FaqEntry(l10n.faqQ5, l10n.faqA5),
+    ];
+    final paymentsFaq = [
+      FaqEntry(l10n.faqQ6, l10n.faqA6),
+      FaqEntry(l10n.faqQ7, l10n.faqA7),
+      FaqEntry(l10n.faqQ8, l10n.faqA8),
+      FaqEntry(l10n.faqQ9, l10n.faqA9),
+    ];
+    final referralsFaq = [
+      FaqEntry(l10n.faqQ10, l10n.faqA10),
+      FaqEntry(l10n.faqQ11, l10n.faqA11),
+      FaqEntry(l10n.faqQ12, l10n.faqA12),
+      FaqEntry(l10n.faqQ13, l10n.faqA13),
+      FaqEntry(l10n.faqQ14, l10n.faqA14),
+      FaqEntry(l10n.faqQ15, l10n.faqA15),
+      FaqEntry(l10n.faqQ16, l10n.faqA16),
+    ];
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('FAQ'),
+        title: Text(l10n.faqTitle),
       ),
       body: SafeArea(
         top: false,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
-            const FaqSection(title: 'Tasks & earning', entries: _tasksFaq),
+            FaqSection(title: l10n.faqSectionTasks, entries: tasksFaq),
             const SizedBox(height: 20),
-            const FaqSection(title: 'Payments', entries: _paymentsFaq),
+            FaqSection(title: l10n.faqSectionPayments, entries: paymentsFaq),
             const SizedBox(height: 20),
-            const FaqSection(title: 'Referrals & Premium', entries: _referralsFaq),
+            FaqSection(title: l10n.faqSectionReferrals, entries: referralsFaq),
             const SizedBox(height: 28),
             GradientCtaButton(
-              label: 'Contact support',
+              label: l10n.contactSupportButton,
               onTap: () => context.push('/contact'),
             ),
           ],

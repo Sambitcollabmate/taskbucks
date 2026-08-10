@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/about_provider.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
 import '../../shared/widgets/pending_legal_card.dart';
@@ -36,12 +37,13 @@ class _AboutScreenBody extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('About'),
+        title: Text(AppLocalizations.of(context).aboutTitle),
       ),
       body: SafeArea(
         top: false,
         child: Consumer<AboutProvider>(
           builder: (context, provider, _) {
+            final l10n = AppLocalizations.of(context);
             final info = provider.info;
 
             if (provider.isLoading && info == null) {
@@ -55,15 +57,12 @@ class _AboutScreenBody extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
               children: [
                 Text(
-                  'Built by people who got burned by earning apps that '
-                  'never paid.',
+                  l10n.aboutHeadline,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'EarnBucks started in ${info.foundingYear} as a reaction '
-                  'to an industry full of apps that vanish when users ask '
-                  'to withdraw.',
+                  l10n.aboutBody(info.foundingYear),
                   style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
@@ -79,15 +78,18 @@ class _AboutScreenBody extends StatelessWidget {
                 // registration number, and registered address are
                 // placeholders only; do not fill these in with an invented
                 // value, only with what finance/legal actually confirms.
-                const PendingLegalCard(
-                  title: 'Company details',
-                  fields: ['Legal entity name', 'Registration number', 'Registered address'],
-                  note: 'Pending legal confirmation — do not invent a name, '
-                      'number, or address here.',
+                PendingLegalCard(
+                  title: l10n.companyDetailsTitle,
+                  fields: [
+                    l10n.legalEntityNameField,
+                    l10n.registrationNumberField,
+                    l10n.registeredAddressField,
+                  ],
+                  note: l10n.companyDetailsPendingNote,
                 ),
                 const SizedBox(height: 28),
                 GradientCtaButton(
-                  label: 'See payment proofs',
+                  label: l10n.seePaymentProofsButton,
                   onTap: () => context.push('/payment-proofs'),
                 ),
               ],

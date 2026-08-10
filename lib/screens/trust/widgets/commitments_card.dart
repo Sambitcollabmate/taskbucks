@@ -2,33 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
-
-const _commitments = [
-  (
-    icon: LucideIcons.eye,
-    title: 'Transparency',
-    body: 'Every payout is published publicly — see real, verified '
-        'withdrawals on our Payment Proofs page, not just a promise.',
-  ),
-  (
-    icon: LucideIcons.ban,
-    title: 'No pay-to-join',
-    body: 'Signing up is free, forever. Never a fee to earn or withdraw '
-        '— no deposits, no hidden charges.',
-  ),
-  (
-    icon: LucideIcons.scale,
-    title: 'Fair rates',
-    body: 'The exact ₹ rate for a task is shown before you start it — no '
-        'surprise deductions, no rate changes without notice.',
-  ),
-  (
-    icon: LucideIcons.headset,
-    title: 'Real support',
-    body: 'A human reads every support ticket — not a bot loop, you '
-        'always get a real reply.',
-  ),
-];
+import '../../../l10n/app_localizations.dart';
 
 /// The "Four commitments" card (PROJECT.md Phase 5) — transparency, no
 /// pay-to-join, fair rates, real support. Same card shape as
@@ -39,6 +13,29 @@ class CommitmentsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final commitments = [
+      (
+        icon: LucideIcons.eye,
+        title: l10n.commitmentTransparencyTitle,
+        body: l10n.commitmentTransparencyBody,
+      ),
+      (
+        icon: LucideIcons.ban,
+        title: l10n.commitmentNoPayToJoinTitle,
+        body: l10n.commitmentNoPayToJoinBody,
+      ),
+      (
+        icon: LucideIcons.scale,
+        title: l10n.commitmentFairRatesTitle,
+        body: l10n.commitmentFairRatesBody,
+      ),
+      (
+        icon: LucideIcons.headset,
+        title: l10n.commitmentRealSupportTitle,
+        body: l10n.commitmentRealSupportBody,
+      ),
+    ];
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -55,15 +52,15 @@ class CommitmentsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Four commitments', style: Theme.of(context).textTheme.titleLarge),
+          Text(l10n.fourCommitments, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 16),
-          for (var i = 0; i < _commitments.length; i++) ...[
+          for (var i = 0; i < commitments.length; i++) ...[
             _CommitmentRow(
-              icon: _commitments[i].icon,
-              title: _commitments[i].title,
-              body: _commitments[i].body,
+              icon: commitments[i].icon,
+              title: commitments[i].title,
+              body: commitments[i].body,
             ),
-            if (i != _commitments.length - 1) const SizedBox(height: 18),
+            if (i != commitments.length - 1) const SizedBox(height: 18),
           ],
         ],
       ),

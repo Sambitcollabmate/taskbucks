@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../data/models/transaction.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Single transaction row — first built here for Wallet, reused as-is on
 /// Transactions and Notifications (see PROJECT.md 6.3). The green
@@ -33,19 +34,20 @@ class TxnRow extends StatelessWidget {
     }
   }
 
-  String _relativeDate(DateTime date) {
+  String _relativeDate(AppLocalizations l10n, DateTime date) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final day = DateTime(date.year, date.month, date.day);
     final diffDays = today.difference(day).inDays;
 
-    if (diffDays == 0) return 'Today, ${DateFormat('h:mm a').format(date)}';
-    if (diffDays < 7) return '$diffDays day${diffDays == 1 ? '' : 's'} ago';
+    if (diffDays == 0) return l10n.todayAtTime(DateFormat('h:mm a').format(date));
+    if (diffDays < 7) return l10n.daysAgo(diffDays);
     return DateFormat('MMM d, yyyy').format(date);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isCredit = transaction.type == TransactionType.credit;
     final amountColor = isCredit ? AppColors.earningsGreen : AppColors.danger;
     final amountFormatter = NumberFormat.currency(
@@ -80,7 +82,7 @@ class TxnRow extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                _relativeDate(transaction.date),
+                _relativeDate(l10n, transaction.date),
                 style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
             ],

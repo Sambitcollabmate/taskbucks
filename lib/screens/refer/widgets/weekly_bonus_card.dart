@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/refer_summary.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Surfaces the new weekly referral bonus (PROJECT.md 2) on Refer & Earn.
 /// Three states:
@@ -21,19 +22,18 @@ class WeeklyBonusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (!summary.isPremium) {
       return _CardShell(
         icon: LucideIcons.lock,
         iconColor: AppColors.textSecondary,
-        title: 'Weekly referral bonus',
+        title: l10n.weeklyReferralBonusTitle,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Get 5 Premium referrals converting in the same week and '
-              "you'll earn +5 bonus ad slots the week after, but this "
-              'perk is Premium-only. Upgrade to start qualifying.',
-              style: TextStyle(
+            Text(
+              l10n.weeklyBonusLockedExplainer,
+              style: const TextStyle(
                 fontSize: 12.5,
                 color: AppColors.textSecondary,
                 height: 1.45,
@@ -43,9 +43,9 @@ class WeeklyBonusCard extends StatelessWidget {
             TextButton(
               onPressed: () => context.push('/upgrade'),
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
-              child: const Text(
-                'Upgrade to Premium →',
-                style: TextStyle(
+              child: Text(
+                l10n.upgradeToPremiumArrow,
+                style: const TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w700,
                   color: AppColors.primary,
@@ -61,12 +61,10 @@ class WeeklyBonusCard extends StatelessWidget {
       return _CardShell(
         icon: LucideIcons.gift,
         iconColor: AppColors.earningsGreen,
-        title: 'Weekly referral bonus',
+        title: l10n.weeklyReferralBonusTitle,
         highlighted: true,
         child: Text(
-          '🎉 ${summary.bonusAdSlotsAvailable} bonus ad slots are active '
-          'this week. Head to Tasks to watch them, in any order, any '
-          'time before the week ends.',
+          l10n.bonusSlotsActiveMessage(summary.bonusAdSlotsAvailable),
           style: const TextStyle(
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
@@ -83,15 +81,17 @@ class WeeklyBonusCard extends StatelessWidget {
     return _CardShell(
       icon: LucideIcons.gift,
       iconColor: AppColors.premiumGold,
-      title: 'Weekly referral bonus',
+      title: l10n.weeklyReferralBonusTitle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${summary.conversionsThisWeek} of $weeklyBonusConversionThreshold '
-            "Premium referrals converted this week. Get $remaining more to "
-            'convert this same week for +$weeklyBonusAdSlots bonus ad '
-            'slots next week.',
+            l10n.weeklyBonusProgress(
+              summary.conversionsThisWeek,
+              weeklyBonusConversionThreshold,
+              remaining,
+              weeklyBonusAdSlots,
+            ),
             style: const TextStyle(
               fontSize: 12.5,
               color: AppColors.textSecondary,

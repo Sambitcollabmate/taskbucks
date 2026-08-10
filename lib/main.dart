@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'core/config/app_config.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'l10n/app_localizations.dart';
 import 'providers/auth_provider.dart';
 import 'providers/balance_provider.dart';
 import 'providers/language_provider.dart';
@@ -32,11 +33,18 @@ class EarnBucksApp extends StatelessWidget {
         ChangeNotifierProvider<ProfileProvider>.value(value: profileProvider),
         ChangeNotifierProvider<LanguageProvider>.value(value: languageProvider),
       ],
-      child: MaterialApp.router(
-        title: AppConfig.brandName,
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light,
-        routerConfig: appRouter,
+      child: Consumer<LanguageProvider>(
+        builder: (context, language, _) {
+          return MaterialApp.router(
+            title: AppConfig.brandName,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light,
+            routerConfig: appRouter,
+            locale: language.language.locale,
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+          );
+        },
       ),
     );
   }

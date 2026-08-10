@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/phone_input.dart';
 import 'verify_phone_screen.dart';
 import 'widgets/auth_text_field.dart';
@@ -107,6 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(backgroundColor: AppColors.background, elevation: 0),
@@ -115,25 +117,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
             Text(
-              'Start earning in under a minute',
+              l10n.registerTitle,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 6),
-            const Text(
-              'Free forever. No card required.',
-              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+            Text(
+              l10n.registerSubtitle,
+              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 24),
             AuthTextField(
               controller: _nameController,
-              label: 'Full name',
-              hintText: 'Your name',
+              label: l10n.fullNameLabel,
+              hintText: l10n.fullNameHint,
               onChanged: (_) {},
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Mobile number',
-              style: TextStyle(
+            Text(
+              l10n.mobileNumberLabel,
+              style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -142,22 +144,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 6),
             PhoneInput(controller: _phoneController, onChanged: (_) {}),
             const SizedBox(height: 6),
-            const Text(
-              "We'll send a 6-digit OTP to verify this number.",
-              style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            Text(
+              l10n.otpHint,
+              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: _emailController,
-              label: 'Email (optional)',
+              label: l10n.emailOptionalLabel,
               hintText: 'you@example.com',
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: _passwordController,
-              label: 'Password',
-              hintText: 'At least 8 characters',
+              label: l10n.passwordLabel,
+              hintText: l10n.passwordHintChars,
               obscureText: _obscurePassword,
               suffixIcon: IconButton(
                 icon: Icon(
@@ -171,8 +173,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 16),
             AuthTextField(
               controller: _referralController,
-              label: 'Referral code (optional)',
-              hintText: 'e.g. SAMBIT482',
+              label: l10n.referralCodeOptionalLabel,
+              hintText: l10n.referralCodeHint,
             ),
             if (_referralError != null) ...[
               const SizedBox(height: 6),
@@ -238,7 +240,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             )
                           : Text(
-                              'Send OTP',
+                              l10n.sendOtp,
                               style: TextStyle(
                                 color: _isValid
                                     ? Colors.white
@@ -257,13 +259,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: GestureDetector(
                 onTap: () => context.push('/login'),
                 child: RichText(
-                  text: const TextSpan(
-                    style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  text: TextSpan(
+                    style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                     children: [
-                      TextSpan(text: 'Already have an account? '),
+                      TextSpan(text: l10n.alreadyHaveAccount),
                       TextSpan(
-                        text: 'Log in',
-                        style: TextStyle(
+                        text: l10n.logIn,
+                        style: const TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w700,
                         ),

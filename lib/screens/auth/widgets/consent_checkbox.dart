@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Age/terms consent row. [onTapTerms]/[onTapPrivacy] push the in-app
 /// `/terms`/`/privacy` legal screens (not an external browser), so the user
@@ -22,6 +23,7 @@ class ConsentCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -51,24 +53,25 @@ class ConsentCheckbox extends StatelessWidget {
                   height: 1.4,
                 ),
                 children: [
-                  const TextSpan(text: "I'm 18+ and agree to the "),
+                  TextSpan(text: l10n.consentPrefix),
                   TextSpan(
-                    text: 'Terms',
+                    text: l10n.termsLabel,
                     style: const TextStyle(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
                     ),
                     recognizer: TapGestureRecognizer()..onTap = onTapTerms,
                   ),
-                  const TextSpan(text: ' and '),
+                  TextSpan(text: l10n.consentAnd),
                   TextSpan(
-                    text: 'Privacy Policy',
+                    text: l10n.privacyPolicyLabel,
                     style: const TextStyle(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
                     ),
                     recognizer: TapGestureRecognizer()..onTap = onTapPrivacy,
                   ),
+                  TextSpan(text: l10n.consentSuffix),
                 ],
               ),
             ),

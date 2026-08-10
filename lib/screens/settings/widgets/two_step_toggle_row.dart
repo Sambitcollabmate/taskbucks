@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Turning two-step verification ON is a single tap — turning it OFF asks
 /// for a password confirm first. Disabling a security feature should have
@@ -32,24 +33,25 @@ class TwoStepToggleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Two-step verification',
-                style: TextStyle(
+                l10n.twoStepVerification,
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
               ),
-              SizedBox(height: 2),
+              const SizedBox(height: 2),
               Text(
-                'Extra code at login',
-                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                l10n.extraCodeAtLogin,
+                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -96,25 +98,25 @@ class _ReauthDialogState extends State<_ReauthDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('Confirm your password'),
+      title: Text(l10n.confirmYourPassword),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Turning off two-step verification reduces your account '
-            'security. Enter your password to confirm.',
-            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          Text(
+            l10n.turnOffTwoStepExplainer,
+            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 16),
           TextField(
             controller: _passwordController,
             obscureText: true,
             autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'Password',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.passwordLabel,
+              border: const OutlineInputBorder(),
             ),
           ),
         ],
@@ -122,7 +124,7 @@ class _ReauthDialogState extends State<_ReauthDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelLabel),
         ),
         ValueListenableBuilder<TextEditingValue>(
           valueListenable: _passwordController,
@@ -135,9 +137,9 @@ class _ReauthDialogState extends State<_ReauthDialog> {
               onPressed: value.text.isEmpty
                   ? null
                   : () => Navigator.of(context).pop(true),
-              child: const Text(
-                'Turn off',
-                style: TextStyle(color: AppColors.danger, fontWeight: FontWeight.w700),
+              child: Text(
+                l10n.turnOff,
+                style: const TextStyle(color: AppColors.danger, fontWeight: FontWeight.w700),
               ),
             );
           },

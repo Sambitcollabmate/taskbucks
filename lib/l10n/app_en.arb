@@ -1,0 +1,573 @@
+{
+  "@@locale": "en",
+
+  "heroTagline": "Simple daily earning, made for India",
+  "heroHeadline": "Watch 25 ads a day. Get paid every month.",
+  "heroDescription": "Open the app, tap a task, watch one short video ad, earn ₹100. Do it 25 times a day and cash out monthly straight to UPI — no surveys, no complicated offers.",
+  "seePaymentProofs": "See real payment proofs",
+  "createFreeAccount": "Create free account",
+  "logIn": "Log in",
+  "legalAndSupport": "Legal & support",
+
+  "loginTitle": "Log in to your account",
+  "loginSubtitle": "Welcome back — enter your details to continue.",
+  "mobileOrEmailLabel": "Mobile number or email",
+  "mobileOrEmailHint": "98765 43210 or you@example.com",
+  "passwordLabel": "Password",
+  "passwordHint": "Your password",
+  "rememberMe": "Remember me",
+  "forgotPassword": "Forgot password?",
+  "newToApp": "New to {brandName}? ",
+  "@newToApp": {
+    "placeholders": { "brandName": { "type": "String" } }
+  },
+  "createAccountLink": "Create a free account",
+
+  "registerTitle": "Start earning in under a minute",
+  "registerSubtitle": "Free forever. No card required.",
+  "fullNameLabel": "Full name",
+  "fullNameHint": "Your name",
+  "mobileNumberLabel": "Mobile number",
+  "otpHint": "We'll send a 6-digit OTP to verify this number.",
+  "emailOptionalLabel": "Email (optional)",
+  "passwordHintChars": "At least 8 characters",
+  "referralCodeOptionalLabel": "Referral code (optional)",
+  "referralCodeHint": "e.g. SAMBIT482",
+  "sendOtp": "Send OTP",
+  "alreadyHaveAccount": "Already have an account? ",
+
+  "couldNotSendOtp": "Could not send OTP right now.",
+  "otpDidNotMatch": "That code didn't match.",
+  "couldNotResendOtp": "Could not resend OTP right now.",
+  "passwordUpdatedLoginMessage": "Password updated. Log in with your new password.",
+  "resetPasswordTitle": "Reset your password",
+  "resetPasswordSubtitle": "Enter your mobile number and we'll send a 6-digit OTP to reset your password.",
+  "didntGetOtp": "Didn't get it? Check that your number can receive SMS, or wait a few minutes and try again.",
+  "remembered": "Remembered it? ",
+  "backToLogin": "Back to log in",
+  "verifyAndReset": "Verify & reset",
+  "verifyResetSubtitle": "Enter the 6-digit code sent to +91 {maskedPhone}, then choose a new password.",
+  "@verifyResetSubtitle": {
+    "placeholders": { "maskedPhone": { "type": "String" } }
+  },
+  "resendOtp": "Resend OTP",
+  "newPasswordLabel": "New password",
+  "confirmPasswordLabel": "Confirm password",
+  "confirmPasswordHint": "Re-enter new password",
+  "passwordsDoNotMatch": "Passwords do not match.",
+  "updatePassword": "Update password",
+
+  "consentPrefix": "I'm 18+ and agree to the ",
+  "termsLabel": "Terms",
+  "consentAnd": " and ",
+  "privacyPolicyLabel": "Privacy Policy",
+  "consentSuffix": "",
+
+  "aboutUs": "About us",
+  "faq": "FAQ",
+  "contact": "Contact",
+  "termsOfService": "Terms of Service",
+  "privacyPolicy": "Privacy Policy",
+  "refundPolicy": "Refund Policy",
+
+  "tasksPerDayLabel": "Tasks/day",
+  "earnersLabel": "Earners",
+  "monthlyValue": "Monthly",
+  "payoutLabel": "Payout",
+
+  "sslSecured": "SSL secured",
+  "yearsPaying": "7 yrs paying",
+  "upiBankPill": "UPI · Bank",
+
+  "howItWorks": "How it works",
+  "stepTapTask": "Tap a task — 25 available every day",
+  "stepWatchAd": "Watch the video ad — non-skippable, ~20–30 sec",
+  "stepGetCredited": "Get credited — instantly after each ad",
+  "stepWithdraw": "Withdraw monthly — once a month, on the 1st, to UPI or bank",
+
+  "walletLabel": "Wallet",
+  "referAndEarnLabel": "Refer & earn",
+
+  "goodMorning": "Good morning",
+  "goodAfternoon": "Good afternoon",
+  "goodEvening": "Good evening",
+
+  "thisWeek": "This week",
+  "dailyTaskStreak": "Your daily task streak",
+  "dayLetters": "S,M,T,W,T,F,S",
+
+  "todaysTasks": "Today's tasks",
+  "capReachedMessage": "You've hit today's cap. Come back tomorrow!",
+  "moreToReachLimit": "{count} more to reach your daily limit",
+  "@moreToReachLimit": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "capReached": "Cap reached",
+  "watchVideoToEarn": "Watch a video to earn",
+
+  "topReferrer": "Top referrer",
+  "topAdWatcher": "Top ad-watcher",
+  "thisWeeksLeaders": "This week's leaders",
+  "weeklyBonusFootnote": "Top referrer & top ad-watcher each get a bonus gift every week.",
+
+  "tasksTitle": "Tasks",
+  "adNoticeMessage": "Each task plays one short video ad. The ad cannot be skipped or minimized — stay on screen until it finishes to get credited.",
+
+  "completedLabel": "Completed",
+  "earnedTodayLabel": "Earned today",
+
+  "taskOfDay": "Task {id} of the day",
+  "@taskOfDay": {
+    "placeholders": { "id": { "type": "int" } }
+  },
+  "watchAndEarn": "Watch a video, earn {amount}",
+  "@watchAndEarn": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "watchNow": "Watch Now",
+
+  "allBonusSlotsWatched": "All {count} bonus slots watched this week 🎉",
+  "@allBonusSlotsWatched": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "bonusSlotsLeft": "{count, plural, one{1 bonus ad slot left this week} other{{count} bonus ad slots left this week}}",
+  "@bonusSlotsLeft": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "bonusAdsFootnote": "From last week's referral bonus. Watch any time before the week resets.",
+  "bonusAdsTitle": "Bonus ads",
+  "watchedOfTotal": "{watched} of {total} watched",
+  "@watchedOfTotal": {
+    "placeholders": { "watched": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "noBonusSlots": "No bonus ad slots this week",
+  "noBonusSlotsExplainer": "Get 5 Premium referrals to convert in the same week and you'll unlock 5 bonus ad slots the week after.",
+  "lockedLabel": "Locked",
+
+  "resetsIn": "Resets in {hours}h {minutes}m {seconds}s",
+  "@resetsIn": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" },
+      "seconds": { "type": "int" }
+    }
+  },
+
+  "walletTitle": "Wallet",
+  "withdrawLabel": "Withdraw",
+  "historyLabel": "History",
+  "withdrawalWindowNotice": "Withdrawals are processed once a month, on the 1st. Next window opens in {days} days.",
+  "@withdrawalWindowNotice": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "paymentMethodTitle": "Payment method",
+  "addUpiNotice": "Add a UPI ID in Settings to receive payouts.",
+  "recentActivityTitle": "Recent activity",
+
+  "balanceBreakdown": "Balance breakdown",
+  "taskAdEarnings": "Task (video ad) earnings",
+  "referralEarnings": "Referral earnings",
+  "bonusRewards": "Bonus rewards",
+
+  "defaultBadge": "DEFAULT",
+
+  "availableBalance": "Available balance",
+
+  "todayAtTime": "Today, {time}",
+  "@todayAtTime": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "daysAgo": "{count, plural, one{1 day ago} other{{count} days ago}}",
+  "@daysAgo": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "referAndEarnTitle": "Refer & earn",
+  "referralCommissionNotice": "You earn ₹125 only when someone you refer completes the ₹49 Premium purchase, not just for signing up. It shows as pending until their payment clears.",
+  "recentReferralsTitle": "Recent referrals",
+
+  "referredLabel": "Referred",
+  "convertedLabel": "Converted",
+  "earnedLabel": "Earned",
+
+  "referralLinkCopied": "Referral link copied",
+  "referralCodeCopied": "Referral code copied",
+  "shareReferralMessage": "Join me on {brandName} and start earning! Use my link: {link}",
+  "@shareReferralMessage": {
+    "placeholders": { "brandName": { "type": "String" }, "link": { "type": "String" } }
+  },
+  "yourReferralCode": "Your referral code",
+  "copyLink": "Copy link",
+  "shareLabel": "Share",
+
+  "pendingLabel": "Pending",
+
+  "thisWeeksTopReferrers": "This week's top referrers",
+  "conversionsCount": "{count} conversions",
+  "@conversionsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "topReferrerBonusFootnote": "Top referrer this week wins a bonus gift.",
+
+  "weeklyReferralBonusTitle": "Weekly referral bonus",
+  "weeklyBonusLockedExplainer": "Get 5 Premium referrals converting in the same week and you'll earn +5 bonus ad slots the week after, but this perk is Premium-only. Upgrade to start qualifying.",
+  "upgradeToPremiumArrow": "Upgrade to Premium →",
+  "bonusSlotsActiveMessage": "🎉 {count} bonus ad slots are active this week. Head to Tasks to watch them, in any order, any time before the week ends.",
+  "@bonusSlotsActiveMessage": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "weeklyBonusProgress": "{converted} of {threshold} Premium referrals converted this week. Get {remaining} more to convert this same week for +{slots} bonus ad slots next week.",
+  "@weeklyBonusProgress": {
+    "placeholders": {
+      "converted": { "type": "int" },
+      "threshold": { "type": "int" },
+      "remaining": { "type": "int" },
+      "slots": { "type": "int" }
+    }
+  },
+
+  "enterValidAmount": "Enter a valid withdrawal amount.",
+  "cannotExceedBalance": "You can't withdraw more than your available balance.",
+  "withdrawalRequestedMessage": "Withdrawal requested — queued for the {date} payout cycle.",
+  "@withdrawalRequestedMessage": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "withdrawTitle": "Withdraw",
+  "withdrawWindowNotice": "Withdrawals are processed once a month, on the 1st. This month's window opens in {days} days — your request will queue until then, not transfer right away.",
+  "@withdrawWindowNotice": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "amountLabel": "Amount",
+  "enterAmountHint": "Enter amount",
+  "payoutMethodLabel": "Payout method",
+  "upiMethodLabel": "UPI (Google Pay / PhonePe / Paytm)",
+  "addUpiBeforeWithdrawNotice": "Add a UPI ID in Settings before requesting a withdrawal.",
+  "recentUpiCapNotice": "This UPI ID was added in the last 24 hours, so withdrawals to it are capped at ₹5,000 during that window. If a transfer fails for that reason, it may auto-retry once the 24 hours pass.",
+  "queuingLabel": "Queuing...",
+  "queueWithdrawalFor": "Queue withdrawal for {date}",
+  "@queueWithdrawalFor": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "firstTimeWithdrawalNotice": "First-time withdrawals may need manual verification.",
+
+  "appLanguageLabel": "App language",
+  "termsAndPrivacy": "Terms & Privacy",
+  "profileTitle": "Profile",
+  "accountLabel": "Account",
+  "editProfile": "Edit profile",
+  "securityAndPassword": "Security & password",
+  "paymentDetails": "Payment details",
+  "manageSubscription": "Manage subscription",
+  "supportLabel": "Support",
+  "notificationsLabel": "Notifications",
+  "supportTickets": "Support tickets",
+  "contactUs": "Contact us",
+  "paymentProofs": "Payment proofs",
+
+  "logOut": "Log out",
+
+  "premiumBadge": "Premium",
+  "freeBadge": "Free",
+
+  "settingsTitle": "Settings",
+  "profilePhotoRemoved": "Profile photo removed",
+  "profilePhotoUpdated": "Profile photo updated",
+  "fullNameSettingsLabel": "Full name",
+  "emailAddressLabel": "Email address",
+  "saveChanges": "Save changes",
+  "profileUpdated": "Profile updated",
+  "securityTitle": "Security",
+  "currentPasswordLabel": "Current password",
+  "currentPasswordHint": "Your current password",
+  "passwordUpdatedShort": "Password updated",
+  "twoStepOn": "Two-step verification turned on",
+  "twoStepOff": "Two-step verification turned off",
+  "paymentDetailsTitle": "Payment details",
+  "upiIdUpdated": "UPI ID updated",
+  "bankAccountLabel": "Bank account",
+  "pushNotificationsTitle": "Push notifications",
+  "earningsPushTitle": "Earnings",
+  "earningsPushSubtitle": "Task credits, referrals, streak bonuses",
+  "accountPushTitle": "Account",
+  "accountPushSubtitle": "Security alerts, like new-device logins",
+  "promotionsPushTitle": "Promotions",
+  "promotionsPushSubtitle": "Occasional offers, like Premium discounts",
+
+  "cropPhoto": "Crop photo",
+  "takeAPhoto": "Take a photo",
+  "chooseFromGallery": "Choose from gallery",
+  "removePhoto": "Remove photo",
+
+  "twoStepVerification": "Two-step verification",
+  "extraCodeAtLogin": "Extra code at login",
+  "confirmYourPassword": "Confirm your password",
+  "turnOffTwoStepExplainer": "Turning off two-step verification reduces your account security. Enter your password to confirm.",
+  "cancelLabel": "Cancel",
+  "turnOff": "Turn off",
+
+  "upiIdLabel": "UPI ID",
+  "defaultLabelLower": "Default",
+  "upiIdHint": "yourname@bank",
+  "upiIdValidationError": "Enter a valid UPI ID, e.g. yourname@okhdfcbank.",
+  "saveUpiId": "Save UPI ID",
+
+  "notificationsTitle": "Notifications",
+  "markAllRead": "Mark all read",
+  "noNotificationsHere": "No notifications here",
+
+  "allFilterLabel": "All",
+  "allFilterLabelWithCount": "All ({count})",
+  "@allFilterLabelWithCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "transactionsTitle": "Transactions",
+  "noTransactionsYet": "No transactions yet",
+
+  "tasksFilterLabel": "Tasks",
+  "referralsFilterLabel": "Referrals",
+  "withdrawalsFilterLabel": "Withdrawals",
+
+  "newTicket": "+ New ticket",
+  "supportReplyTimeNotice": "We read and reply to every ticket within 24–48 hours.",
+  "noOpenTickets": "No open tickets",
+  "noClosedTickets": "No closed tickets",
+
+  "openWithCount": "Open ({count})",
+  "@openWithCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "closedWithCount": "Closed ({count})",
+  "@closedWithCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "ticketStatusOpen": "Open",
+  "ticketStatusReply": "Reply",
+  "ticketStatusClosed": "Closed",
+
+  "describeIssueFirst": "Describe your issue before submitting.",
+  "raiseNewTicket": "Raise a new ticket",
+  "messageLabel": "Message",
+  "tellUsWhatHappened": "Tell us what happened...",
+  "submittingLabel": "Submitting...",
+  "submitTicket": "Submit ticket",
+
+  "typeAReply": "Type a reply...",
+  "supportAuthorLabel": "Support ({authorName})",
+  "@supportAuthorLabel": {
+    "placeholders": { "authorName": { "type": "String" } }
+  },
+
+  "aboutTitle": "About",
+  "aboutHeadline": "Built by people who got burned by earning apps that never paid.",
+  "aboutBody": "EarnBucks started in {foundingYear} as a reaction to an industry full of apps that vanish when users ask to withdraw.",
+  "@aboutBody": {
+    "placeholders": { "foundingYear": { "type": "int" } }
+  },
+  "companyDetailsTitle": "Company details",
+  "legalEntityNameField": "Legal entity name",
+  "registrationNumberField": "Registration number",
+  "registeredAddressField": "Registered address",
+  "companyDetailsPendingNote": "Pending legal confirmation — do not invent a name, number, or address here.",
+  "seePaymentProofsButton": "See payment proofs",
+
+  "foundedLabel": "Founded",
+  "statesLabel": "States",
+
+  "fourCommitments": "Four commitments",
+  "commitmentTransparencyTitle": "Transparency",
+  "commitmentTransparencyBody": "Every payout is published publicly — see real, verified withdrawals on our Payment Proofs page, not just a promise.",
+  "commitmentNoPayToJoinTitle": "No pay-to-join",
+  "commitmentNoPayToJoinBody": "Signing up is free, forever. Never a fee to earn or withdraw — no deposits, no hidden charges.",
+  "commitmentFairRatesTitle": "Fair rates",
+  "commitmentFairRatesBody": "The exact ₹ rate for a task is shown before you start it — no surprise deductions, no rate changes without notice.",
+  "commitmentRealSupportTitle": "Real support",
+  "commitmentRealSupportBody": "A human reads every support ticket — not a bot loop, you always get a real reply.",
+
+  "faqTitle": "FAQ",
+  "faqSectionTasks": "Tasks & earning",
+  "faqSectionPayments": "Payments",
+  "faqSectionReferrals": "Referrals & Premium",
+  "contactSupportButton": "Contact support",
+
+  "faqQ1": "Why only 25 tasks a day?",
+  "faqA1": "A fixed daily set keeps payouts predictable and sustainable for everyone. Premium members get 30/day, at the same ₹/task rate.",
+  "faqQ2": "How much does each task pay?",
+  "faqA2": "₹100 per task — complete all 25 and earn up to ₹2,500 a day.",
+  "faqQ3": "When do my daily tasks reset?",
+  "faqA3": "At midnight, every day. Whatever's left of today's cap disappears — there's no rollover.",
+  "faqQ4": "Why can't I skip the ad?",
+  "faqA4": "Your reward is funded by the advertiser paying for a full view — skipping early means no reward can be credited. Credit only fires once the ad finishes playing to the end, not on tap or open.",
+  "faqQ5": "Can I get more tasks by using multiple accounts?",
+  "faqA5": "No — each phone number gets one account, and using multiple accounts is against our terms.",
+
+  "faqQ6": "When do I get paid?",
+  "faqA6": "Withdrawals are processed once a month, on the 1st, straight to your UPI ID or a verified bank account (IMPS transfer).",
+  "faqQ7": "Can I withdraw whenever I want?",
+  "faqA7": "Not right now — payouts are monthly only, there's no on-demand withdrawal.",
+  "faqQ8": "Which payment methods do you support?",
+  "faqA8": "UPI (Google Pay, PhonePe, Paytm) and verified bank account transfer only — no PayPal, no wallets, no other payout methods.",
+  "faqQ9": "What if I have the wrong UPI ID saved?",
+  "faqA9": "Payouts go to whatever's saved in Settings, so double-check it before the 1st — a typo means a delayed payout while our team helps you fix it.",
+
+  "faqQ10": "How much do I earn per referral?",
+  "faqA10": "₹125 flat, credited only when the person you referred completes the ₹49 Premium purchase — never for signing up alone.",
+  "faqQ11": "Why is my referral still showing as \"pending\"?",
+  "faqA11": "It stays pending until your referral's Premium payment clears. Once it does, the ₹125 credits automatically.",
+  "faqQ12": "What does Premium include?",
+  "faqA12": "30 tasks/day instead of 25, at the same ₹/task rate — never a smaller cut per task.",
+  "faqQ13": "Can I cancel Premium anytime?",
+  "faqA13": "Yes, from Profile → Manage subscription. Your benefits continue until the end of the paid cycle, even after you cancel.",
+  "faqQ14": "What happens if my referral's Premium purchase is refunded?",
+  "faqA14": "The ₹125 commission is reversed — deducted from your balance, even from a future payout if it's already been paid out.",
+  "faqQ15": "What is the weekly referral bonus?",
+  "faqA15": "Premium members who get 5 or more referrals converting to Premium within the same Sunday–Saturday week earn +5 bonus ad slots, active the following week. It's gated on you holding Premium yourself. Free-tier accounts still earn the ₹125 commission, just never this bonus.",
+  "faqQ16": "Does it matter when my referral signed up, or when they went Premium?",
+  "faqA16": "Only the week their Premium purchase lands counts toward your 5. Signup timing doesn't matter, and each week is judged on its own. If 4 convert one week and a 5th converts the next, neither week reaches 5 and no bonus fires for either.",
+
+  "fillContactFormNotice": "Fill in your name, a valid email, and a message.",
+  "messageSentNotice": "Message sent — we'll reply within {range}.",
+  "@messageSentNotice": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "contactUsTitle": "Contact us",
+  "everyTicketAnswered": "Every ticket is read and answered within {range}{premiumSuffix}.",
+  "@everyTicketAnswered": {
+    "placeholders": { "range": { "type": "String" }, "premiumSuffix": { "type": "String" } }
+  },
+  "premiumPrioritySuffix": " — Premium priority",
+  "contactMessageHint": "Tell us what's going on...",
+  "sendMessageButton": "Send message",
+
+  "responseTimePremium": "12–24 hours",
+  "responseTimeStandard": "24–48 hours",
+
+  "otherWaysToReachUs": "Other ways to reach us",
+  "supportChannelLabel": "Support",
+  "paymentsChannelLabel": "Payments",
+  "weUsuallyReplyWithin": "We usually reply within {range}.",
+  "@weUsuallyReplyWithin": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "noEmailAppFound": "No email app found for {email}",
+  "@noEmailAppFound": {
+    "placeholders": { "email": { "type": "String" } }
+  },
+
+  "topicLabel": "Topic",
+  "topicAccountAccess": "Account access",
+  "topicWithdrawalIssue": "Withdrawal issue",
+  "topicAdNotCredited": "Ad not credited",
+  "topicReferralCommissionMissing": "Referral commission missing",
+  "topicSomethingElse": "Something else",
+
+  "howItWorksTitle": "How it works",
+  "howItWorksIntro": "One earning method, kept simple. No offer walls, no surveys, no confusing task types — just short video ads, up to 25 a day.",
+  "wantMore": "Want more?",
+  "referAndEarnInfoTitle": "Refer & earn",
+  "referAndEarnInfoMessage": "Share your referral link. You earn ₹125 only when the person you referred actually completes the ₹49 Premium purchase, not just for signing up. Earnings show as \"pending\" until their payment clears, and are reversed if their payment is refunded.",
+  "goPremiumInfoTitle": "Go Premium",
+  "goPremiumBullet1": "30 tasks/day, up from Free's 25",
+  "goPremiumBullet2": "Same ₹/task rate — no reduced payout per task",
+  "goPremiumBullet3": "Billed monthly — cancel anytime from Settings, benefits continue until the end of the paid cycle",
+  "weeklyBonusInfoTitle": "Weekly referral bonus",
+  "weeklyBonusInfoMessage": "Premium members who get 5 or more referrals converting to Premium in the same Sunday–Saturday week earn +5 bonus ad slots, active the following week. The week that counts is when your referral's purchase lands, not when they signed up. Each week resets clean with no partial carryover.",
+
+  "stepCreateAccountTitle": "Create your free account",
+  "stepCreateAccountBody": "Sign up with your mobile number in under a minute — no fees to join.",
+  "stepOpenTasksTitle": "Open today's tasks",
+  "stepOpenTasksBody": "25 tasks reset daily at midnight (30 on the Premium plan).",
+  "stepWatchAdTitle": "Watch the video ad",
+  "stepWatchAdBody": "Each task plays one short, non-skippable video ad — stay on screen until it finishes.",
+  "stepGetPaidTitle": "Get paid monthly",
+  "stepGetPaidBody": "All earnings are paid out once a month, on the 1st, to UPI or bank transfer.",
+
+  "paymentProofsTitle": "Payment Proofs",
+  "paymentProofsIntro": "Every withdrawal appears here automatically. Nothing is hand-picked.",
+
+  "lastCycleLabel": "Last cycle",
+  "totalEarnersLabel": "Total earners",
+
+  "paidBadge": "PAID",
+
+  "sampleDataNotLive": "Sample data — not live",
+  "sampleDataExplainer": "Every amount, name, and date on this screen is illustrative, not a real payout. This banner stays until this screen is wired to real transaction records.",
+
+  "lastUpdatedOn": "Last updated: {date}",
+  "@lastUpdatedOn": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "contentsLabel": "Contents",
+
+  "nowPremiumMessage": "You're now Premium!",
+  "subscriptionCancelledMessage": "Subscription cancelled — benefits continue until the cycle ends.",
+  "upgradeTitle": "Upgrade",
+  "goPremiumTitle": "Go Premium",
+  "unlockExtraTasksSubtitle": "Unlock 5 extra tasks every day.",
+  "cancellationScheduled": "Cancellation scheduled. Benefits continue until {date}.",
+  "@cancellationScheduled": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "endOfThisCycle": "the end of this cycle",
+  "youreOnPremium": "You're on Premium.",
+  "cancelSubscription": "Cancel subscription",
+  "subscribePriceButton": "Subscribe — ₹49/month",
+  "billedMonthlyNotice": "Billed monthly via Google Play. Cancel anytime from Profile → Manage subscription — Premium benefits continue until the end of the paid cycle.",
+  "referralCommissionOnUpgradeNotice": "If you were referred by someone, completing this purchase credits their ₹125 referral commission, it's never credited on signup alone. See Refund Policy for subscription cancellation terms.",
+  "weeklyBonusUnlockNotice": "Premium also unlocks the weekly referral bonus: get 5+ referrals converting to Premium in the same week and earn +5 bonus ad slots the week after.",
+
+  "perMonthSuffix": " /month",
+  "cancelAnytimeNoContract": "Cancel anytime — no long-term contract",
+
+  "proBadge": "PRO",
+
+  "whatYouGet": "What you get",
+  "prioritySupportBullet": "Priority support — faster reply on tickets",
+
+  "homeLabel": "Home",
+  "referLabel": "Refer",
+
+  "goPremiumBannerTitle": "Go Premium ",
+  "goPremiumBannerPrice": "— ₹49/month",
+  "unlock30TasksSubtitle": "Unlock 30 tasks/day at the same rate",
+
+  "dontLoseStreakTitle": "Don't lose today's streak",
+  "notificationRationale": "We'll let you know when you're close to missing today's task cap, and when a task or referral is credited — nothing more.",
+  "turnOnNotifications": "Turn on notifications",
+  "notNow": "Not now",
+
+  "oneMoreStep": "One more step",
+  "verifyYourPhone": "Verify your phone number",
+  "sendingCodeMessage": "Sending a 6-digit code by SMS to +91 {maskedPhone}…",
+  "@sendingCodeMessage": {
+    "placeholders": { "maskedPhone": { "type": "String" } }
+  },
+  "sentCodeMessage": "We've sent a 6-digit code by SMS to +91 {maskedPhone}.",
+  "@sentCodeMessage": {
+    "placeholders": { "maskedPhone": { "type": "String" } }
+  },
+  "tryAgain": "Try again",
+  "resendOtpInCountdown": "Didn't get the code? Resend OTP in 0:{seconds}",
+  "@resendOtpInCountdown": {
+    "placeholders": { "seconds": { "type": "String" } }
+  },
+  "verifyAndContinue": "Verify & continue",
+  "changeMobileNumber": "Change mobile number",
+  "smsDndNotice": "Make sure your number can receive SMS — some DND (Do Not Disturb) settings block OTP messages. Code expires in 10 minutes.",
+  "otpCodeMismatchRetry": "That code didn't match. Check and try again.",
+  "otpCodeExpired": "This code has expired — request a new one.",
+  "otpTooManyAttempts": "Too many attempts. You're temporarily locked out for 5 minutes.",
+  "couldNotVerifyRightNow": "Couldn't verify that code right now. ({error})",
+  "@couldNotVerifyRightNow": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "couldNotSendOtpWithError": "Could not send OTP right now. ({error})",
+  "@couldNotSendOtpWithError": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "couldNotResendOtpWithError": "Could not resend OTP right now. ({error})",
+  "@couldNotResendOtpWithError": {
+    "placeholders": { "error": { "type": "String" } }
+  }
+}

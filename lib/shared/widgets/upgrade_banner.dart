@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Promotes Premium (₹49/mo, 30 tasks/day — PROJECT.md Section 2). Reused
 /// on Home and Profile. Dark card with gold accents, so gold reads as a
@@ -14,6 +15,7 @@ class UpgradeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -72,12 +74,12 @@ class UpgradeBanner extends StatelessWidget {
                           fontWeight: FontWeight.w800,
                         ),
                         children: [
-                          const TextSpan(
-                            text: 'Go Premium ',
-                            style: TextStyle(color: Colors.white),
+                          TextSpan(
+                            text: l10n.goPremiumBannerTitle,
+                            style: const TextStyle(color: Colors.white),
                           ),
                           TextSpan(
-                            text: '— ₹49/month',
+                            text: l10n.goPremiumBannerPrice,
                             style: TextStyle(
                               color: AppColors.premiumGold.withValues(
                                 alpha: 0.9,
@@ -89,7 +91,7 @@ class UpgradeBanner extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Unlock 30 tasks/day at the same rate',
+                      l10n.unlock30TasksSubtitle,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,

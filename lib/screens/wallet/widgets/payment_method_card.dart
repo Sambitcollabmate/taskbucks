@@ -3,6 +3,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/wallet_summary.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Shows the UPI ID payouts go to. Withdrawals only go to UPI or a verified
 /// bank account, monthly on the 1st (PROJECT.md 2) — no on-demand payout,
@@ -82,8 +83,8 @@ class PaymentMethodCard extends StatelessWidget {
                     color: AppColors.earningsGreen.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Text(
-                    'DEFAULT',
+                  child: Text(
+                    AppLocalizations.of(context).defaultBadge,
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
