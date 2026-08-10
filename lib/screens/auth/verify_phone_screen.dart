@@ -126,13 +126,26 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
     });
   }
 
+  // If the initial `sendOTP` itself failed, there's no `reqId` for
+  // `retryOTP` to work against — offer an immediate retry instead of
+  // leaving the countdown frozen with no way forward.
+  bool get _initialSendFailed => _reqId == null && !_isSendingInitialOtp;
+
   bool get _canResend =>
-      (_resendSecondsLeft == 0 || _error == _OtpError.expiredCode) &&
       !_isResending &&
-      _reqId != null;
+      !_isSendingInitialOtp &&
+      (_initialSendFailed ||
+          _resendSecondsLeft == 0 ||
+          _error == _OtpError.expiredCode);
 
   Future<void> _onResendTap() async {
     if (!_canResend) return;
+
+    if (_initialSendFailed) {
+      await _sendOtp();
+      return;
+    }
+
     setState(() => _isResending = true);
     try {
       final response = await OTPWidget.retryOTP({
@@ -302,9 +315,9 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
               child: GestureDetector(
                 onTap: _canResend ? _onResendTap : null,
                 child: _canResend
-                    ? const Text(
-                        'Resend OTP',
-                        style: TextStyle(
+                    ? Text(
+                        _initialSendFailed ? 'Try again' : 'Resend OTP',
+                        style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: AppColors.primary,
