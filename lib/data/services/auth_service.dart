@@ -6,9 +6,9 @@ enum OtpPurpose { registration, passwordReset }
 
 extension on OtpPurpose {
   String get wireValue => switch (this) {
-        OtpPurpose.registration => 'registration',
-        OtpPurpose.passwordReset => 'password_reset',
-      };
+    OtpPurpose.registration => 'registration',
+    OtpPurpose.passwordReset => 'password_reset',
+  };
 }
 
 /// Real Laravel `v1/auth/*` calls (AUTH_API.md). OTP send/verify itself now
@@ -27,13 +27,19 @@ class AuthService {
     required String password,
     String? referralCode,
   }) {
-    return ApiClient.call((dio) => dio.post('/auth/register', data: {
+    return ApiClient.call(
+      (dio) => dio.post(
+        '/auth/register',
+        data: {
           'name': name,
           'mobile': mobile,
           if (email != null && email.isNotEmpty) 'email': email,
           'password': password,
-          if (referralCode != null && referralCode.isNotEmpty) 'referral_code': referralCode,
-        }));
+          if (referralCode != null && referralCode.isNotEmpty)
+            'referral_code': referralCode,
+        },
+      ),
+    );
   }
 
   /// Registration path: server verifies [accessToken] with MSG91, then
@@ -47,15 +53,19 @@ class AuthService {
     String? referralCode,
   }) {
     return ApiClient.call((dio) async {
-      final response = await dio.post('/auth/verify-otp', data: {
-        'access_token': accessToken,
-        'purpose': OtpPurpose.registration.wireValue,
-        'mobile': mobile,
-        'name': name,
-        if (email != null && email.isNotEmpty) 'email': email,
-        'password': password,
-        if (referralCode != null && referralCode.isNotEmpty) 'referral_code': referralCode,
-      });
+      final response = await dio.post(
+        '/auth/verify-otp',
+        data: {
+          'access_token': accessToken,
+          'purpose': OtpPurpose.registration.wireValue,
+          'mobile': mobile,
+          'name': name,
+          if (email != null && email.isNotEmpty) 'email': email,
+          'password': password,
+          if (referralCode != null && referralCode.isNotEmpty)
+            'referral_code': referralCode,
+        },
+      );
       return AuthSession.fromJson(response.data as Map<String, dynamic>);
     });
   }
@@ -68,21 +78,46 @@ class AuthService {
     required String mobile,
   }) {
     return ApiClient.call((dio) async {
-      final response = await dio.post('/auth/verify-otp', data: {
-        'access_token': accessToken,
-        'purpose': OtpPurpose.passwordReset.wireValue,
-        'mobile': mobile,
-      });
-      return PasswordResetChallenge.fromJson(response.data as Map<String, dynamic>);
+      final response = await dio.post(
+        '/auth/verify-otp',
+        data: {
+          'access_token': accessToken,
+          'purpose': OtpPurpose.passwordReset.wireValue,
+          'mobile': mobile,
+        },
+      );
+      return PasswordResetChallenge.fromJson(
+        response.data as Map<String, dynamic>,
+      );
     });
   }
 
-  Future<AuthSession> login({required String identifier, required String password}) {
+  Future<LoginResult> login({
+    required String identifier,
+    required String password,
+  }) {
     return ApiClient.call((dio) async {
-      final response = await dio.post('/auth/login', data: {
-        'identifier': identifier,
-        'password': password,
-      });
+      final response = await dio.post(
+        '/auth/login',
+        data: {'identifier': identifier, 'password': password},
+      );
+      return LoginResult.fromJson(response.data as Map<String, dynamic>);
+    });
+  }
+
+  /// Second step of a two-step login — exchanges [challengeToken] (from the
+  /// [LoginTwoStepRequired] response) and MSG91's widget-issued
+  /// [accessToken] for the real session, mirroring [verifyRegistration]'s
+  /// access-token handoff.
+  Future<AuthSession> verifyLoginTwoStep({
+    required String challengeToken,
+    required String accessToken,
+  }) {
+    return ApiClient.call((dio) async {
+      final response = await dio.post(
+        '/auth/login/verify-2fa',
+        data: {'challenge_token': challengeToken, 'access_token': accessToken},
+      );
       return AuthSession.fromJson(response.data as Map<String, dynamic>);
     });
   }
@@ -91,9 +126,10 @@ class AuthService {
   /// exists for [mobile] before the Forgot Password screen triggers the
   /// widget's `sendOTP`.
   Future<void> forgotPasswordPrecheck(String mobile) {
-    return ApiClient.call((dio) => dio.post('/auth/forgot-password/request', data: {
-          'mobile': mobile,
-        }));
+    return ApiClient.call(
+      (dio) =>
+          dio.post('/auth/forgot-password/request', data: {'mobile': mobile}),
+    );
   }
 
   Future<void> forgotPasswordReset({
@@ -102,11 +138,14 @@ class AuthService {
     required String passwordConfirmation,
   }) {
     return ApiClient.call((dio) async {
-      await dio.post('/auth/forgot-password/reset', data: {
-        'reset_token': resetToken,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
-      });
+      await dio.post(
+        '/auth/forgot-password/reset',
+        data: {
+          'reset_token': resetToken,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+        },
+      );
     });
   }
 

@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 import '../../core/config/app_config.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/models/auth_user.dart';
 import '../../data/services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
+import 'verify_login_otp_screen.dart';
 import 'widgets/auth_text_field.dart';
 
 final _mobilePattern = RegExp(r'^\d{10}$');
@@ -43,9 +45,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if (widget.successMessage != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(widget.successMessage!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(widget.successMessage!)));
       });
     }
   }
@@ -64,7 +66,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return _mobilePattern.hasMatch(value) || _emailPattern.hasMatch(value);
   }
 
-  bool get _isValid => _isIdentifierValid && _passwordController.text.isNotEmpty;
+  bool get _isValid =>
+      _isIdentifierValid && _passwordController.text.isNotEmpty;
 
   Future<void> _onLogin() async {
     if (!_isValid || _isLoggingIn) return;
@@ -74,14 +77,29 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final session = await _authService.login(
+      final result = await _authService.login(
         identifier: _identifierController.text.trim(),
         password: _passwordController.text,
       );
       if (!mounted) return;
-      await context.read<AuthProvider>().completeLogin(session, rememberMe: _rememberMe);
-      if (!mounted) return;
-      context.go('/home');
+      switch (result) {
+        case LoginSuccess(:final session):
+          await context.read<AuthProvider>().completeLogin(
+            session,
+            rememberMe: _rememberMe,
+          );
+          if (!mounted) return;
+          context.go('/home');
+        case LoginTwoStepRequired(:final challengeToken, :final mobile):
+          context.push(
+            '/verify-login-otp',
+            extra: VerifyLoginOtpArgs(
+              challengeToken: challengeToken,
+              mobile: mobile,
+              rememberMe: _rememberMe,
+            ),
+          );
+      }
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _errorMessage = e.fieldError('identifier') ?? e.message);
@@ -111,7 +129,10 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 6),
             Text(
               l10n.loginSubtitle,
-              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
             ),
             const SizedBox(height: 24),
             AuthTextField(
@@ -132,7 +153,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   size: 18,
                   color: AppColors.textSecondary,
                 ),
-                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                onPressed: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
               ),
             ),
             const SizedBox(height: 12),
@@ -149,15 +171,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 22,
                         child: Checkbox(
                           value: _rememberMe,
-                          onChanged: (v) => setState(() => _rememberMe = v ?? false),
+                          onChanged: (v) =>
+                              setState(() => _rememberMe = v ?? false),
                           activeColor: AppColors.primary,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                         ),
                       ),
                       const SizedBox(width: 6),
                       Text(
                         l10n.rememberMe,
-                        style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -202,7 +229,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           end: Alignment.bottomRight,
                         )
                       : null,
-                  color: _isValid ? null : AppColors.textSecondary.withValues(alpha: 0.25),
+                  color: _isValid
+                      ? null
+                      : AppColors.textSecondary.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Material(
@@ -217,7 +246,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.4,
-                                valueColor: AlwaysStoppedAnimation(Colors.white),
+                                valueColor: AlwaysStoppedAnimation(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : Text(
@@ -241,7 +272,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 onTap: () => context.push('/register'),
                 child: RichText(
                   text: TextSpan(
-                    style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
                     children: [
                       TextSpan(text: l10n.newToApp(AppConfig.brandName)),
                       TextSpan(

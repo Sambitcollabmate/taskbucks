@@ -74,3 +74,47 @@ class AuthSession {
     );
   }
 }
+
+/// `POST /auth/login`'s response is one of these two shapes — a full
+/// [AuthSession] when the account has no two-step verification enabled, or
+/// [LoginTwoStepRequired] (password was correct, but a second factor is
+/// still owed) when it does. See AUTH_API.md's `POST /auth/login`.
+sealed class LoginResult {
+  const LoginResult();
+
+  factory LoginResult.fromJson(Map<String, dynamic> json) {
+    return json['two_step_required'] == true
+        ? LoginTwoStepRequired.fromJson(json)
+        : LoginSuccess(AuthSession.fromJson(json));
+  }
+}
+
+class LoginSuccess extends LoginResult {
+  final AuthSession session;
+
+  const LoginSuccess(this.session);
+}
+
+/// `{ two_step_required: true, challenge_token, mobile, expires_in_seconds }`
+/// — the client sends an OTP to [mobile] via MSG91's widget, then exchanges
+/// the resulting access-token for a real [AuthSession] via
+/// `AuthService.verifyLoginTwoStep`, submitting [challengeToken].
+class LoginTwoStepRequired extends LoginResult {
+  final String challengeToken;
+  final String mobile;
+  final int expiresInSeconds;
+
+  const LoginTwoStepRequired({
+    required this.challengeToken,
+    required this.mobile,
+    required this.expiresInSeconds,
+  });
+
+  factory LoginTwoStepRequired.fromJson(Map<String, dynamic> json) {
+    return LoginTwoStepRequired(
+      challengeToken: json['challenge_token'] as String,
+      mobile: json['mobile'] as String,
+      expiresInSeconds: json['expires_in_seconds'] as int,
+    );
+  }
+}

@@ -6,6 +6,7 @@ import '../../providers/transactions_provider.dart';
 import '../../screens/auth/forgot_password_screen.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/register_screen.dart';
+import '../../screens/auth/verify_login_otp_screen.dart';
 import '../../screens/auth/verify_phone_screen.dart';
 import '../../screens/auth/welcome_screen.dart';
 import '../../screens/home/home_screen.dart';
@@ -43,6 +44,7 @@ const _preAuthPaths = {
   '/login',
   '/forgot-password',
   '/verify-phone',
+  '/verify-login-otp',
 };
 
 /// Routes reachable regardless of auth state — trust/legal pages (PROJECT.md
@@ -104,6 +106,11 @@ final appRouter = GoRouter(
       path: '/verify-phone',
       builder: (context, state) =>
           VerifyPhoneScreen(args: state.extra as VerifyPhoneArgs),
+    ),
+    GoRoute(
+      path: '/verify-login-otp',
+      builder: (context, state) =>
+          VerifyLoginOtpScreen(args: state.extra as VerifyLoginOtpArgs),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
