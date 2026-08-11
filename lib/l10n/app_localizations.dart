@@ -1849,6 +1849,12 @@ abstract class AppLocalizations {
   /// **'Fill in your name, a valid email, and a message.'**
   String get fillContactFormNotice;
 
+  /// No description provided for @signInToSendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in to send a message.'**
+  String get signInToSendMessage;
+
   /// No description provided for @messageSentNotice.
   ///
   /// In en, this message translates to:
@@ -2140,8 +2146,14 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionCancelledMessage.
   ///
   /// In en, this message translates to:
-  /// **'Subscription cancelled — benefits continue until the cycle ends.'**
+  /// **'Almost done — finish cancelling on Google Play so billing actually stops.'**
   String get subscriptionCancelledMessage;
+
+  /// No description provided for @couldNotOpenGooglePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open Google Play. Cancel manually from the Play Store\'s Subscriptions page.'**
+  String get couldNotOpenGooglePlay;
 
   /// No description provided for @upgradeTitle.
   ///

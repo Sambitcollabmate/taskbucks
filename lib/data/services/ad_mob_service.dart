@@ -2,35 +2,33 @@ import 'dart:async';
 
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../core/config/app_config.dart';
 import '../../core/network/api_client.dart';
+import '../../core/utils/uuid.dart';
 
-/// Google's shared test rewarded-ad unit — always fills, safe to interact
-/// with repeatedly without risking an AdMob policy strike. Swap for the
-/// real ad unit ID (from the AdMob console) only once `earnbucks-api` has a
-/// public HTTPS URL Google's SSV callback can actually reach — see
-/// AdMobSsvClient.php / api_requirements.md §3.
-const _rewardedAdUnitId = 'ca-app-pub-3940256099942544/5224354917';
-
-/// Loads and shows a real rewarded video ad, then — once the user has
-/// actually earned the reward client-side — calls the backend's
-/// local-dev-only `POST /v1/ads/dev-simulate` (AdMobController::devSimulate)
-/// to produce a verified `ad_transaction_id`, standing in for the real
-/// AdMob SSV callback until one is wired in. Real reward-crediting must
-/// always trust a server-verified impression, never the client's
-/// `onUserEarnedReward` alone (api_requirements.md §3) — this two-step
-/// shape (real ad, dev-verified credit) is deliberate so the task-
-/// completion flow is fully testable before the backend is publicly
-/// reachable.
+/// Loads and shows a real rewarded video ad, then confirms the reward via
+/// AdMob's real Server-Side Verification (SSV) — never the client-side
+/// `onUserEarnedReward` signal alone (api_requirements.md §3), since a
+/// modified client could fire that without ever showing an ad.
+///
+/// AdMob never hands the client its own `transaction_id`, so a fresh UUID
+/// is set as `customData` on the ad request before showing it; once
+/// AdMob's callback (AdMobController::callback) lands — asynchronously,
+/// not synchronously with the ad closing — GET /ads/verification-status
+/// (polled below) finds the resulting row by that same UUID and returns
+/// the real `ad_transaction_id` for /tasks/{id}/complete to consume.
 class AdMobService {
   Future<String> watchRewardedAd() async {
+    final correlationId = generateUuidV4();
     final ad = await _load();
-    return _showAndAwaitReward(ad);
+    await ad.setServerSideOptions(ServerSideVerificationOptions(customData: correlationId));
+    return _showAndAwaitReward(ad, correlationId);
   }
 
   Future<RewardedAd> _load() {
     final completer = Completer<RewardedAd>();
     RewardedAd.load(
-      adUnitId: _rewardedAdUnitId,
+      adUnitId: AppConfig.rewardedAdUnitId,
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: completer.complete,
@@ -42,7 +40,7 @@ class AdMobService {
     return completer.future;
   }
 
-  Future<String> _showAndAwaitReward(RewardedAd ad) {
+  Future<String> _showAndAwaitReward(RewardedAd ad, String correlationId) {
     final completer = Completer<String>();
     var earnedReward = false;
 
@@ -51,7 +49,7 @@ class AdMobService {
         ad.dispose();
         if (completer.isCompleted) return;
         if (earnedReward) {
-          _confirmWithBackend().then(completer.complete).catchError(completer.completeError);
+          _awaitVerification(correlationId).then(completer.complete).catchError(completer.completeError);
         } else {
           completer.completeError(StateError('Ad dismissed before reward was earned.'));
         }
@@ -69,10 +67,31 @@ class AdMobService {
     return completer.future;
   }
 
-  Future<String> _confirmWithBackend() {
-    return ApiClient.call((dio) async {
-      final response = await dio.post('/ads/dev-simulate');
-      return response.data['ad_transaction_id'] as String;
-    });
+  /// AdMob's SSV callback lands asynchronously — typically within a couple
+  /// of seconds of the ad closing, but never synchronously with it — so
+  /// this polls rather than assuming a single check will find it.
+  Future<String> _awaitVerification(String correlationId) async {
+    const pollInterval = Duration(seconds: 2);
+    final deadline = DateTime.now().add(const Duration(seconds: 20));
+
+    while (DateTime.now().isBefore(deadline)) {
+      final status = await ApiClient.call((dio) async {
+        final response = await dio.get(
+          '/ads/verification-status',
+          queryParameters: {'correlation_id': correlationId},
+        );
+        return response.data as Map<String, dynamic>;
+      });
+
+      if (status['status'] == 'verified') {
+        return status['ad_transaction_id'] as String;
+      }
+
+      await Future.delayed(pollInterval);
+    }
+
+    throw StateError(
+      'Still verifying your ad with AdMob — please try again in a moment.',
+    );
   }
 }

@@ -993,6 +993,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Fill in your name, a valid email, and a message.';
 
   @override
+  String get signInToSendMessage => 'Please sign in to send a message.';
+
+  @override
   String messageSentNotice(String range) {
     return 'Message sent — we\'ll reply within $range.';
   }
@@ -1159,7 +1162,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionCancelledMessage =>
-      'Subscription cancelled — benefits continue until the cycle ends.';
+      'Almost done — finish cancelling on Google Play so billing actually stops.';
+
+  @override
+  String get couldNotOpenGooglePlay =>
+      'Couldn\'t open Google Play. Cancel manually from the Play Store\'s Subscriptions page.';
 
   @override
   String get upgradeTitle => 'Upgrade';

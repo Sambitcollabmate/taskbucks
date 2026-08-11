@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/contact_topic.dart';
 import '../../data/models/user_profile.dart';
+import '../../data/services/support_service.dart';
+import '../../data/services/token_store.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/profile_provider.dart';
 import '../../shared/widgets/gradient_cta_button.dart';
@@ -39,8 +42,10 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
+  final _supportService = SupportService();
 
   ContactTopic _topic = ContactTopic.values.first;
+  bool _isSending = false;
 
   @override
   void dispose() {
@@ -56,7 +61,9 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
   String _responseTimeRange(AppLocalizations l10n, bool isPremium) =>
       isPremium ? l10n.responseTimePremium : l10n.responseTimeStandard;
 
-  void _onSend(AppLocalizations l10n, bool isPremium) {
+  Future<void> _onSend(AppLocalizations l10n, bool isPremium) async {
+    if (_isSending) return;
+
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final message = _messageController.text.trim();
@@ -70,21 +77,38 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
       return;
     }
 
-    // TODO: POST to a real Laravel /support/tickets endpoint once it exists
-    // (PROJECT.md Phase 7). _topic tags which internal queue this should
-    // route to — see ContactTopic's doc comment for the intended mapping.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          l10n.messageSentNotice(_responseTimeRange(l10n, isPremium)),
-        ),
-      ),
-    );
+    // Contact is reachable both pre- and post-auth (_publicPaths in
+    // app_router.dart), but the real /support/tickets endpoint is
+    // auth:sanctum-only — check locally instead of letting a guest's
+    // submit fail with an opaque 401.
+    if (TokenStore.instance.token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.signInToSendMessage)),
+      );
+      return;
+    }
 
-    _nameController.clear();
-    _emailController.clear();
-    _messageController.clear();
-    setState(() => _topic = ContactTopic.values.first);
+    setState(() => _isSending = true);
+    try {
+      await _supportService.raiseTicket(topic: _topic, message: message);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.messageSentNotice(_responseTimeRange(l10n, isPremium)),
+          ),
+        ),
+      );
+      _nameController.clear();
+      _emailController.clear();
+      _messageController.clear();
+      setState(() => _topic = ContactTopic.values.first);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
   }
 
   @override
@@ -142,7 +166,7 @@ class _ContactScreenBodyState extends State<_ContactScreenBody> {
             ),
             const SizedBox(height: 20),
             GradientCtaButton(
-              label: l10n.sendMessageButton,
+              label: _isSending ? l10n.submittingLabel : l10n.sendMessageButton,
               onTap: () => _onSend(l10n, isPremium),
             ),
             const SizedBox(height: 28),

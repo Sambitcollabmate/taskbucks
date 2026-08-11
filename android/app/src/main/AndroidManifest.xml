@@ -42,10 +42,9 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- The App ID itself doesn't serve specific ads, so it's safe to
-             use the real one even during development; it's the ad UNIT
-             ID (in ad_mob_service.dart) that must stay a Google test ID
-             until earnbucks-api has a public URL for real SSV. -->
+        <!-- The rewarded ad unit ID (AppConfig.rewardedAdUnitId, set via
+             dart_defines.json) is real too now that earnbucks-api has a
+             public HTTPS URL for real AdMob SSV — see AdMobService. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-6514822944587484~8441061947" />

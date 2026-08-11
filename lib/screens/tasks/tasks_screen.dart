@@ -43,6 +43,14 @@ class _TasksScreenBody extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
       }
+    } on StateError catch (e) {
+      // AdMobService throws this for every ad-side failure (failed to
+      // load/show, dismissed before reward, SSV verification timeout) —
+      // previously uncaught here, so the button silently reset with no
+      // explanation of what actually went wrong.
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      }
     }
   }
 
@@ -50,6 +58,10 @@ class _TasksScreenBody extends StatelessWidget {
     try {
       await provider.completeBonusSlot(id);
     } on ApiException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    } on StateError catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
       }

@@ -427,6 +427,7 @@
   "faqA16": "Only the week their Premium purchase lands counts toward your 5. Signup timing doesn't matter, and each week is judged on its own. If 4 convert one week and a 5th converts the next, neither week reaches 5 and no bonus fires for either.",
 
   "fillContactFormNotice": "Fill in your name, a valid email, and a message.",
+  "signInToSendMessage": "Please sign in to send a message.",
   "messageSentNotice": "Message sent — we'll reply within {range}.",
   "@messageSentNotice": {
     "placeholders": { "range": { "type": "String" } }
@@ -501,7 +502,8 @@
   "contentsLabel": "Contents",
 
   "nowPremiumMessage": "You're now Premium!",
-  "subscriptionCancelledMessage": "Subscription cancelled — benefits continue until the cycle ends.",
+  "subscriptionCancelledMessage": "Almost done — finish cancelling on Google Play so billing actually stops.",
+  "couldNotOpenGooglePlay": "Couldn't open Google Play. Cancel manually from the Play Store's Subscriptions page.",
   "upgradeTitle": "Upgrade",
   "goPremiumTitle": "Go Premium",
   "unlockExtraTasksSubtitle": "Unlock 5 extra tasks every day.",

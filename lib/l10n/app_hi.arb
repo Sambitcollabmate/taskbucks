@@ -346,6 +346,7 @@
   "faqA16": "केवल वह सप्ताह मायने रखता है जिसमें उनकी प्रीमियम खरीद होती है, आपके 5 की गिनती के लिए। साइन अप का समय मायने नहीं रखता, और हर सप्ताह अपने आप में आंका जाता है। अगर एक सप्ताह 4 कन्वर्ट होते हैं और अगले सप्ताह 5वां, तो कोई भी सप्ताह 5 तक नहीं पहुंचता और किसी के लिए भी बोनस नहीं मिलता।",
 
   "fillContactFormNotice": "अपना नाम, एक मान्य ईमेल और एक संदेश भरें।",
+  "signInToSendMessage": "संदेश भेजने के लिए कृपया साइन इन करें।",
   "messageSentNotice": "संदेश भेजा गया — हम {range} के भीतर जवाब देंगे।",
   "contactUsTitle": "हमसे संपर्क करें",
   "everyTicketAnswered": "हर टिकट {range}{premiumSuffix} के भीतर पढ़ा और जवाब दिया जाता है।",
@@ -405,7 +406,8 @@
   "contentsLabel": "विषय-सूची",
 
   "nowPremiumMessage": "अब आप प्रीमियम हैं!",
-  "subscriptionCancelledMessage": "सदस्यता रद्द हुई — चक्र समाप्त होने तक लाभ जारी रहेंगे।",
+  "subscriptionCancelledMessage": "लगभग हो गया — बिलिंग रोकने के लिए Google Play पर रद्द करना पूरा करें।",
+  "couldNotOpenGooglePlay": "Google Play नहीं खोल सका। Play Store के सदस्यता पेज से मैन्युअल रूप से रद्द करें।",
   "upgradeTitle": "अपग्रेड",
   "goPremiumTitle": "प्रीमियम लें",
   "unlockExtraTasksSubtitle": "हर दिन 5 अतिरिक्त टास्क अनलॉक करें।",

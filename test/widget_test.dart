@@ -1,14 +1,40 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import 'package:earnbucks/main.dart';
+import 'package:earnbucks/l10n/app_localizations.dart';
+import 'package:earnbucks/shared/widgets/balance_hero_card.dart';
 
 void main() {
-  testWidgets('Home screen renders the balance hero card', (
+  testWidgets('BalanceHeroCard renders the available balance', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const EarnBucksApp());
-    await tester.pump(const Duration(milliseconds: 500));
+    final formatter = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹',
+      decimalDigits: 2,
+    );
 
-    expect(find.text('Total balance'), findsOneWidget);
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: BalanceHeroCard(
+            balance: 1234.56,
+            primaryLabel: 'Wallet',
+            primaryIcon: LucideIcons.wallet,
+            onPrimaryTap: () {},
+            secondaryLabel: 'Refer & earn',
+            secondaryIcon: LucideIcons.userPlus,
+            onSecondaryTap: () {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Available balance'), findsOneWidget);
+    expect(find.text(formatter.format(1234.56)), findsOneWidget);
   });
 }

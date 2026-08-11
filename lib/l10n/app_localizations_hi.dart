@@ -994,6 +994,9 @@ class AppLocalizationsHi extends AppLocalizations {
       'अपना नाम, एक मान्य ईमेल और एक संदेश भरें।';
 
   @override
+  String get signInToSendMessage => 'संदेश भेजने के लिए कृपया साइन इन करें।';
+
+  @override
   String messageSentNotice(String range) {
     return 'संदेश भेजा गया — हम $range के भीतर जवाब देंगे।';
   }
@@ -1159,7 +1162,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get subscriptionCancelledMessage =>
-      'सदस्यता रद्द हुई — चक्र समाप्त होने तक लाभ जारी रहेंगे।';
+      'लगभग हो गया — बिलिंग रोकने के लिए Google Play पर रद्द करना पूरा करें।';
+
+  @override
+  String get couldNotOpenGooglePlay =>
+      'Google Play नहीं खोल सका। Play Store के सदस्यता पेज से मैन्युअल रूप से रद्द करें।';
 
   @override
   String get upgradeTitle => 'अपग्रेड';
