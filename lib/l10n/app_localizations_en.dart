@@ -155,7 +155,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updatePassword => 'Update password';
 
   @override
-  String get consentPrefix => 'I\'m 18+ and agree to the ';
+  String get consentPrefix => 'I\'m 14+ and agree to the ';
 
   @override
   String get termsLabel => 'Terms';

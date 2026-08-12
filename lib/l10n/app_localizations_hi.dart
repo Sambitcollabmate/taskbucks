@@ -157,7 +157,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get updatePassword => 'पासवर्ड अपडेट करें';
 
   @override
-  String get consentPrefix => 'मैं 18+ हूं और ';
+  String get consentPrefix => 'मैं 14+ हूं और ';
 
   @override
   String get termsLabel => 'नियम व शर्तों';

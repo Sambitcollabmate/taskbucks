@@ -377,7 +377,7 @@ abstract class AppLocalizations {
   /// No description provided for @consentPrefix.
   ///
   /// In en, this message translates to:
-  /// **'I\'m 18+ and agree to the '**
+  /// **'I\'m 14+ and agree to the '**
   String get consentPrefix;
 
   /// No description provided for @termsLabel.
