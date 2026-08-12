@@ -15,11 +15,11 @@ import 'providers/profile_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MobileAds.instance.initialize();
-  runApp(const EarnBucksApp());
+  runApp(const CollabMateApp());
 }
 
-class EarnBucksApp extends StatelessWidget {
-  const EarnBucksApp({super.key});
+class CollabMateApp extends StatelessWidget {
+  const CollabMateApp({super.key});
 
   @override
   Widget build(BuildContext context) {

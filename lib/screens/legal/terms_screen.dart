@@ -12,7 +12,7 @@ final _sections = [
     id: 'acceptance',
     heading: 'Acceptance of Terms',
     paragraphs: [
-      'By creating an account or using EarnBucks in any way, you agree to '
+      'By creating an account or using CollabMate in any way, you agree to '
           "be bound by these Terms of Service. If you don't agree, please "
           "don't use the app.",
     ],
@@ -22,7 +22,7 @@ final _sections = [
     heading: 'Eligibility',
     paragraphs: [
       'You must be at least 18 years old and a resident of India to use '
-          'EarnBucks. Each person may hold only one account — creating '
+          'CollabMate. Each person may hold only one account — creating '
           'multiple accounts to claim extra tasks, referral bonuses, or '
           'Premium benefits is not allowed and may result in your accounts '
           'being suspended.',
@@ -112,7 +112,7 @@ final _sections = [
     id: 'ip',
     heading: 'Intellectual Property',
     paragraphs: [
-      'The EarnBucks app, its branding, and its content are owned by us '
+      'The CollabMate app, its branding, and its content are owned by us '
           'and our licensors. You may not copy, modify, or redistribute '
           'any part of the app without our written permission.',
     ],
@@ -121,7 +121,7 @@ final _sections = [
     id: 'liability',
     heading: 'Limitation of Liability',
     paragraphs: [
-      "EarnBucks is provided on an \"as is\" basis. To the maximum extent "
+      "CollabMate is provided on an \"as is\" basis. To the maximum extent "
           "permitted by law, we aren't liable for indirect, incidental, or "
           'consequential damages arising from your use of the app, '
           'including losses related to task availability, ad delivery, or '
@@ -132,7 +132,7 @@ final _sections = [
     id: 'termination',
     heading: 'Termination',
     paragraphs: [
-      'You may stop using EarnBucks and close your account at any time. '
+      'You may stop using CollabMate and close your account at any time. '
           'We may suspend or terminate your account for violating these '
           'Terms, including the Prohibited Conduct section above.',
     ],
@@ -151,7 +151,7 @@ final _sections = [
     heading: 'Changes to These Terms',
     paragraphs: [
       'We may update these Terms from time to time. Continuing to use '
-          'EarnBucks after a change takes effect means you accept the '
+          'CollabMate after a change takes effect means you accept the '
           'updated Terms.',
     ],
   ),

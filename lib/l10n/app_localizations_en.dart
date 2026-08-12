@@ -800,7 +800,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String aboutBody(int foundingYear) {
-    return 'EarnBucks started in $foundingYear as a reaction to an industry full of apps that vanish when users ask to withdraw.';
+    return 'CollabMate started in $foundingYear as a reaction to an industry full of apps that vanish when users ask to withdraw.';
   }
 
   @override

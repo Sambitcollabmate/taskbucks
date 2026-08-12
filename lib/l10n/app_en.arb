@@ -361,7 +361,7 @@
 
   "aboutTitle": "About",
   "aboutHeadline": "Built by people who got burned by earning apps that never paid.",
-  "aboutBody": "EarnBucks started in {foundingYear} as a reaction to an industry full of apps that vanish when users ask to withdraw.",
+  "aboutBody": "CollabMate started in {foundingYear} as a reaction to an industry full of apps that vanish when users ask to withdraw.",
   "@aboutBody": {
     "placeholders": { "foundingYear": { "type": "int" } }
   },

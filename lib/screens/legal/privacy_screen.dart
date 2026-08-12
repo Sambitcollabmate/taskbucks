@@ -14,7 +14,7 @@ final _sections = [
     id: 'intro',
     heading: 'Introduction',
     paragraphs: [
-      'This Privacy Policy explains what information EarnBucks collects, '
+      'This Privacy Policy explains what information CollabMate collects, '
           'how we use it, and the choices you have. By using the app, you '
           'agree to the practices described here.',
     ],
@@ -81,7 +81,7 @@ final _sections = [
     id: 'children',
     heading: "Children's Privacy",
     paragraphs: [
-      "EarnBucks is not directed at anyone under 18. We don't knowingly "
+      "CollabMate is not directed at anyone under 18. We don't knowingly "
           'collect personal information from minors.',
     ],
   ),
@@ -89,7 +89,7 @@ final _sections = [
     id: 'third-party',
     heading: 'Third-Party Services',
     paragraphs: [
-      'EarnBucks uses Google AdMob (rewarded video ads) and Google Play '
+      'CollabMate uses Google AdMob (rewarded video ads) and Google Play '
           'Billing (Premium subscriptions). These providers have their '
           'own privacy policies governing how they handle data collected '
           'through their services.',

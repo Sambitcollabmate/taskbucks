@@ -801,7 +801,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String aboutBody(int foundingYear) {
-    return 'EarnBucks की शुरुआत $foundingYear में उन ऐप्स के जवाब में हुई जो निकासी मांगने पर गायब हो जाते हैं।';
+    return 'CollabMate की शुरुआत $foundingYear में उन ऐप्स के जवाब में हुई जो निकासी मांगने पर गायब हो जाते हैं।';
   }
 
   @override

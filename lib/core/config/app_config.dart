@@ -2,7 +2,7 @@
 class AppConfig {
   AppConfig._();
 
-  static const String brandName = 'EarnBucks';
+  static const String brandName = 'CollabMate';
   static const String brandDomain = 'earnbucks.tech';
 
   /// Must match `android/app/build.gradle.kts`'s `applicationId` — used to

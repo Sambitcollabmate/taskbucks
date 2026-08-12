@@ -1516,7 +1516,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutBody.
   ///
   /// In en, this message translates to:
-  /// **'EarnBucks started in {foundingYear} as a reaction to an industry full of apps that vanish when users ask to withdraw.'**
+  /// **'CollabMate started in {foundingYear} as a reaction to an industry full of apps that vanish when users ask to withdraw.'**
   String aboutBody(int foundingYear);
 
   /// No description provided for @companyDetailsTitle.

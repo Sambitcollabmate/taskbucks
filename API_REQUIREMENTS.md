@@ -1,4 +1,4 @@
-# EarnBucks — Backend API Requirements
+# CollabMate — Backend API Requirements
 
 For the Laravel backend team. Auth is already built and working — listed here
 only for reference/conventions. Everything else (Tasks, Wallet, Withdrawals,
