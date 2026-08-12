@@ -65,6 +65,15 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
+            // Flutter's own gradle plugin enables minification/R8 for
+            // release builds and supplies flutter_proguard_rules.pro, but
+            // that file has no Room/WorkManager rules — add ours alongside
+            // it (see proguard-rules.pro for why: R8 breaks WorkManager's
+            // Room-backed WorkDatabase without them).
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }
