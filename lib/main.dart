@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import 'core/config/app_config.dart';
 import 'core/router/app_router.dart';
-import 'core/services/deep_link_listener.dart';
 import 'core/theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/auth_provider.dart';
@@ -16,7 +15,6 @@ import 'providers/profile_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MobileAds.instance.initialize();
-  await DeepLinkListener.instance.init();
   runApp(const EarnBucksApp());
 }
 

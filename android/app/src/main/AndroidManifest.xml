@@ -14,16 +14,6 @@
         android:label="EarnBucks"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-        <!-- Flutter's own automatic deep-link routing (separate from the
-             app_links package) is on by default and would otherwise hand
-             the earnbucks://task-complete URI straight to go_router as a
-             page route — which has no match for it, hence the
-             "no routes for location" GoException. DeepLinkListener
-             (app_links) handles this link manually instead, so Flutter's
-             own routing of it must be disabled. -->
-        <meta-data
-            android:name="flutter_deeplinking_enabled"
-            android:value="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -46,8 +36,10 @@
             </intent-filter>
             <!-- Inbound deep link the Adsterra task page (earnbucks.tech/task/*)
                  navigates to once its timer finishes, to bring the user back
-                 into the app — see lib/core/services/deep_link_listener.dart
-                 and lib/data/services/adsterra_task_service.dart. -->
+                 into the app. Flutter's engine forwards this straight to
+                 go_router as a route push (confirmed: happens regardless of
+                 flutter_deeplinking_enabled) — see app_router.dart's `/`
+                 route and lib/data/services/adsterra_task_service.dart. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

@@ -1,33 +1,27 @@
 import 'package:flutter/foundation.dart';
 
-import '../core/utils/uuid.dart';
 import '../data/models/tasks_summary.dart';
 import '../data/services/adsterra_task_service.dart';
 import '../data/services/tasks_service.dart';
-import 'balance_provider.dart';
 
 /// Holds Tasks screen state. Widgets that `watch` this rebuild whenever
 /// [notifyListeners] fires (see HomeProvider for the same pattern).
+///
+/// Wallet balance is no longer updated from here: task/bonus-slot credit
+/// now happens out of band via AdsterraTaskService.completeFromReturn
+/// (called from app_router's `/` redirect once the user returns from the
+/// Adsterra task page), which updates the app-wide `balanceProvider`
+/// singleton directly since this TasksProvider instance may not even be
+/// mounted at that point.
 class TasksProvider extends ChangeNotifier {
   final TasksService _service;
   final AdsterraTaskService _adsterraService;
-  final BalanceProvider _balanceProvider;
 
-  /// [_balanceProvider] is updated with the server's authoritative
-  /// `wallet_balance` after each completion (Home/Wallet read from the
-  /// same instance), rather than locally incremented, now that a real
-  /// backend exists. Kept as an explicit initializer (not
-  /// `this._balanceProvider`) because a private initializing formal would
-  /// force call sites in other files to pass a private-named argument,
-  /// which isn't accessible outside this library.
   TasksProvider({
     TasksService? service,
     AdsterraTaskService? adsterraService,
-    required BalanceProvider balanceProvider,
   }) : _service = service ?? TasksService(),
-       _adsterraService = adsterraService ?? AdsterraTaskService(),
-       // ignore: prefer_initializing_formals
-       _balanceProvider = balanceProvider {
+       _adsterraService = adsterraService ?? AdsterraTaskService() {
     load();
   }
 
@@ -51,61 +45,40 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Opens the Adsterra task page and credits the task once the user
-  /// finishes it there and returns. Only fires the completion request
-  /// after [AdsterraTaskService.watchTask] resolves — i.e. only once the
-  /// server-side minimum-duration check has actually passed — never
-  /// directly on tap.
+  /// Opens the Adsterra task page for the current "next" task. Only starts
+  /// the browser session — the actual credit happens later, out of band,
+  /// once the user returns via the `earnbucks://task-complete` deep link
+  /// (app_router's `/` redirect calls
+  /// [AdsterraTaskService.completeFromReturn] and this screen's next
+  /// [load] picks up the result), since the app may be backgrounded for
+  /// the whole 15s+ the user spends on the task page in between.
   Future<void> completeCurrentTask() async {
-    final summary = _summary;
-    final currentTask = summary?.currentTask;
-    if (summary == null || currentTask == null || _isCompletingTask) return;
+    final currentTask = _summary?.currentTask;
+    if (_summary == null || currentTask == null || _isCompletingTask) return;
 
     _isCompletingTask = true;
     notifyListeners();
 
     try {
-      final adTransactionId = await _adsterraService.watchTask();
-      final result = await _service.completeTask(
-        currentTask.id,
-        adTransactionId: adTransactionId,
-        idempotencyKey: generateUuidV4(),
-      );
-      _summary = TasksSummary(
-        tasks: result.tasks,
-        resetAt: summary.resetAt,
-        bonusSlots: summary.bonusSlots,
-      );
-      _balanceProvider.setBalance(result.walletBalance);
+      await _adsterraService.startTask(kind: 'task', id: currentTask.id);
     } finally {
       _isCompletingTask = false;
       notifyListeners();
     }
   }
 
-  /// Watches a bonus ad slot's rewarded ad and credits it. Unlike
+  /// Opens the Adsterra task page for bonus ad slot [id]. Unlike
   /// [completeCurrentTask], any available slot can be tapped: bonus slots
-  /// aren't a sequential queue (PROJECT.md 2).
+  /// aren't a sequential queue (PROJECT.md 2). Same out-of-band completion
+  /// as above.
   Future<void> completeBonusSlot(int id) async {
-    final summary = _summary;
-    if (summary == null || _completingBonusSlotId != null) return;
+    if (_summary == null || _completingBonusSlotId != null) return;
 
     _completingBonusSlotId = id;
     notifyListeners();
 
     try {
-      final adTransactionId = await _adsterraService.watchTask();
-      final result = await _service.completeBonusSlot(
-        id,
-        adTransactionId: adTransactionId,
-        idempotencyKey: generateUuidV4(),
-      );
-      _summary = TasksSummary(
-        tasks: summary.tasks,
-        resetAt: summary.resetAt,
-        bonusSlots: result.bonusSlots,
-      );
-      _balanceProvider.setBalance(result.walletBalance);
+      await _adsterraService.startTask(kind: 'bonus', id: id);
     } finally {
       _completingBonusSlotId = null;
       notifyListeners();

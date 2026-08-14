@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
-import '../../providers/balance_provider.dart';
 import '../../providers/tasks_provider.dart';
 import '../../shared/widgets/notice_card.dart';
 import '../../shared/widgets/notification_permission_sheet.dart';
@@ -20,9 +19,7 @@ class TasksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => TasksProvider(
-        balanceProvider: context.read<BalanceProvider>(),
-      ),
+      create: (context) => TasksProvider(),
       child: const _TasksScreenBody(),
     );
   }
@@ -44,10 +41,10 @@ class _TasksScreenBody extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } on StateError catch (e) {
-      // AdsterraTaskService throws this for every task-page failure (page
-      // wouldn't open, timed out waiting for the user to return) —
-      // previously uncaught here, so the button silently reset with no
-      // explanation of what actually went wrong.
+      // AdsterraTaskService.startTask throws this if the task page couldn't
+      // be opened at all — the actual credit happens later, out of band,
+      // once the user returns (see app_router.dart's `/` route), so there's
+      // nothing to catch here for that part.
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
       }

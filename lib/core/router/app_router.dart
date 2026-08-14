@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/services/adsterra_task_service.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/transactions_provider.dart';
 import '../../screens/auth/forgot_password_screen.dart';
@@ -86,6 +87,43 @@ final appRouter = GoRouter(
     return null;
   },
   routes: [
+    // Handles `earnbucks://task-complete?session_token=...&kind=...&id=...`
+    // — the Adsterra task page's return deep link (earnbucks-site's
+    // task.blade.php). Flutter's engine forwards an incoming deep link's
+    // URI straight into go_router's location matching regardless of the
+    // AndroidManifest `flutter_deeplinking_enabled` meta-data (observed
+    // directly: setting it false did not stop this), and go_router derives
+    // the match location from the URI's *path*, which for a
+    // `scheme://host/?query` custom-scheme link is always `/` — so this is
+    // the one route a return trip can land on, and also why the
+    // error page's own "Home" button previously crashed identically (no
+    // `/` route existed at all before this). `redirect` runs the actual
+    // verify+complete call (AdsterraTaskService.completeFromReturn) before
+    // sending the user on to `/tasks`, so by the time that screen mounts
+    // and reloads, the credit has already landed.
+    GoRoute(
+      path: '/',
+      redirect: (context, state) async {
+        final sessionToken = state.uri.queryParameters['session_token'];
+        if (sessionToken != null) {
+          final kind = state.uri.queryParameters['kind'] ?? 'task';
+          final id = int.tryParse(state.uri.queryParameters['id'] ?? '') ?? 0;
+          try {
+            await AdsterraTaskService().completeFromReturn(
+              sessionToken: sessionToken,
+              kind: kind,
+              id: id,
+            );
+          } catch (_) {
+            // Nothing user-facing to surface from a redirect — the Tasks
+            // screen just won't show this one as completed, and the user
+            // can retry the task from there.
+          }
+          return '/tasks';
+        }
+        return authProvider.isLoggedIn ? '/tasks' : '/welcome';
+      },
+    ),
     GoRoute(
       path: '/welcome',
       builder: (context, state) => WelcomeScreen(
