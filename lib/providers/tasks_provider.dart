@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../core/utils/uuid.dart';
 import '../data/models/tasks_summary.dart';
-import '../data/services/ad_mob_service.dart';
+import '../data/services/adsterra_task_service.dart';
 import '../data/services/tasks_service.dart';
 import 'balance_provider.dart';
 
@@ -10,7 +10,7 @@ import 'balance_provider.dart';
 /// [notifyListeners] fires (see HomeProvider for the same pattern).
 class TasksProvider extends ChangeNotifier {
   final TasksService _service;
-  final AdMobService _adMobService;
+  final AdsterraTaskService _adsterraService;
   final BalanceProvider _balanceProvider;
 
   /// [_balanceProvider] is updated with the server's authoritative
@@ -22,10 +22,10 @@ class TasksProvider extends ChangeNotifier {
   /// which isn't accessible outside this library.
   TasksProvider({
     TasksService? service,
-    AdMobService? adMobService,
+    AdsterraTaskService? adsterraService,
     required BalanceProvider balanceProvider,
   }) : _service = service ?? TasksService(),
-       _adMobService = adMobService ?? AdMobService(),
+       _adsterraService = adsterraService ?? AdsterraTaskService(),
        // ignore: prefer_initializing_formals
        _balanceProvider = balanceProvider {
     load();
@@ -51,10 +51,11 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Watches the current "next" task's rewarded ad and credits it. Only
-  /// fires the completion request after [AdMobService.watchRewardedAd]
-  /// resolves — i.e. only once the ad was actually shown and the reward
-  /// earned — never directly on tap.
+  /// Opens the Adsterra task page and credits the task once the user
+  /// finishes it there and returns. Only fires the completion request
+  /// after [AdsterraTaskService.watchTask] resolves — i.e. only once the
+  /// server-side minimum-duration check has actually passed — never
+  /// directly on tap.
   Future<void> completeCurrentTask() async {
     final summary = _summary;
     final currentTask = summary?.currentTask;
@@ -64,7 +65,7 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final adTransactionId = await _adMobService.watchRewardedAd();
+      final adTransactionId = await _adsterraService.watchTask();
       final result = await _service.completeTask(
         currentTask.id,
         adTransactionId: adTransactionId,
@@ -93,7 +94,7 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final adTransactionId = await _adMobService.watchRewardedAd();
+      final adTransactionId = await _adsterraService.watchTask();
       final result = await _service.completeBonusSlot(
         id,
         adTransactionId: adTransactionId,

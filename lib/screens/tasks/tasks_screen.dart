@@ -44,8 +44,8 @@ class _TasksScreenBody extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } on StateError catch (e) {
-      // AdMobService throws this for every ad-side failure (failed to
-      // load/show, dismissed before reward, SSV verification timeout) —
+      // AdsterraTaskService throws this for every task-page failure (page
+      // wouldn't open, timed out waiting for the user to return) —
       // previously uncaught here, so the button silently reset with no
       // explanation of what actually went wrong.
       if (context.mounted) {
