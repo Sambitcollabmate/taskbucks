@@ -42,6 +42,8 @@ class _SettingsScreenBody extends StatefulWidget {
 }
 
 class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
+  static final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _currentPasswordController = TextEditingController();
@@ -188,6 +190,7 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                           controller: _emailController,
                           label: l10n.emailAddressLabel,
                           keyboardType: TextInputType.emailAddress,
+                          onChanged: (_) => setState(() {}),
                         ),
                         const SizedBox(height: 16),
                         Align(
@@ -195,7 +198,8 @@ class _SettingsScreenBodyState extends State<_SettingsScreenBody> {
                           child: _SectionButton(
                             label: l10n.saveChanges,
                             isLoading: provider.isSavingProfile,
-                            enabled: _nameController.text.trim().isNotEmpty,
+                            enabled: _nameController.text.trim().isNotEmpty &&
+                                _emailPattern.hasMatch(_emailController.text.trim()),
                             onTap: () => _runWithFeedback(
                               () => provider.saveProfile(
                                 name: _nameController.text.trim(),
