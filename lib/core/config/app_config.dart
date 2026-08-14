@@ -2,7 +2,7 @@
 class AppConfig {
   AppConfig._();
 
-  static const String brandName = 'CollabMate';
+  static const String brandName = 'EarnBucks';
   static const String brandDomain = 'earnbucks.tech';
 
   /// Must match `android/app/build.gradle.kts`'s `applicationId` — used to
@@ -28,21 +28,6 @@ class AppConfig {
     if (apiBaseUrl.isNotEmpty) return apiBaseUrl;
     return 'https://api.earnbucks.tech/api/v1';
   }
-
-  /// MSG91 Login-with-OTP widget credentials (MSG91_WIDGET_REVIEW.md). Both
-  /// are client-side-safe by MSG91's own design (unlike the account
-  /// `authkey`, which stays server-side in Laravel), but are still kept out
-  /// of source — set via `dart_defines.json` (see [apiBaseUrl]'s doc above
-  /// for the file-based setup; same file, same flag).
-  static const String msg91WidgetId = String.fromEnvironment(
-    'MSG91_WIDGET_ID',
-    defaultValue: '',
-  );
-
-  static const String msg91AuthToken = String.fromEnvironment(
-    'MSG91_AUTH_TOKEN',
-    defaultValue: '',
-  );
 
   /// Rewarded-ad unit ID (AdMobService). Set via `dart_defines.json` (see
   /// [apiBaseUrl]'s doc above) to the real ad unit ID from the AdMob

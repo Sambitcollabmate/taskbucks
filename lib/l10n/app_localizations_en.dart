@@ -78,10 +78,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mobileNumberLabel => 'Mobile number';
 
   @override
-  String get otpHint => 'We\'ll send a 6-digit OTP to verify this number.';
-
-  @override
-  String get emailOptionalLabel => 'Email (optional)';
+  String get otpHint => 'We\'ll send a 6-digit code to verify this email.';
 
   @override
   String get passwordHintChars => 'At least 8 characters';
@@ -99,15 +96,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alreadyHaveAccount => 'Already have an account? ';
 
   @override
-  String get couldNotSendOtp => 'Could not send OTP right now.';
-
-  @override
-  String get otpDidNotMatch => 'That code didn\'t match.';
-
-  @override
-  String get couldNotResendOtp => 'Could not resend OTP right now.';
-
-  @override
   String get passwordUpdatedLoginMessage =>
       'Password updated. Log in with your new password.';
 
@@ -116,11 +104,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetPasswordSubtitle =>
-      'Enter your mobile number and we\'ll send a 6-digit OTP to reset your password.';
+      'Enter your email and we\'ll send a 6-digit code to reset your password.';
 
   @override
   String get didntGetOtp =>
-      'Didn\'t get it? Check that your number can receive SMS, or wait a few minutes and try again.';
+      'Didn\'t get it? Check your spam folder, or wait a few minutes and try again.';
 
   @override
   String get remembered => 'Remembered it? ';
@@ -132,8 +120,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifyAndReset => 'Verify & reset';
 
   @override
-  String verifyResetSubtitle(String maskedPhone) {
-    return 'Enter the 6-digit code sent to +91 $maskedPhone, then choose a new password.';
+  String verifyResetSubtitle(String maskedEmail) {
+    return 'Enter the 6-digit code sent to $maskedEmail, then choose a new password.';
   }
 
   @override
@@ -800,7 +788,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String aboutBody(int foundingYear) {
-    return 'CollabMate started in $foundingYear as a reaction to an industry full of apps that vanish when users ask to withdraw.';
+    return 'EarnBucks started in $foundingYear as a reaction to an industry full of apps that vanish when users ask to withdraw.';
   }
 
   @override
@@ -1161,14 +1149,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nowPremiumMessage => 'You\'re now Premium!';
 
   @override
-  String get subscriptionCancelledMessage =>
-      'Almost done — finish cancelling on Google Play so billing actually stops.';
-
-  @override
-  String get couldNotOpenGooglePlay =>
-      'Couldn\'t open Google Play. Cancel manually from the Play Store\'s Subscriptions page.';
-
-  @override
   String get upgradeTitle => 'Upgrade';
 
   @override
@@ -1178,25 +1158,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unlockExtraTasksSubtitle => 'Unlock 5 extra tasks every day.';
 
   @override
-  String cancellationScheduled(String date) {
-    return 'Cancellation scheduled. Benefits continue until $date.';
+  String premiumActiveUntil(String date) {
+    return 'You\'re on Premium until $date. Come back before then to renew.';
   }
-
-  @override
-  String get endOfThisCycle => 'the end of this cycle';
 
   @override
   String get youreOnPremium => 'You\'re on Premium.';
 
   @override
-  String get cancelSubscription => 'Cancel subscription';
+  String get renewNow => 'Renew now';
 
   @override
   String get subscribePriceButton => 'Subscribe — ₹49/month';
 
   @override
   String get billedMonthlyNotice =>
-      'Billed monthly via Google Play. Cancel anytime from Profile → Manage subscription — Premium benefits continue until the end of the paid cycle.';
+      'A one-time ₹49 payment via Razorpay unlocks Premium for 30 days — it doesn\'t auto-renew, so repurchase before it expires to keep your benefits.';
 
   @override
   String get referralCommissionOnUpgradeNotice =>
@@ -1255,20 +1232,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get oneMoreStep => 'One more step';
 
   @override
-  String get verifyYourPhone => 'Verify your phone number';
+  String get verifyYourPhone => 'Verify your email';
 
   @override
-  String sendingCodeMessage(String maskedPhone) {
-    return 'Sending a 6-digit code by SMS to +91 $maskedPhone…';
+  String sentCodeMessage(String maskedEmail) {
+    return 'We\'ve sent a 6-digit code by email to $maskedEmail.';
   }
-
-  @override
-  String sentCodeMessage(String maskedPhone) {
-    return 'We\'ve sent a 6-digit code by SMS to +91 $maskedPhone.';
-  }
-
-  @override
-  String get tryAgain => 'Try again';
 
   @override
   String resendOtpInCountdown(String seconds) {
@@ -1279,35 +1248,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifyAndContinue => 'Verify & continue';
 
   @override
-  String get changeMobileNumber => 'Change mobile number';
+  String get changeMobileNumber => 'Change details';
 
   @override
   String get smsDndNotice =>
-      'Make sure your number can receive SMS — some DND (Do Not Disturb) settings block OTP messages. Code expires in 10 minutes.';
-
-  @override
-  String get otpCodeMismatchRetry =>
-      'That code didn\'t match. Check and try again.';
-
-  @override
-  String get otpCodeExpired => 'This code has expired — request a new one.';
-
-  @override
-  String get otpTooManyAttempts =>
-      'Too many attempts. You\'re temporarily locked out for 5 minutes.';
-
-  @override
-  String couldNotVerifyRightNow(String error) {
-    return 'Couldn\'t verify that code right now. ($error)';
-  }
-
-  @override
-  String couldNotSendOtpWithError(String error) {
-    return 'Could not send OTP right now. ($error)';
-  }
-
-  @override
-  String couldNotResendOtpWithError(String error) {
-    return 'Could not resend OTP right now. ($error)';
-  }
+      'Check your inbox (and spam folder) for the code. It expires in 10 minutes.';
 }

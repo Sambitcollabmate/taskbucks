@@ -10,9 +10,9 @@ class ProfileService {
       return UserProfile(
         name: json['name'] as String,
         phone: json['mobile'] as String,
+        email: json['email'] as String?,
         tier: json['tier'] == 'premium' ? UserTier.premium : UserTier.free,
         imagePath: json['avatar_url'] as String?,
-        premiumCancelPending: json['premium_cancel_pending'] as bool? ?? false,
         premiumExpiresAt: json['premium_expires_at'] == null
             ? null
             : DateTime.parse(json['premium_expires_at'] as String),

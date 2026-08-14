@@ -11,19 +11,17 @@ extension on OtpPurpose {
   };
 }
 
-/// Real Laravel `v1/auth/*` calls (AUTH_API.md). OTP send/verify itself now
-/// happens client-side against MSG91's Login-with-OTP widget
-/// (`OTPWidget.sendOTP`/`verifyOTP` in the Verify Phone / Forgot Password
-/// screens) — this service only ever sees the resulting access-token, never
-/// a raw OTP (MSG91_WIDGET_REVIEW.md).
+/// Real Laravel `v1/auth/*` calls (AUTH_API.md). OTP generation, delivery
+/// (email), and verification are entirely server-side
+/// (`App\Services\EmailOtpService`) — this service submits the 6-digit code
+/// the user reads out of their email, not a widget-issued token.
 class AuthService {
-  /// Pre-check only — does *not* create a pending record or trigger any SMS.
-  /// Called before the widget's `sendOTP` so a duplicate mobile/email or bad
-  /// referral code is caught before MSG91 is asked to send anything.
+  /// Pre-check only, but also the moment the OTP email actually goes out —
+  /// there's no separate client-side widget step to trigger it.
   Future<void> registerPrecheck({
     required String name,
+    required String email,
     required String mobile,
-    String? email,
     required String password,
     String? referralCode,
   }) {
@@ -32,8 +30,8 @@ class AuthService {
         '/auth/register',
         data: {
           'name': name,
+          'email': email,
           'mobile': mobile,
-          if (email != null && email.isNotEmpty) 'email': email,
           'password': password,
           if (referralCode != null && referralCode.isNotEmpty)
             'referral_code': referralCode,
@@ -42,13 +40,13 @@ class AuthService {
     );
   }
 
-  /// Registration path: server verifies [accessToken] with MSG91, then
+  /// Registration path: server verifies [otp] against the emailed code, then
   /// creates the user and issues a Sanctum token.
   Future<AuthSession> verifyRegistration({
-    required String accessToken,
+    required String otp,
     required String name,
+    required String email,
     required String mobile,
-    String? email,
     required String password,
     String? referralCode,
   }) {
@@ -56,11 +54,11 @@ class AuthService {
       final response = await dio.post(
         '/auth/verify-otp',
         data: {
-          'access_token': accessToken,
+          'otp': otp,
           'purpose': OtpPurpose.registration.wireValue,
-          'mobile': mobile,
+          'email': email,
           'name': name,
-          if (email != null && email.isNotEmpty) 'email': email,
+          'mobile': mobile,
           'password': password,
           if (referralCode != null && referralCode.isNotEmpty)
             'referral_code': referralCode,
@@ -70,20 +68,21 @@ class AuthService {
     });
   }
 
-  /// Password-reset path: server verifies [accessToken] with MSG91 and, on
-  /// success, hands back a short-lived [PasswordResetChallenge.resetToken]
-  /// the client submits to [forgotPasswordReset].
+  /// Password-reset path: server verifies [otp] against the emailed code
+  /// and, on success, hands back a short-lived
+  /// [PasswordResetChallenge.resetToken] the client submits to
+  /// [forgotPasswordReset].
   Future<PasswordResetChallenge> verifyPasswordResetOtp({
-    required String accessToken,
-    required String mobile,
+    required String otp,
+    required String email,
   }) {
     return ApiClient.call((dio) async {
       final response = await dio.post(
         '/auth/verify-otp',
         data: {
-          'access_token': accessToken,
+          'otp': otp,
           'purpose': OtpPurpose.passwordReset.wireValue,
-          'mobile': mobile,
+          'email': email,
         },
       );
       return PasswordResetChallenge.fromJson(
@@ -106,29 +105,27 @@ class AuthService {
   }
 
   /// Second step of a two-step login — exchanges [challengeToken] (from the
-  /// [LoginTwoStepRequired] response) and MSG91's widget-issued
-  /// [accessToken] for the real session, mirroring [verifyRegistration]'s
-  /// access-token handoff.
+  /// [LoginTwoStepRequired] response) and the emailed [otp] for the real
+  /// session, mirroring [verifyRegistration]'s code handoff.
   Future<AuthSession> verifyLoginTwoStep({
     required String challengeToken,
-    required String accessToken,
+    required String otp,
   }) {
     return ApiClient.call((dio) async {
       final response = await dio.post(
         '/auth/login/verify-2fa',
-        data: {'challenge_token': challengeToken, 'access_token': accessToken},
+        data: {'challenge_token': challengeToken, 'otp': otp},
       );
       return AuthSession.fromJson(response.data as Map<String, dynamic>);
     });
   }
 
   /// Pre-check only, mirroring [registerPrecheck] — confirms an account
-  /// exists for [mobile] before the Forgot Password screen triggers the
-  /// widget's `sendOTP`.
-  Future<void> forgotPasswordPrecheck(String mobile) {
+  /// exists for [email] and triggers the OTP email.
+  Future<void> forgotPasswordPrecheck(String email) {
     return ApiClient.call(
       (dio) =>
-          dio.post('/auth/forgot-password/request', data: {'mobile': mobile}),
+          dio.post('/auth/forgot-password/request', data: {'email': email}),
     );
   }
 

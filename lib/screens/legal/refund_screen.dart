@@ -11,7 +11,7 @@ final _sections = [
     id: 'overview',
     heading: 'Overview',
     paragraphs: [
-      "CollabMate is a real-money earning app, not a marketplace for goods "
+      "EarnBucks is a real-money earning app, not a marketplace for goods "
           "or services — there's no product purchase to return, so a "
           "traditional \"refund\" policy doesn't apply the way it would "
           'for a retail app. This page explains the one place a '
@@ -75,7 +75,7 @@ final _sections = [
 ];
 
 /// Legal page (PROJECT.md Phase 5, 6.2) built on the shared `LegalScreen`
-/// template. Per PROJECT.md Section 2, CollabMate has no purchased-good
+/// template. Per PROJECT.md Section 2, EarnBucks has no purchased-good
 /// refund concept — the only place "refund" applies is Premium
 /// cancellation, which this cross-references from the Upgrade screen
 /// rather than duplicating (`UpgradeCrossReference`). Reachable from

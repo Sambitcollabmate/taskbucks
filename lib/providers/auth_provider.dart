@@ -57,7 +57,6 @@ class AuthProvider extends ChangeNotifier {
       _isLoggedIn = true;
       notificationsProvider.load();
       profileProvider.load();
-      profileProvider.restorePendingPurchases();
     } on ApiException {
       // Stored token no longer valid (revoked/expired) — fall back to
       // logged out rather than sending authenticated requests that will
@@ -84,7 +83,6 @@ class AuthProvider extends ChangeNotifier {
     }
     notificationsProvider.load();
     profileProvider.load();
-    profileProvider.restorePendingPurchases();
     notifyListeners();
   }
 

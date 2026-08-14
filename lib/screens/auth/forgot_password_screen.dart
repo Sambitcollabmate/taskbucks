@@ -1,28 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:sendotp_flutter_sdk/sendotp_flutter_sdk.dart';
 
-import '../../core/config/app_config.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/otp_row.dart';
-import '../../shared/widgets/phone_input.dart';
 import 'widgets/auth_text_field.dart';
 
 enum _Step { requestOtp, resetPassword }
 
-// SMS retry channel per MSG91's widget SDK (`retryOTP`'s `retryChannel`):
-// 1 = text, 11 = SMS, 2 = voice call.
-const _smsRetryChannel = 11;
-
-/// Forgot Password screen (PROJECT.md 7, Phase 3). Reuses phone_input and
-/// otp_row directly rather than rebuilding either. The mockup shows both
-/// steps stacked for review, but they're sequential in the real app: one
-/// screen, internal state toggles between them (no route change) so the
-/// back button can always return straight to Login regardless of step.
+/// Forgot Password screen (PROJECT.md 7, Phase 3). Reuses otp_row directly
+/// rather than rebuilding it. The mockup shows both steps stacked for
+/// review, but they're sequential in the real app: one screen, internal
+/// state toggles between them (no route change) so the back button can
+/// always return straight to Login regardless of step.
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
@@ -31,14 +24,13 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _otpKey = GlobalKey<OtpRowState>();
   final _authService = AuthService();
 
   _Step _step = _Step.requestOtp;
-  String? _reqId;
   String _otpCode = '';
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
@@ -50,14 +42,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   void initState() {
     super.initState();
-    _phoneController.addListener(_revalidate);
+    _emailController.addListener(_revalidate);
     _newPasswordController.addListener(_revalidate);
     _confirmPasswordController.addListener(_revalidate);
   }
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -65,7 +57,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   void _revalidate() => setState(() {});
 
-  bool get _canSendOtp => _phoneController.text.length == 10 && !_isSendingOtp;
+  bool get _canSendOtp => _emailController.text.trim().isNotEmpty && !_isSendingOtp;
 
   bool get _passwordsMismatch =>
       _confirmPasswordController.text.isNotEmpty &&
@@ -85,55 +77,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     });
 
     try {
-      // Pre-check only — confirms an account exists for this mobile before
-      // MSG91 is asked to send anything.
-      await _authService.forgotPasswordPrecheck(_phoneController.text);
-      OTPWidget.initializeWidget(AppConfig.msg91WidgetId, AppConfig.msg91AuthToken);
-      final response = await OTPWidget.sendOTP({
-        'identifier': '91${_phoneController.text}',
-      }) as Map;
+      // Pre-check, but also the moment EmailOtpService actually sends the
+      // code — confirms an account exists for this email first.
+      await _authService.forgotPasswordPrecheck(_emailController.text.trim());
       if (!mounted) return;
-      if (response['type'] == 'success') {
-        setState(() {
-          _reqId = response['message'] as String?;
-          _step = _Step.resetPassword;
-        });
-      } else {
-        setState(() => _requestError = response['message'] as String? ??
-            AppLocalizations.of(context).couldNotSendOtp);
-      }
+      setState(() => _step = _Step.resetPassword);
     } on ApiException catch (e) {
       if (!mounted) return;
-      setState(() => _requestError = e.fieldError('mobile') ?? e.message);
+      setState(() => _requestError = e.fieldError('email') ?? e.message);
     } finally {
       if (mounted) setState(() => _isSendingOtp = false);
     }
   }
 
   Future<void> _onUpdatePassword() async {
-    if (!_canUpdatePassword || _reqId == null) return;
+    if (!_canUpdatePassword) return;
     setState(() {
       _isUpdating = true;
       _resetError = null;
     });
 
     try {
-      final verifyResponse = await OTPWidget.verifyOTP({
-        'reqId': _reqId,
-        'otp': _otpCode,
-      }) as Map;
-
-      if (verifyResponse['type'] != 'success') {
-        if (!mounted) return;
-        setState(() => _resetError = verifyResponse['message'] as String? ??
-            AppLocalizations.of(context).otpDidNotMatch);
-        return;
-      }
-
-      final accessToken = verifyResponse['message'] as String;
       final challenge = await _authService.verifyPasswordResetOtp(
-        accessToken: accessToken,
-        mobile: _phoneController.text,
+        otp: _otpCode,
+        email: _emailController.text.trim(),
       );
       await _authService.forgotPasswordReset(
         resetToken: challenge.resetToken,
@@ -144,29 +111,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       context.go('/login', extra: AppLocalizations.of(context).passwordUpdatedLoginMessage);
     } on ApiException catch (e) {
       if (!mounted) return;
-      setState(() => _resetError = e.fieldError('password') ?? e.message);
+      setState(() => _resetError = e.fieldError('otp') ?? e.fieldError('password') ?? e.message);
     } finally {
       if (mounted) setState(() => _isUpdating = false);
     }
   }
 
   Future<void> _onResendOtp() async {
-    if (_reqId == null) return;
     setState(() => _resetError = null);
-    final response = await OTPWidget.retryOTP({
-      'reqId': _reqId,
-      'retryChannel': _smsRetryChannel,
-    }) as Map;
-    if (!mounted) return;
-    if (response['type'] == 'success') {
-      if (response['message'] is String) {
-        setState(() => _reqId = response['message'] as String);
-      }
+    try {
+      await _authService.forgotPasswordPrecheck(_emailController.text.trim());
+      if (!mounted) return;
       _otpKey.currentState?.clear();
       setState(() => _otpCode = '');
-    } else {
-      setState(() => _resetError = response['message'] as String? ??
-          AppLocalizations.of(context).couldNotResendOtp);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _resetError = e.message);
     }
   }
 
@@ -197,16 +157,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
       const SizedBox(height: 24),
-      Text(
-        l10n.mobileNumberLabel,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
+      AuthTextField(
+        controller: _emailController,
+        label: l10n.emailAddressLabel,
+        hintText: 'you@example.com',
+        keyboardType: TextInputType.emailAddress,
       ),
-      const SizedBox(height: 6),
-      PhoneInput(controller: _phoneController),
       const SizedBox(height: 8),
       Text(
         l10n.didntGetOtp,
@@ -260,7 +216,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
       const SizedBox(height: 6),
       Text(
-        l10n.verifyResetSubtitle(_maskedPhone),
+        l10n.verifyResetSubtitle(_maskedEmail),
         style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
       const SizedBox(height: 24),
@@ -345,10 +301,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     ];
   }
 
-  String get _maskedPhone {
-    final digits = _phoneController.text;
-    if (digits.length != 10) return digits;
-    return '${digits.substring(0, 2)}${'•' * 6}${digits.substring(8)}';
+  String get _maskedEmail {
+    final email = _emailController.text.trim();
+    final atIndex = email.indexOf('@');
+    if (atIndex <= 0) return email;
+    final visibleLength = atIndex > 2 ? 2 : 1;
+    return '${email.substring(0, visibleLength)}${'•' * 3}${email.substring(atIndex)}';
   }
 }
 

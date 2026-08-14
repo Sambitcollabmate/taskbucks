@@ -80,10 +80,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get otpHint =>
-      'हम इस नंबर को सत्यापित करने के लिए 6-अंकों का OTP भेजेंगे।';
-
-  @override
-  String get emailOptionalLabel => 'ईमेल (वैकल्पिक)';
+      'हम इस ईमेल को सत्यापित करने के लिए 6-अंकों का कोड भेजेंगे।';
 
   @override
   String get passwordHintChars => 'कम से कम 8 अक्षर';
@@ -101,15 +98,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get alreadyHaveAccount => 'पहले से खाता है? ';
 
   @override
-  String get couldNotSendOtp => 'अभी OTP नहीं भेजा जा सका।';
-
-  @override
-  String get otpDidNotMatch => 'वह कोड मेल नहीं खाया।';
-
-  @override
-  String get couldNotResendOtp => 'अभी OTP दोबारा नहीं भेजा जा सका।';
-
-  @override
   String get passwordUpdatedLoginMessage =>
       'पासवर्ड अपडेट हो गया। अपने नए पासवर्ड से लॉग इन करें।';
 
@@ -118,11 +106,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get resetPasswordSubtitle =>
-      'अपना मोबाइल नंबर दर्ज करें और हम पासवर्ड रीसेट करने के लिए 6-अंकों का OTP भेजेंगे।';
+      'अपना ईमेल दर्ज करें और हम पासवर्ड रीसेट करने के लिए 6-अंकों का कोड भेजेंगे।';
 
   @override
   String get didntGetOtp =>
-      'OTP नहीं मिला? जांचें कि आपका नंबर SMS प्राप्त कर सकता है, या कुछ मिनट रुककर फिर से कोशिश करें।';
+      'कोड नहीं मिला? अपना स्पैम फ़ोल्डर जांचें, या कुछ मिनट रुककर फिर से कोशिश करें।';
 
   @override
   String get remembered => 'याद आ गया? ';
@@ -134,8 +122,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get verifyAndReset => 'सत्यापित करें और रीसेट करें';
 
   @override
-  String verifyResetSubtitle(String maskedPhone) {
-    return '+91 $maskedPhone पर भेजा गया 6-अंकों का कोड दर्ज करें, फिर एक नया पासवर्ड चुनें।';
+  String verifyResetSubtitle(String maskedEmail) {
+    return '$maskedEmail पर भेजा गया 6-अंकों का कोड दर्ज करें, फिर एक नया पासवर्ड चुनें।';
   }
 
   @override
@@ -801,7 +789,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String aboutBody(int foundingYear) {
-    return 'CollabMate की शुरुआत $foundingYear में उन ऐप्स के जवाब में हुई जो निकासी मांगने पर गायब हो जाते हैं।';
+    return 'EarnBucks की शुरुआत $foundingYear में उन ऐप्स के जवाब में हुई जो निकासी मांगने पर गायब हो जाते हैं।';
   }
 
   @override
@@ -1161,14 +1149,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get nowPremiumMessage => 'अब आप प्रीमियम हैं!';
 
   @override
-  String get subscriptionCancelledMessage =>
-      'लगभग हो गया — बिलिंग रोकने के लिए Google Play पर रद्द करना पूरा करें।';
-
-  @override
-  String get couldNotOpenGooglePlay =>
-      'Google Play नहीं खोल सका। Play Store के सदस्यता पेज से मैन्युअल रूप से रद्द करें।';
-
-  @override
   String get upgradeTitle => 'अपग्रेड';
 
   @override
@@ -1178,25 +1158,22 @@ class AppLocalizationsHi extends AppLocalizations {
   String get unlockExtraTasksSubtitle => 'हर दिन 5 अतिरिक्त टास्क अनलॉक करें।';
 
   @override
-  String cancellationScheduled(String date) {
-    return 'रद्दीकरण निर्धारित है। लाभ $date तक जारी रहेंगे।';
+  String premiumActiveUntil(String date) {
+    return 'आप $date तक प्रीमियम पर हैं। नवीनीकरण के लिए उससे पहले वापस आएं।';
   }
-
-  @override
-  String get endOfThisCycle => 'इस चक्र के अंत';
 
   @override
   String get youreOnPremium => 'आप प्रीमियम पर हैं।';
 
   @override
-  String get cancelSubscription => 'सदस्यता रद्द करें';
+  String get renewNow => 'अभी नवीनीकरण करें';
 
   @override
   String get subscribePriceButton => 'सब्सक्राइब करें — ₹49/माह';
 
   @override
   String get billedMonthlyNotice =>
-      'Google Play के माध्यम से मासिक बिल। प्रोफ़ाइल → सदस्यता प्रबंधित करें से कभी भी रद्द करें — प्रीमियम लाभ भुगतान चक्र के अंत तक जारी रहते हैं।';
+      'Razorpay के माध्यम से एक बार का ₹49 भुगतान 30 दिनों के लिए प्रीमियम अनलॉक करता है — यह अपने आप नवीनीकृत नहीं होता, इसलिए अपने लाभ बनाए रखने के लिए इसके समाप्त होने से पहले फिर से खरीदें।';
 
   @override
   String get referralCommissionOnUpgradeNotice =>
@@ -1254,20 +1231,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get oneMoreStep => 'एक और कदम';
 
   @override
-  String get verifyYourPhone => 'अपना फ़ोन नंबर सत्यापित करें';
+  String get verifyYourPhone => 'अपना ईमेल सत्यापित करें';
 
   @override
-  String sendingCodeMessage(String maskedPhone) {
-    return '+91 $maskedPhone पर SMS द्वारा 6-अंकों का कोड भेजा जा रहा है…';
+  String sentCodeMessage(String maskedEmail) {
+    return 'हमने $maskedEmail पर ईमेल द्वारा 6-अंकों का कोड भेजा है।';
   }
-
-  @override
-  String sentCodeMessage(String maskedPhone) {
-    return 'हमने +91 $maskedPhone पर SMS द्वारा 6-अंकों का कोड भेजा है।';
-  }
-
-  @override
-  String get tryAgain => 'फिर कोशिश करें';
 
   @override
   String resendOtpInCountdown(String seconds) {
@@ -1278,35 +1247,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get verifyAndContinue => 'सत्यापित करें और जारी रखें';
 
   @override
-  String get changeMobileNumber => 'मोबाइल नंबर बदलें';
+  String get changeMobileNumber => 'विवरण बदलें';
 
   @override
   String get smsDndNotice =>
-      'सुनिश्चित करें कि आपका नंबर SMS प्राप्त कर सकता है — कुछ DND (डू नॉट डिस्टर्ब) सेटिंग्स OTP संदेशों को ब्लॉक कर देती हैं। कोड 10 मिनट में समाप्त हो जाता है।';
-
-  @override
-  String get otpCodeMismatchRetry =>
-      'वह कोड मेल नहीं खाया। जांचें और फिर कोशिश करें।';
-
-  @override
-  String get otpCodeExpired => 'यह कोड समाप्त हो गया है — नया कोड मांगें।';
-
-  @override
-  String get otpTooManyAttempts =>
-      'बहुत अधिक प्रयास। आप 5 मिनट के लिए अस्थायी रूप से लॉक हो गए हैं।';
-
-  @override
-  String couldNotVerifyRightNow(String error) {
-    return 'अभी उस कोड को सत्यापित नहीं किया जा सका। ($error)';
-  }
-
-  @override
-  String couldNotSendOtpWithError(String error) {
-    return 'अभी OTP नहीं भेजा जा सका। ($error)';
-  }
-
-  @override
-  String couldNotResendOtpWithError(String error) {
-    return 'अभी OTP दोबारा नहीं भेजा जा सका। ($error)';
-  }
+      'कोड के लिए अपना इनबॉक्स (और स्पैम फ़ोल्डर) जांचें। यह 10 मिनट में समाप्त हो जाता है।';
 }

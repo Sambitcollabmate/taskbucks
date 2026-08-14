@@ -1,4 +1,4 @@
-# CollabMate
+# EarnBucks
 
 Earn money in your free time.
 

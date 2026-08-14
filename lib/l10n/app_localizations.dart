@@ -233,14 +233,8 @@ abstract class AppLocalizations {
   /// No description provided for @otpHint.
   ///
   /// In en, this message translates to:
-  /// **'We\'ll send a 6-digit OTP to verify this number.'**
+  /// **'We\'ll send a 6-digit code to verify this email.'**
   String get otpHint;
-
-  /// No description provided for @emailOptionalLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Email (optional)'**
-  String get emailOptionalLabel;
 
   /// No description provided for @passwordHintChars.
   ///
@@ -272,24 +266,6 @@ abstract class AppLocalizations {
   /// **'Already have an account? '**
   String get alreadyHaveAccount;
 
-  /// No description provided for @couldNotSendOtp.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not send OTP right now.'**
-  String get couldNotSendOtp;
-
-  /// No description provided for @otpDidNotMatch.
-  ///
-  /// In en, this message translates to:
-  /// **'That code didn\'t match.'**
-  String get otpDidNotMatch;
-
-  /// No description provided for @couldNotResendOtp.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not resend OTP right now.'**
-  String get couldNotResendOtp;
-
   /// No description provided for @passwordUpdatedLoginMessage.
   ///
   /// In en, this message translates to:
@@ -305,13 +281,13 @@ abstract class AppLocalizations {
   /// No description provided for @resetPasswordSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter your mobile number and we\'ll send a 6-digit OTP to reset your password.'**
+  /// **'Enter your email and we\'ll send a 6-digit code to reset your password.'**
   String get resetPasswordSubtitle;
 
   /// No description provided for @didntGetOtp.
   ///
   /// In en, this message translates to:
-  /// **'Didn\'t get it? Check that your number can receive SMS, or wait a few minutes and try again.'**
+  /// **'Didn\'t get it? Check your spam folder, or wait a few minutes and try again.'**
   String get didntGetOtp;
 
   /// No description provided for @remembered.
@@ -335,8 +311,8 @@ abstract class AppLocalizations {
   /// No description provided for @verifyResetSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter the 6-digit code sent to +91 {maskedPhone}, then choose a new password.'**
-  String verifyResetSubtitle(String maskedPhone);
+  /// **'Enter the 6-digit code sent to {maskedEmail}, then choose a new password.'**
+  String verifyResetSubtitle(String maskedEmail);
 
   /// No description provided for @resendOtp.
   ///
@@ -1516,7 +1492,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutBody.
   ///
   /// In en, this message translates to:
-  /// **'CollabMate started in {foundingYear} as a reaction to an industry full of apps that vanish when users ask to withdraw.'**
+  /// **'EarnBucks started in {foundingYear} as a reaction to an industry full of apps that vanish when users ask to withdraw.'**
   String aboutBody(int foundingYear);
 
   /// No description provided for @companyDetailsTitle.
@@ -2143,18 +2119,6 @@ abstract class AppLocalizations {
   /// **'You\'re now Premium!'**
   String get nowPremiumMessage;
 
-  /// No description provided for @subscriptionCancelledMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Almost done — finish cancelling on Google Play so billing actually stops.'**
-  String get subscriptionCancelledMessage;
-
-  /// No description provided for @couldNotOpenGooglePlay.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t open Google Play. Cancel manually from the Play Store\'s Subscriptions page.'**
-  String get couldNotOpenGooglePlay;
-
   /// No description provided for @upgradeTitle.
   ///
   /// In en, this message translates to:
@@ -2173,17 +2137,11 @@ abstract class AppLocalizations {
   /// **'Unlock 5 extra tasks every day.'**
   String get unlockExtraTasksSubtitle;
 
-  /// No description provided for @cancellationScheduled.
+  /// No description provided for @premiumActiveUntil.
   ///
   /// In en, this message translates to:
-  /// **'Cancellation scheduled. Benefits continue until {date}.'**
-  String cancellationScheduled(String date);
-
-  /// No description provided for @endOfThisCycle.
-  ///
-  /// In en, this message translates to:
-  /// **'the end of this cycle'**
-  String get endOfThisCycle;
+  /// **'You\'re on Premium until {date}. Come back before then to renew.'**
+  String premiumActiveUntil(String date);
 
   /// No description provided for @youreOnPremium.
   ///
@@ -2191,11 +2149,11 @@ abstract class AppLocalizations {
   /// **'You\'re on Premium.'**
   String get youreOnPremium;
 
-  /// No description provided for @cancelSubscription.
+  /// No description provided for @renewNow.
   ///
   /// In en, this message translates to:
-  /// **'Cancel subscription'**
-  String get cancelSubscription;
+  /// **'Renew now'**
+  String get renewNow;
 
   /// No description provided for @subscribePriceButton.
   ///
@@ -2206,7 +2164,7 @@ abstract class AppLocalizations {
   /// No description provided for @billedMonthlyNotice.
   ///
   /// In en, this message translates to:
-  /// **'Billed monthly via Google Play. Cancel anytime from Profile → Manage subscription — Premium benefits continue until the end of the paid cycle.'**
+  /// **'A one-time ₹49 payment via Razorpay unlocks Premium for 30 days — it doesn\'t auto-renew, so repurchase before it expires to keep your benefits.'**
   String get billedMonthlyNotice;
 
   /// No description provided for @referralCommissionOnUpgradeNotice.
@@ -2314,26 +2272,14 @@ abstract class AppLocalizations {
   /// No description provided for @verifyYourPhone.
   ///
   /// In en, this message translates to:
-  /// **'Verify your phone number'**
+  /// **'Verify your email'**
   String get verifyYourPhone;
-
-  /// No description provided for @sendingCodeMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Sending a 6-digit code by SMS to +91 {maskedPhone}…'**
-  String sendingCodeMessage(String maskedPhone);
 
   /// No description provided for @sentCodeMessage.
   ///
   /// In en, this message translates to:
-  /// **'We\'ve sent a 6-digit code by SMS to +91 {maskedPhone}.'**
-  String sentCodeMessage(String maskedPhone);
-
-  /// No description provided for @tryAgain.
-  ///
-  /// In en, this message translates to:
-  /// **'Try again'**
-  String get tryAgain;
+  /// **'We\'ve sent a 6-digit code by email to {maskedEmail}.'**
+  String sentCodeMessage(String maskedEmail);
 
   /// No description provided for @resendOtpInCountdown.
   ///
@@ -2350,50 +2296,14 @@ abstract class AppLocalizations {
   /// No description provided for @changeMobileNumber.
   ///
   /// In en, this message translates to:
-  /// **'Change mobile number'**
+  /// **'Change details'**
   String get changeMobileNumber;
 
   /// No description provided for @smsDndNotice.
   ///
   /// In en, this message translates to:
-  /// **'Make sure your number can receive SMS — some DND (Do Not Disturb) settings block OTP messages. Code expires in 10 minutes.'**
+  /// **'Check your inbox (and spam folder) for the code. It expires in 10 minutes.'**
   String get smsDndNotice;
-
-  /// No description provided for @otpCodeMismatchRetry.
-  ///
-  /// In en, this message translates to:
-  /// **'That code didn\'t match. Check and try again.'**
-  String get otpCodeMismatchRetry;
-
-  /// No description provided for @otpCodeExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'This code has expired — request a new one.'**
-  String get otpCodeExpired;
-
-  /// No description provided for @otpTooManyAttempts.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many attempts. You\'re temporarily locked out for 5 minutes.'**
-  String get otpTooManyAttempts;
-
-  /// No description provided for @couldNotVerifyRightNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t verify that code right now. ({error})'**
-  String couldNotVerifyRightNow(String error);
-
-  /// No description provided for @couldNotSendOtpWithError.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not send OTP right now. ({error})'**
-  String couldNotSendOtpWithError(String error);
-
-  /// No description provided for @couldNotResendOtpWithError.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not resend OTP right now. ({error})'**
-  String couldNotResendOtpWithError(String error);
 }
 
 class _AppLocalizationsDelegate

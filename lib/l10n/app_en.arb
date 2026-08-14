@@ -28,27 +28,23 @@
   "fullNameLabel": "Full name",
   "fullNameHint": "Your name",
   "mobileNumberLabel": "Mobile number",
-  "otpHint": "We'll send a 6-digit OTP to verify this number.",
-  "emailOptionalLabel": "Email (optional)",
+  "otpHint": "We'll send a 6-digit code to verify this email.",
   "passwordHintChars": "At least 8 characters",
   "referralCodeOptionalLabel": "Referral code (optional)",
   "referralCodeHint": "e.g. SAMBIT482",
   "sendOtp": "Send OTP",
   "alreadyHaveAccount": "Already have an account? ",
 
-  "couldNotSendOtp": "Could not send OTP right now.",
-  "otpDidNotMatch": "That code didn't match.",
-  "couldNotResendOtp": "Could not resend OTP right now.",
   "passwordUpdatedLoginMessage": "Password updated. Log in with your new password.",
   "resetPasswordTitle": "Reset your password",
-  "resetPasswordSubtitle": "Enter your mobile number and we'll send a 6-digit OTP to reset your password.",
-  "didntGetOtp": "Didn't get it? Check that your number can receive SMS, or wait a few minutes and try again.",
+  "resetPasswordSubtitle": "Enter your email and we'll send a 6-digit code to reset your password.",
+  "didntGetOtp": "Didn't get it? Check your spam folder, or wait a few minutes and try again.",
   "remembered": "Remembered it? ",
   "backToLogin": "Back to log in",
   "verifyAndReset": "Verify & reset",
-  "verifyResetSubtitle": "Enter the 6-digit code sent to +91 {maskedPhone}, then choose a new password.",
+  "verifyResetSubtitle": "Enter the 6-digit code sent to {maskedEmail}, then choose a new password.",
   "@verifyResetSubtitle": {
-    "placeholders": { "maskedPhone": { "type": "String" } }
+    "placeholders": { "maskedEmail": { "type": "String" } }
   },
   "resendOtp": "Resend OTP",
   "newPasswordLabel": "New password",
@@ -361,7 +357,7 @@
 
   "aboutTitle": "About",
   "aboutHeadline": "Built by people who got burned by earning apps that never paid.",
-  "aboutBody": "CollabMate started in {foundingYear} as a reaction to an industry full of apps that vanish when users ask to withdraw.",
+  "aboutBody": "EarnBucks started in {foundingYear} as a reaction to an industry full of apps that vanish when users ask to withdraw.",
   "@aboutBody": {
     "placeholders": { "foundingYear": { "type": "int" } }
   },
@@ -502,20 +498,17 @@
   "contentsLabel": "Contents",
 
   "nowPremiumMessage": "You're now Premium!",
-  "subscriptionCancelledMessage": "Almost done — finish cancelling on Google Play so billing actually stops.",
-  "couldNotOpenGooglePlay": "Couldn't open Google Play. Cancel manually from the Play Store's Subscriptions page.",
   "upgradeTitle": "Upgrade",
   "goPremiumTitle": "Go Premium",
   "unlockExtraTasksSubtitle": "Unlock 5 extra tasks every day.",
-  "cancellationScheduled": "Cancellation scheduled. Benefits continue until {date}.",
-  "@cancellationScheduled": {
+  "premiumActiveUntil": "You're on Premium until {date}. Come back before then to renew.",
+  "@premiumActiveUntil": {
     "placeholders": { "date": { "type": "String" } }
   },
-  "endOfThisCycle": "the end of this cycle",
   "youreOnPremium": "You're on Premium.",
-  "cancelSubscription": "Cancel subscription",
+  "renewNow": "Renew now",
   "subscribePriceButton": "Subscribe — ₹49/month",
-  "billedMonthlyNotice": "Billed monthly via Google Play. Cancel anytime from Profile → Manage subscription — Premium benefits continue until the end of the paid cycle.",
+  "billedMonthlyNotice": "A one-time ₹49 payment via Razorpay unlocks Premium for 30 days — it doesn't auto-renew, so repurchase before it expires to keep your benefits.",
   "referralCommissionOnUpgradeNotice": "If you were referred by someone, completing this purchase credits their ₹125 referral commission, it's never credited on signup alone. See Refund Policy for subscription cancellation terms.",
   "weeklyBonusUnlockNotice": "Premium also unlocks the weekly referral bonus: get 5+ referrals converting to Premium in the same week and earn +5 bonus ad slots the week after.",
 
@@ -540,36 +533,16 @@
   "notNow": "Not now",
 
   "oneMoreStep": "One more step",
-  "verifyYourPhone": "Verify your phone number",
-  "sendingCodeMessage": "Sending a 6-digit code by SMS to +91 {maskedPhone}…",
-  "@sendingCodeMessage": {
-    "placeholders": { "maskedPhone": { "type": "String" } }
-  },
-  "sentCodeMessage": "We've sent a 6-digit code by SMS to +91 {maskedPhone}.",
+  "verifyYourPhone": "Verify your email",
+  "sentCodeMessage": "We've sent a 6-digit code by email to {maskedEmail}.",
   "@sentCodeMessage": {
-    "placeholders": { "maskedPhone": { "type": "String" } }
+    "placeholders": { "maskedEmail": { "type": "String" } }
   },
-  "tryAgain": "Try again",
   "resendOtpInCountdown": "Didn't get the code? Resend OTP in 0:{seconds}",
   "@resendOtpInCountdown": {
     "placeholders": { "seconds": { "type": "String" } }
   },
   "verifyAndContinue": "Verify & continue",
-  "changeMobileNumber": "Change mobile number",
-  "smsDndNotice": "Make sure your number can receive SMS — some DND (Do Not Disturb) settings block OTP messages. Code expires in 10 minutes.",
-  "otpCodeMismatchRetry": "That code didn't match. Check and try again.",
-  "otpCodeExpired": "This code has expired — request a new one.",
-  "otpTooManyAttempts": "Too many attempts. You're temporarily locked out for 5 minutes.",
-  "couldNotVerifyRightNow": "Couldn't verify that code right now. ({error})",
-  "@couldNotVerifyRightNow": {
-    "placeholders": { "error": { "type": "String" } }
-  },
-  "couldNotSendOtpWithError": "Could not send OTP right now. ({error})",
-  "@couldNotSendOtpWithError": {
-    "placeholders": { "error": { "type": "String" } }
-  },
-  "couldNotResendOtpWithError": "Could not resend OTP right now. ({error})",
-  "@couldNotResendOtpWithError": {
-    "placeholders": { "error": { "type": "String" } }
-  }
+  "changeMobileNumber": "Change details",
+  "smsDndNotice": "Check your inbox (and spam folder) for the code. It expires in 10 minutes."
 }

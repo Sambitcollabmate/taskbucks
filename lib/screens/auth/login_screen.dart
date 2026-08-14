@@ -90,12 +90,14 @@ class _LoginScreenState extends State<LoginScreen> {
           );
           if (!mounted) return;
           context.go('/home');
-        case LoginTwoStepRequired(:final challengeToken, :final mobile):
+        case LoginTwoStepRequired(:final challengeToken, :final email):
           context.push(
             '/verify-login-otp',
             extra: VerifyLoginOtpArgs(
               challengeToken: challengeToken,
-              mobile: mobile,
+              email: email,
+              identifier: _identifierController.text.trim(),
+              password: _passwordController.text,
               rememberMe: _rememberMe,
             ),
           );

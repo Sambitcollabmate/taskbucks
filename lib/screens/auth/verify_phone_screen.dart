@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:sendotp_flutter_sdk/sendotp_flutter_sdk.dart';
 
-import '../../core/config/app_config.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/services/auth_service.dart';
@@ -16,38 +14,30 @@ import '../../shared/widgets/otp_row.dart';
 
 const _defaultResendCooldownSeconds = 30;
 
-// SMS retry channel per MSG91's widget SDK (`retryOTP`'s `retryChannel`):
-// 1 = text, 11 = SMS, 2 = voice call.
-const _smsRetryChannel = 11;
-
-/// Error cases surfaced by MSG91's widget (`OTPWidget.verifyOTP`) — the
-/// widget owns OTP generation/expiry/attempt-limiting entirely now
-/// (MSG91_WIDGET_REVIEW.md), so this only classifies its failure callback,
-/// it doesn't enforce any of these itself.
-enum _OtpError { none, wrongCode, expiredCode, tooManyAttempts }
-
 /// Router `extra` for `/verify-phone` — carries the registration form data
 /// collected on Register, since nothing is persisted server-side until
-/// `verify-otp` succeeds (there's no more `reference_token`/pending record;
-/// MSG91's widget owns the OTP lifecycle end to end).
+/// `verify-otp` succeeds. The OTP email itself was already sent by Register's
+/// `registerPrecheck` call before this screen was pushed
+/// (`App\Services\EmailOtpService`, see AUTH_API.md).
 class VerifyPhoneArgs {
   final String name;
-  final String phoneNumber;
-  final String? email;
+  final String email;
+  final String mobile;
   final String password;
   final String? referralCode;
 
   const VerifyPhoneArgs({
     required this.name,
-    required this.phoneNumber,
-    this.email,
+    required this.email,
+    required this.mobile,
     required this.password,
     this.referralCode,
   });
 }
 
-/// Verify Phone screen (PROJECT.md 7, Phase 3). Pushed from Register with a
-/// [VerifyPhoneArgs] as `extra`.
+/// Verify Email screen (PROJECT.md 7, Phase 3, renamed from Verify Phone now
+/// that OTP is email-based). Pushed from Register with a [VerifyPhoneArgs]
+/// as `extra`.
 class VerifyPhoneScreen extends StatefulWidget {
   final VerifyPhoneArgs args;
 
@@ -61,62 +51,23 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
   final _otpKey = GlobalKey<OtpRowState>();
   final _authService = AuthService();
 
-  String? _reqId;
-  _OtpError _error = _OtpError.none;
-  String? _errorMessageOverride;
+  String? _errorMessage;
   int _resendSecondsLeft = _defaultResendCooldownSeconds;
   Timer? _resendTimer;
-  bool _isSendingInitialOtp = true;
   bool _isVerifying = false;
   bool _isResending = false;
   String _currentCode = '';
 
-  // TODO: wire SMS auto-fill (see PROJECT.md Verify Phone notes) — Android
-  // SMS Retriever/User Consent API is a native-integration task for later.
-  // The otp_row above should be filled programmatically once that lands.
-
   @override
   void initState() {
     super.initState();
-    _initWidgetAndSendOtp();
+    _startResendTimer(_defaultResendCooldownSeconds);
   }
 
   @override
   void dispose() {
     _resendTimer?.cancel();
     super.dispose();
-  }
-
-  Future<void> _initWidgetAndSendOtp() async {
-    OTPWidget.initializeWidget(AppConfig.msg91WidgetId, AppConfig.msg91AuthToken);
-    await _sendOtp();
-  }
-
-  Future<void> _sendOtp() async {
-    setState(() => _isSendingInitialOtp = true);
-    try {
-      final response = await OTPWidget.sendOTP({
-        'identifier': '91${widget.args.phoneNumber}',
-      }) as Map;
-      if (response['type'] == 'success') {
-        if (!mounted) return;
-        setState(() {
-          _reqId = response['message'] as String?;
-          _errorMessageOverride = null;
-        });
-        _startResendTimer(_defaultResendCooldownSeconds);
-      } else if (mounted) {
-        setState(() => _errorMessageOverride = response['message'] as String? ??
-            AppLocalizations.of(context).couldNotSendOtp);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _errorMessageOverride =
-            AppLocalizations.of(context).couldNotSendOtpWithError('$e'));
-      }
-    } finally {
-      if (mounted) setState(() => _isSendingInitialOtp = false);
-    }
   }
 
   void _startResendTimer(int seconds) {
@@ -132,50 +83,30 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
     });
   }
 
-  // If the initial `sendOTP` itself failed, there's no `reqId` for
-  // `retryOTP` to work against — offer an immediate retry instead of
-  // leaving the countdown frozen with no way forward.
-  bool get _initialSendFailed => _reqId == null && !_isSendingInitialOtp;
-
-  bool get _canResend =>
-      !_isResending &&
-      !_isSendingInitialOtp &&
-      (_initialSendFailed ||
-          _resendSecondsLeft == 0 ||
-          _error == _OtpError.expiredCode);
+  bool get _canResend => !_isResending && _resendSecondsLeft == 0;
 
   Future<void> _onResendTap() async {
     if (!_canResend) return;
-
-    if (_initialSendFailed) {
-      await _sendOtp();
-      return;
-    }
-
-    setState(() => _isResending = true);
+    setState(() {
+      _isResending = true;
+      _errorMessage = null;
+    });
     try {
-      final response = await OTPWidget.retryOTP({
-        'reqId': _reqId,
-        'retryChannel': _smsRetryChannel,
-      }) as Map;
+      // Calling the precheck endpoint again is the resend — it's also what
+      // triggers EmailOtpService to send a fresh code.
+      await _authService.registerPrecheck(
+        name: widget.args.name,
+        email: widget.args.email,
+        mobile: widget.args.mobile,
+        password: widget.args.password,
+        referralCode: widget.args.referralCode,
+      );
       if (!mounted) return;
-      if (response['type'] == 'success') {
-        setState(() {
-          if (response['message'] is String) _reqId = response['message'] as String;
-          _error = _OtpError.none;
-          _errorMessageOverride = null;
-        });
-        _otpKey.currentState?.clear();
-        _startResendTimer(_defaultResendCooldownSeconds);
-      } else {
-        setState(() => _errorMessageOverride = response['message'] as String? ??
-            AppLocalizations.of(context).couldNotResendOtp);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _errorMessageOverride =
-            AppLocalizations.of(context).couldNotResendOtpWithError('$e'));
-      }
+      _otpKey.currentState?.clear();
+      _startResendTimer(_defaultResendCooldownSeconds);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _errorMessage = e.message);
     } finally {
       if (mounted) setState(() => _isResending = false);
     }
@@ -184,8 +115,7 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
   void _onOtpChanged(String code) {
     setState(() {
       _currentCode = code;
-      if (_error != _OtpError.none) _error = _OtpError.none;
-      _errorMessageOverride = null;
+      _errorMessage = null;
     });
   }
 
@@ -194,49 +124,18 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
   }
 
   Future<void> _verify(String code) async {
-    if (_isVerifying || _reqId == null || _error == _OtpError.tooManyAttempts) return;
-    setState(() => _isVerifying = true);
-
-    final Map response;
-    try {
-      response = await OTPWidget.verifyOTP({'reqId': _reqId, 'otp': code}) as Map;
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isVerifying = false;
-        _errorMessageOverride = AppLocalizations.of(context).couldNotVerifyRightNow('$e');
-        _error = _OtpError.wrongCode;
-      });
-      return;
-    }
-
-    if (response['type'] != 'success') {
-      if (!mounted) return;
-      final message =
-          response['message'] as String? ?? AppLocalizations.of(context).otpDidNotMatch;
-      setState(() {
-        _isVerifying = false;
-        _errorMessageOverride = message;
-        final lower = message.toLowerCase();
-        if (lower.contains('max') || lower.contains('too many')) {
-          _error = _OtpError.tooManyAttempts;
-        } else if (lower.contains('expired') || lower.contains('invalid')) {
-          _error = _OtpError.expiredCode;
-        } else {
-          _error = _OtpError.wrongCode;
-        }
-      });
-      return;
-    }
-
-    final accessToken = response['message'] as String;
+    if (_isVerifying) return;
+    setState(() {
+      _isVerifying = true;
+      _errorMessage = null;
+    });
 
     try {
       final session = await _authService.verifyRegistration(
-        accessToken: accessToken,
+        otp: code,
         name: widget.args.name,
-        mobile: widget.args.phoneNumber,
         email: widget.args.email,
+        mobile: widget.args.mobile,
         password: widget.args.password,
         referralCode: widget.args.referralCode,
       );
@@ -251,43 +150,25 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
       if (!mounted) return;
       setState(() {
         _isVerifying = false;
-        _errorMessageOverride = e.fieldError('mobile') ?? e.message;
-        _error = _OtpError.wrongCode;
+        _errorMessage = e.fieldError('otp') ?? e.message;
       });
       return;
     }
     if (mounted) setState(() => _isVerifying = false);
   }
 
-  String get _maskedPhone {
-    final digits = widget.args.phoneNumber;
-    if (digits.length != 10) return digits;
-    return '${digits.substring(0, 2)}${'•' * 6}${digits.substring(8)}';
-  }
-
-  String? get _errorMessage {
-    if (_errorMessageOverride != null) return _errorMessageOverride;
-    final l10n = AppLocalizations.of(context);
-    switch (_error) {
-      case _OtpError.wrongCode:
-        return l10n.otpCodeMismatchRetry;
-      case _OtpError.expiredCode:
-        return l10n.otpCodeExpired;
-      case _OtpError.tooManyAttempts:
-        return l10n.otpTooManyAttempts;
-      case _OtpError.none:
-        return null;
-    }
+  String get _maskedEmail {
+    final email = widget.args.email;
+    final atIndex = email.indexOf('@');
+    if (atIndex <= 0) return email;
+    final visibleLength = atIndex > 2 ? 2 : 1;
+    return '${email.substring(0, visibleLength)}${'•' * 3}${email.substring(atIndex)}';
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final notLockedOut = _error != _OtpError.tooManyAttempts;
-    final canSubmit = notLockedOut &&
-        _currentCode.length == otpLength &&
-        !_isVerifying &&
-        _reqId != null;
+    final canSubmit = _currentCode.length == otpLength && !_isVerifying;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -312,17 +193,15 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              _isSendingInitialOtp
-                  ? l10n.sendingCodeMessage(_maskedPhone)
-                  : l10n.sentCodeMessage(_maskedPhone),
+              l10n.sentCodeMessage(_maskedEmail),
               style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 24),
             OtpRow(
               key: _otpKey,
-              hasError: _error == _OtpError.wrongCode,
+              hasError: _errorMessage != null,
               onChanged: _onOtpChanged,
-              onCompleted: notLockedOut ? _onOtpCompleted : (_) {},
+              onCompleted: _onOtpCompleted,
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 10),
@@ -341,7 +220,7 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
                 onTap: _canResend ? _onResendTap : null,
                 child: _canResend
                     ? Text(
-                        _initialSendFailed ? l10n.tryAgain : l10n.resendOtp,
+                        l10n.resendOtp,
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,

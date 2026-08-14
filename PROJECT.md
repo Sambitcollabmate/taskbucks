@@ -816,12 +816,17 @@ patterns, so later screens are mostly assembly, not new invention.
     reach — impossible against a local/LAN dev server. Until then,
     `/ads/dev-simulate` remains the only way to produce a verified
     `ad_transaction_id`.
-- [ ] Google Play Billing real integration (currently placeholder) — still
-  open, no Play Console app listing yet. The backend's own dev-bypass
-  (`GooglePlayBillingClient`, active when `APP_ENV=local`) lets Subscribe/
-  Cancel on the Upgrade screen be tested for real against placeholder
-  purchase tokens; `BillingService.verifyPurchase()` has a matching
-  `// TODO` for the real purchase flow.
+- [x] Google Play Billing replaced with Razorpay Checkout — the app moved
+  to direct-APK distribution instead of Play Store, so Play Billing can no
+  longer work. Premium is now a manual monthly repurchase (not
+  auto-renewing) via `BillingService.createOrder()`/`verifyPayment()` and
+  `RazorpayCheckoutService`; the backend's dev-bypass
+  (`RazorpayCheckoutClient`, active when `APP_ENV=local`) lets Subscribe be
+  tested without real Razorpay credentials.
+- [ ] RazorpayX Payouts for withdrawals — `RazorpayPayoutClient` and the
+  `withdrawals:process-queued` command are built with the same dev-bypass
+  pattern, but real payouts need a RazorpayX account (separate KYC/approval
+  from standard Razorpay), not yet obtained.
 
 **Phase 8 — Pre-launch pass**
 - Resolve every item in Section 3 (compliance/legal placeholders)

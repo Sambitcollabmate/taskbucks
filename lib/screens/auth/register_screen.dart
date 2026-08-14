@@ -11,9 +11,10 @@ import 'verify_phone_screen.dart';
 import 'widgets/auth_text_field.dart';
 import 'widgets/consent_checkbox.dart';
 
-/// Register screen (PROJECT.md 7, Phase 3). Field order is locked to
-/// name → mobile → optional email → password → optional referral code
-/// (PROJECT.md 2). No tab bar; has a back button (pre-auth stack screen
+/// Register screen (PROJECT.md 7, Phase 3). Field order is
+/// name → email → mobile → password → optional referral code — email is
+/// first since it's the OTP-verified identifier, mobile is required but no
+/// longer OTP-verified. No tab bar; has a back button (pre-auth stack screen
 /// the user can retreat from to Welcome — unlike Welcome itself).
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -41,9 +42,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     // Real-time validation: the Send OTP button only lights up once these
-    // two pass — never fire a fake OTP send on an invalid number (PROJECT.md
+    // pass — never fire a fake OTP send on invalid input (PROJECT.md
     // instructions for this screen).
     _nameController.addListener(_revalidate);
+    _emailController.addListener(_revalidate);
     _phoneController.addListener(_revalidate);
   }
 
@@ -59,8 +61,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _revalidate() => setState(() {});
 
+  static final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
   bool get _isValid =>
-      _nameController.text.trim().isNotEmpty && _phoneController.text.length == 10;
+      _nameController.text.trim().isNotEmpty &&
+      _emailPattern.hasMatch(_emailController.text.trim()) &&
+      _phoneController.text.length == 10;
 
   Future<void> _onSendOtp() async {
     if (!_isValid || _isSendingOtp) return;
@@ -71,19 +77,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     final name = _nameController.text.trim();
-    final mobile = _phoneController.text;
     final email = _emailController.text.trim();
+    final mobile = _phoneController.text;
     final password = _passwordController.text;
     final referralCode = _referralController.text.trim();
 
     try {
-      // Validation-only — no OTP is sent yet. Catching a duplicate
-      // mobile/email or bad referral code here means we never ask MSG91 to
-      // send an SMS for a registration that can't complete anyway.
+      // Validation-only, but also the moment the OTP email actually goes
+      // out — catching a duplicate mobile/email or bad referral code here
+      // means we never send a code for a registration that can't complete
+      // anyway.
       await _authService.registerPrecheck(
         name: name,
-        mobile: mobile,
         email: email,
+        mobile: mobile,
         password: password,
         referralCode: referralCode,
       );
@@ -92,14 +99,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         '/verify-phone',
         extra: VerifyPhoneArgs(
           name: name,
-          phoneNumber: mobile,
-          email: email.isEmpty ? null : email,
+          email: email,
+          mobile: mobile,
           password: password,
           referralCode: referralCode.isEmpty ? null : referralCode,
         ),
       );
     } on ApiException catch (e) {
-      setState(() => _errorMessage = e.fieldError('mobile') ?? e.fieldError('email') ?? e.message);
+      setState(() => _errorMessage = e.fieldError('email') ?? e.fieldError('mobile') ?? e.message);
       setState(() => _referralError = e.fieldError('referral_code'));
     } finally {
       if (mounted) setState(() => _isSendingOtp = false);
@@ -133,6 +140,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
               onChanged: (_) {},
             ),
             const SizedBox(height: 16),
+            AuthTextField(
+              controller: _emailController,
+              label: l10n.emailAddressLabel,
+              hintText: 'you@example.com',
+              keyboardType: TextInputType.emailAddress,
+              onChanged: (_) {},
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.otpHint,
+              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 16),
             Text(
               l10n.mobileNumberLabel,
               style: const TextStyle(
@@ -143,18 +163,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             const SizedBox(height: 6),
             PhoneInput(controller: _phoneController, onChanged: (_) {}),
-            const SizedBox(height: 6),
-            Text(
-              l10n.otpHint,
-              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: 16),
-            AuthTextField(
-              controller: _emailController,
-              label: l10n.emailOptionalLabel,
-              hintText: 'you@example.com',
-              keyboardType: TextInputType.emailAddress,
-            ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: _passwordController,

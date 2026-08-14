@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:sendotp_flutter_sdk/sendotp_flutter_sdk.dart';
 
-import '../../core/config/app_config.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/models/auth_user.dart';
 import '../../data/services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
@@ -16,26 +15,23 @@ import '../../shared/widgets/otp_row.dart';
 
 const _defaultResendCooldownSeconds = 30;
 
-// SMS retry channel per MSG91's widget SDK (`retryOTP`'s `retryChannel`):
-// 1 = text, 11 = SMS, 2 = voice call.
-const _smsRetryChannel = 11;
-
-/// Same failure classification as Verify Phone's `_OtpError` — the widget
-/// owns OTP generation/expiry/attempt-limiting entirely, this only
-/// classifies its failure callback.
-enum _OtpError { none, wrongCode, expiredCode, tooManyAttempts }
-
 /// Router `extra` for `/verify-login-otp` — carries the challenge Login's
-/// password check returned (AUTH_API.md's `two_step_required` response),
-/// since no session exists yet for this backend to key state off of.
+/// password check returned (AUTH_API.md's `two_step_required` response), and
+/// the credentials that produced it, so "resend" can re-run `login()` to get
+/// a fresh challenge/OTP (there's no separate resend endpoint — the OTP
+/// email is sent as a side effect of `login()` itself).
 class VerifyLoginOtpArgs {
   final String challengeToken;
-  final String mobile;
+  final String email;
+  final String identifier;
+  final String password;
   final bool rememberMe;
 
   const VerifyLoginOtpArgs({
     required this.challengeToken,
-    required this.mobile,
+    required this.email,
+    required this.identifier,
+    required this.password,
     required this.rememberMe,
   });
 }
@@ -43,8 +39,7 @@ class VerifyLoginOtpArgs {
 /// Second step of a two-step login (PROJECT.md Settings: "two-step
 /// verification"). Pushed from Login when its response is
 /// `LoginTwoStepRequired` instead of a session — password already checked
-/// out, this is the second factor. Deliberately mirrors Verify Phone's
-/// OTPWidget usage verbatim rather than introducing a new pattern.
+/// out, this is the second factor.
 class VerifyLoginOtpScreen extends StatefulWidget {
   final VerifyLoginOtpArgs args;
 
@@ -58,12 +53,10 @@ class _VerifyLoginOtpScreenState extends State<VerifyLoginOtpScreen> {
   final _otpKey = GlobalKey<OtpRowState>();
   final _authService = AuthService();
 
-  String? _reqId;
-  _OtpError _error = _OtpError.none;
-  String? _errorMessageOverride;
+  late String _challengeToken = widget.args.challengeToken;
+  String? _errorMessage;
   int _resendSecondsLeft = _defaultResendCooldownSeconds;
   Timer? _resendTimer;
-  bool _isSendingInitialOtp = true;
   bool _isVerifying = false;
   bool _isResending = false;
   String _currentCode = '';
@@ -71,54 +64,13 @@ class _VerifyLoginOtpScreenState extends State<VerifyLoginOtpScreen> {
   @override
   void initState() {
     super.initState();
-    _initWidgetAndSendOtp();
+    _startResendTimer(_defaultResendCooldownSeconds);
   }
 
   @override
   void dispose() {
     _resendTimer?.cancel();
     super.dispose();
-  }
-
-  Future<void> _initWidgetAndSendOtp() async {
-    OTPWidget.initializeWidget(
-      AppConfig.msg91WidgetId,
-      AppConfig.msg91AuthToken,
-    );
-    await _sendOtp();
-  }
-
-  Future<void> _sendOtp() async {
-    setState(() => _isSendingInitialOtp = true);
-    try {
-      final response =
-          await OTPWidget.sendOTP({'identifier': '91${widget.args.mobile}'})
-              as Map;
-      if (response['type'] == 'success') {
-        if (!mounted) return;
-        setState(() {
-          _reqId = response['message'] as String?;
-          _errorMessageOverride = null;
-        });
-        _startResendTimer(_defaultResendCooldownSeconds);
-      } else if (mounted) {
-        setState(
-          () => _errorMessageOverride =
-              response['message'] as String? ??
-              AppLocalizations.of(context).couldNotSendOtp,
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(
-          () => _errorMessageOverride = AppLocalizations.of(
-            context,
-          ).couldNotSendOtpWithError('$e'),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isSendingInitialOtp = false);
-    }
   }
 
   void _startResendTimer(int seconds) {
@@ -134,57 +86,30 @@ class _VerifyLoginOtpScreenState extends State<VerifyLoginOtpScreen> {
     });
   }
 
-  bool get _initialSendFailed => _reqId == null && !_isSendingInitialOtp;
-
-  bool get _canResend =>
-      !_isResending &&
-      !_isSendingInitialOtp &&
-      (_initialSendFailed ||
-          _resendSecondsLeft == 0 ||
-          _error == _OtpError.expiredCode);
+  bool get _canResend => !_isResending && _resendSecondsLeft == 0;
 
   Future<void> _onResendTap() async {
     if (!_canResend) return;
-
-    if (_initialSendFailed) {
-      await _sendOtp();
-      return;
-    }
-
-    setState(() => _isResending = true);
+    setState(() {
+      _isResending = true;
+      _errorMessage = null;
+    });
     try {
-      final response =
-          await OTPWidget.retryOTP({
-                'reqId': _reqId,
-                'retryChannel': _smsRetryChannel,
-              })
-              as Map;
+      // login() re-issues a fresh challenge_token and sends a new OTP email
+      // — there's no standalone resend endpoint for the 2FA step.
+      final result = await _authService.login(
+        identifier: widget.args.identifier,
+        password: widget.args.password,
+      );
       if (!mounted) return;
-      if (response['type'] == 'success') {
-        setState(() {
-          if (response['message'] is String) {
-            _reqId = response['message'] as String;
-          }
-          _error = _OtpError.none;
-          _errorMessageOverride = null;
-        });
-        _otpKey.currentState?.clear();
-        _startResendTimer(_defaultResendCooldownSeconds);
-      } else {
-        setState(
-          () => _errorMessageOverride =
-              response['message'] as String? ??
-              AppLocalizations.of(context).couldNotResendOtp,
-        );
+      if (result case LoginTwoStepRequired(:final challengeToken)) {
+        setState(() => _challengeToken = challengeToken);
       }
-    } catch (e) {
-      if (mounted) {
-        setState(
-          () => _errorMessageOverride = AppLocalizations.of(
-            context,
-          ).couldNotResendOtpWithError('$e'),
-        );
-      }
+      _otpKey.currentState?.clear();
+      _startResendTimer(_defaultResendCooldownSeconds);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _errorMessage = e.message);
     } finally {
       if (mounted) setState(() => _isResending = false);
     }
@@ -193,8 +118,7 @@ class _VerifyLoginOtpScreenState extends State<VerifyLoginOtpScreen> {
   void _onOtpChanged(String code) {
     setState(() {
       _currentCode = code;
-      if (_error != _OtpError.none) _error = _OtpError.none;
-      _errorMessageOverride = null;
+      _errorMessage = null;
     });
   }
 
@@ -203,53 +127,16 @@ class _VerifyLoginOtpScreenState extends State<VerifyLoginOtpScreen> {
   }
 
   Future<void> _verify(String code) async {
-    if (_isVerifying || _reqId == null || _error == _OtpError.tooManyAttempts) {
-      return;
-    }
-    setState(() => _isVerifying = true);
-
-    final Map response;
-    try {
-      response =
-          await OTPWidget.verifyOTP({'reqId': _reqId, 'otp': code}) as Map;
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isVerifying = false;
-        _errorMessageOverride = AppLocalizations.of(
-          context,
-        ).couldNotVerifyRightNow('$e');
-        _error = _OtpError.wrongCode;
-      });
-      return;
-    }
-
-    if (response['type'] != 'success') {
-      if (!mounted) return;
-      final message =
-          response['message'] as String? ??
-          AppLocalizations.of(context).otpDidNotMatch;
-      setState(() {
-        _isVerifying = false;
-        _errorMessageOverride = message;
-        final lower = message.toLowerCase();
-        if (lower.contains('max') || lower.contains('too many')) {
-          _error = _OtpError.tooManyAttempts;
-        } else if (lower.contains('expired') || lower.contains('invalid')) {
-          _error = _OtpError.expiredCode;
-        } else {
-          _error = _OtpError.wrongCode;
-        }
-      });
-      return;
-    }
-
-    final accessToken = response['message'] as String;
+    if (_isVerifying) return;
+    setState(() {
+      _isVerifying = true;
+      _errorMessage = null;
+    });
 
     try {
       final session = await _authService.verifyLoginTwoStep(
-        challengeToken: widget.args.challengeToken,
-        accessToken: accessToken,
+        challengeToken: _challengeToken,
+        otp: code,
       );
       if (!mounted) return;
       await context.read<AuthProvider>().completeLogin(
@@ -265,47 +152,25 @@ class _VerifyLoginOtpScreenState extends State<VerifyLoginOtpScreen> {
         // A challenge_token error here means the 10-minute window on the
         // backend's Cache::put lapsed — no amount of retrying the OTP fixes
         // that, the user needs a fresh password+challenge round trip.
-        _errorMessageOverride =
-            e.fieldError('challenge_token') ??
-            e.fieldError('access_token') ??
-            e.message;
-        _error = _OtpError.wrongCode;
+        _errorMessage = e.fieldError('challenge_token') ?? e.fieldError('otp') ?? e.message;
       });
       return;
     }
     if (mounted) setState(() => _isVerifying = false);
   }
 
-  String get _maskedPhone {
-    final digits = widget.args.mobile;
-    if (digits.length != 10) return digits;
-    return '${digits.substring(0, 2)}${'•' * 6}${digits.substring(8)}';
-  }
-
-  String? get _errorMessage {
-    if (_errorMessageOverride != null) return _errorMessageOverride;
-    final l10n = AppLocalizations.of(context);
-    switch (_error) {
-      case _OtpError.wrongCode:
-        return l10n.otpCodeMismatchRetry;
-      case _OtpError.expiredCode:
-        return l10n.otpCodeExpired;
-      case _OtpError.tooManyAttempts:
-        return l10n.otpTooManyAttempts;
-      case _OtpError.none:
-        return null;
-    }
+  String get _maskedEmail {
+    final email = widget.args.email;
+    final atIndex = email.indexOf('@');
+    if (atIndex <= 0) return email;
+    final visibleLength = atIndex > 2 ? 2 : 1;
+    return '${email.substring(0, visibleLength)}${'•' * 3}${email.substring(atIndex)}';
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final notLockedOut = _error != _OtpError.tooManyAttempts;
-    final canSubmit =
-        notLockedOut &&
-        _currentCode.length == otpLength &&
-        !_isVerifying &&
-        _reqId != null;
+    final canSubmit = _currentCode.length == otpLength && !_isVerifying;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -330,9 +195,7 @@ class _VerifyLoginOtpScreenState extends State<VerifyLoginOtpScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              _isSendingInitialOtp
-                  ? l10n.sendingCodeMessage(_maskedPhone)
-                  : l10n.sentCodeMessage(_maskedPhone),
+              l10n.sentCodeMessage(_maskedEmail),
               style: const TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -341,9 +204,9 @@ class _VerifyLoginOtpScreenState extends State<VerifyLoginOtpScreen> {
             const SizedBox(height: 24),
             OtpRow(
               key: _otpKey,
-              hasError: _error == _OtpError.wrongCode,
+              hasError: _errorMessage != null,
               onChanged: _onOtpChanged,
-              onCompleted: notLockedOut ? _onOtpCompleted : (_) {},
+              onCompleted: _onOtpCompleted,
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 10),
@@ -362,7 +225,7 @@ class _VerifyLoginOtpScreenState extends State<VerifyLoginOtpScreen> {
                 onTap: _canResend ? _onResendTap : null,
                 child: _canResend
                     ? Text(
-                        _initialSendFailed ? l10n.tryAgain : l10n.resendOtp,
+                        l10n.resendOtp,
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,

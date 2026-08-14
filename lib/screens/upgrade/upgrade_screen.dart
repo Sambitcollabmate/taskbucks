@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../../core/config/app_config.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user_profile.dart';
-import '../../data/services/play_billing_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/profile_provider.dart';
 import '../../shared/widgets/notice_card.dart';
@@ -46,54 +43,13 @@ class _UpgradeScreenBody extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } on StateError catch (e) {
-      // PlayBillingService throws this for every purchase-sheet-side
-      // failure (not available, no product to buy, cancelled by the
-      // user) — same gap as AdMobService's uncaught StateErrors before
+      // RazorpayCheckoutService throws this for every Checkout-side failure
+      // (payment failed, cancelled by the user, unsupported external
+      // wallet) — same gap as AdMobService's uncaught StateErrors before
       // tasks_screen.dart was fixed to catch them.
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
       }
-    }
-  }
-
-  /// Marks the cancellation as pending in our own records, then hands off
-  /// to Google Play's subscription management page — only Google can
-  /// actually stop a Play Billing subscription from recurring; our own
-  /// `/billing/cancel` (ProfileProvider.cancelPremium) never touches
-  /// Google at all, it just stops granting Premium once the current cycle
-  /// ends.
-  Future<void> _onCancel(BuildContext context, ProfileProvider provider) async {
-    final l10n = AppLocalizations.of(context);
-    try {
-      await provider.cancelPremium();
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.subscriptionCancelledMessage),
-          ),
-        );
-      }
-      if (context.mounted) {
-        await _openGooglePlaySubscriptions(context, l10n);
-      }
-    } on ApiException catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
-      }
-    }
-  }
-
-  Future<void> _openGooglePlaySubscriptions(BuildContext context, AppLocalizations l10n) async {
-    final uri = Uri.parse(
-      'https://play.google.com/store/account/subscriptions'
-      '?sku=${PlayBillingService.premiumProductId}'
-      '&package=${AppConfig.androidPackageName}',
-    );
-    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-    if (!launched && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.couldNotOpenGooglePlay)),
-      );
     }
   }
 
@@ -154,12 +110,8 @@ class _UpgradeScreenBody extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            profile.premiumCancelPending
-                                ? l10n.cancellationScheduled(
-                                    profile.premiumExpiresAt != null
-                                        ? _formatDate(profile.premiumExpiresAt!)
-                                        : l10n.endOfThisCycle,
-                                  )
+                            profile.premiumExpiresAt != null
+                                ? l10n.premiumActiveUntil(_formatDate(profile.premiumExpiresAt!))
                                 : l10n.youreOnPremium,
                             style: const TextStyle(
                               fontSize: 12.5,
@@ -172,25 +124,23 @@ class _UpgradeScreenBody extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (!profile.premiumCancelPending) ...[
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: OutlinedButton(
-                        onPressed: provider.isProcessingBilling
-                            ? null
-                            : () => _onCancel(context, provider),
-                        child: provider.isProcessingBilling
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : Text(l10n.cancelSubscription),
-                      ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: OutlinedButton(
+                      onPressed: provider.isProcessingBilling
+                          ? null
+                          : () => _onSubscribe(context, provider),
+                      child: provider.isProcessingBilling
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(l10n.renewNow),
                     ),
-                  ],
+                  ),
                 ] else
                   SizedBox(
                     width: double.infinity,

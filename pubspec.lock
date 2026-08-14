@@ -121,6 +121,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  eventify:
+    dependency: transitive
+    description:
+      name: eventify
+      sha256: b829429f08586cc2001c628e7499e3e3c2493a1d895fd73b00ecb23351aa5a66
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -429,38 +437,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.2"
-  in_app_purchase:
-    dependency: "direct main"
-    description:
-      name: in_app_purchase
-      sha256: "0e9510b80b0074e89ab0a8e0fc901439b779dc9ae575ab8d419253c6e1627716"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.3.0"
-  in_app_purchase_android:
-    dependency: transitive
-    description:
-      name: in_app_purchase_android
-      sha256: c04e2cad0470fc868cb0ea06477648f003220b1b6612909db83528ca83ac0905
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.2"
-  in_app_purchase_platform_interface:
-    dependency: transitive
-    description:
-      name: in_app_purchase_platform_interface
-      sha256: "0b0076cac8ce4fa7048f01e76af8b123aeb6a7c4e0dea2a5206d6664454f3e36"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.1"
-  in_app_purchase_storekit:
-    dependency: transitive
-    description:
-      name: in_app_purchase_storekit
-      sha256: "702a23c3d2ddc177b075d521d264900e82f01663881e4ef3ce17775de298c0e3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.11"
   intl:
     dependency: "direct main"
     description:
@@ -749,6 +725,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  razorpay_flutter:
+    dependency: "direct main"
+    description:
+      name: razorpay_flutter
+      sha256: a9026acf004df802128be6996a9397f5e9c20f32dd12ab215fd1659e0233c9f0
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.5"
   record_use:
     dependency: transitive
     description:
@@ -757,14 +741,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
-  sendotp_flutter_sdk:
-    dependency: "direct main"
-    description:
-      name: sendotp_flutter_sdk
-      sha256: "4536dc5132c505c7f854c1f203b146f32f705e95640c476fa3320bf435c0e6ea"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.2"
   share_plus:
     dependency: "direct main"
     description:
